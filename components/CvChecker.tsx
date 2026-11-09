@@ -259,9 +259,9 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
   useEffect(() => {
     try {
       if (!location.search.includes('resume=1')) return;
-      const raw = sessionStorage.getItem(PENDING_KEY);
+      const raw = localStorage.getItem(PENDING_KEY);
       if (!raw) return;
-      sessionStorage.removeItem(PENDING_KEY);
+      localStorage.removeItem(PENDING_KEY);
       const p = JSON.parse(raw);
       if (p.market) setMarket(p.market);
       setPaste(p.text || '');
@@ -313,7 +313,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       // membership gate: the result is shown only to signed-up members (email code / Google)
       const u = user === undefined ? await currentUser().catch(() => null) : user;
       if (!u) {
-        try { sessionStorage.setItem(PENDING_KEY, JSON.stringify({ text, market: mkt })); } catch {}
+        try { localStorage.setItem(PENDING_KEY, JSON.stringify({ text, market: mkt })); } catch {}
         setPending({ text, pages, market: mkt }); setBusy('');
         setTimeout(() => document.getElementById('cv-gate')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
         return;
@@ -339,7 +339,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role_id: r.roles[0].role.id, market: mkt, score: r.score, years: r.years, level: r.level, name: u.name }) }).catch(() => {});
         // keep the member profile up to date with the latest check (+ flush a Google sign-up draft if any)
         let extra: any = {};
-        try { const d = sessionStorage.getItem('meplab_profile_draft'); if (d) { extra = JSON.parse(d); sessionStorage.removeItem('meplab_profile_draft'); } } catch {}
+        try { const d = localStorage.getItem('meplab_profile_draft'); if (d) { extra = JSON.parse(d); localStorage.removeItem('meplab_profile_draft'); } } catch {}
         fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...extra, last_ats: r.score, detected_role: r.roles[0].role.id, detected_years: r.years, market: extra.market || mkt, check: true }) }).catch(() => {});
       }
     } catch {}

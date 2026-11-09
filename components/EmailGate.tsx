@@ -8,7 +8,7 @@ type Loc = 'ar' | 'en';
 const T = {
   ar: {
     title: 'اعمل بروفايلك على MEP LAB وشوف نتيجة الـ CV',
-    sub: 'مجاني تمامًا ودقيقة واحدة. هنبعتلك كود من 6 أرقام على إيميلك، وبعدها النتيجة هتظهر على طول.',
+    sub: 'مجاني تمامًا ودقيقة واحدة. هنبعتلك إيميل فيه لينك الدخول، تضغط عليه والنتيجة تظهر على طول.',
     phone: 'رقم الموبايل (واتساب)',
     role: 'تخصصك',
     role_ph: 'اختار التخصص',
@@ -20,7 +20,7 @@ const T = {
     email: 'الإيميل',
     send: 'ابعتلي الكود',
     sending: 'بنبعت الكود...',
-    code_sent: 'بعتنا الكود على {e}. افتح إيميلك (شوف الـ Spam كمان) واكتبه هنا.',
+    code_sent: 'بعتنا إيميل على {e}. افتحه (شوف الـ Spam كمان) واضغط على لينك الدخول — ولو في الإيميل كود من 6 أرقام اكتبه هنا.',
     code: 'الكود (6 أرقام)',
     verify: 'تأكيد وعرض النتيجة',
     verifying: 'بنتأكد...',
@@ -36,13 +36,13 @@ const T = {
       'نتيجة ATS كاملة ومطابقة مع إعلانات الوظايف', 'تعديل الـ CV أوتوماتيك وتحميله Word و PDF', 'وظايف MEP مناسبة ليك كل يوم', 'إشعار بأي كورس جديد من MEP LAB'],
     privacy: 'الـ CV بيتحلل على جهازك ومش بيترفع. بنحفظ إيميلك ونتيجتك بس، ومش بنشاركهم مع حد.',
     welcome: 'أهلًا {n}! بنجهّز النتيجة...',
-    login_title: 'ادخل على حسابك في MEP LAB', login_sub: 'اكتب إيميلك وهنبعتلك كود من 6 أرقام — من غير باسورد.', login_verify: 'تأكيد ودخول', login_welcome: 'أهلًا بيك تاني! بندخّلك...',
+    login_title: 'ادخل على حسابك في MEP LAB', login_sub: 'اكتب إيميلك وهنبعتلك لينك دخول — من غير باسورد.', login_verify: 'تأكيد ودخول', login_welcome: 'أهلًا بيك تاني! بندخّلك...',
     signup_title: 'اعمل حسابك على MEP LAB', signup_sub: 'مجاني ودقيقة واحدة. الحساب بيفتحلك الكورسات والتحميل وفحص الـ CV وصفحتك الشخصية.', signup_verify: 'تأكيد وإنشاء الحساب', signup_welcome: 'أهلًا {n}! بنجهّز حسابك...',
     no_account: 'معندكش حساب؟', have_account: 'عندك حساب؟', go_signup: 'اعمل حساب', go_login: 'ادخل'
   },
   en: {
     title: 'Create your MEP LAB profile and see your CV results',
-    sub: 'Free and takes a minute. We will email you a 6-digit code and your results will appear right after.',
+    sub: 'Free and takes a minute. We will email you a sign-in link; click it and your results appear right away.',
     phone: 'Mobile (WhatsApp)',
     role: 'Your specialty',
     role_ph: 'Choose a specialty',
@@ -54,7 +54,7 @@ const T = {
     email: 'Email',
     send: 'Send me the code',
     sending: 'Sending...',
-    code_sent: 'We sent a code to {e}. Check your inbox (and spam) and enter it here.',
+    code_sent: 'We sent an email to {e}. Open it (check spam too) and click the sign-in link — or, if it has a 6-digit code, enter it here.',
     code: 'Code (6 digits)',
     verify: 'Verify & show results',
     verifying: 'Verifying...',
@@ -70,7 +70,7 @@ const T = {
       'Full ATS score and job-post matching', 'Automatic CV rewrite with Word & PDF download', 'Matching MEP jobs every day', 'Updates on new MEP LAB courses'],
     privacy: 'Your CV is analysed on your device and never uploaded. We only keep your email and result, and never share them.',
     welcome: 'Welcome {n}! Preparing your results...',
-    login_title: 'Log in to MEP LAB', login_sub: 'Enter your email and we will send a 6-digit code — no password.', login_verify: 'Verify & log in', login_welcome: 'Welcome back! Signing you in...',
+    login_title: 'Log in to MEP LAB', login_sub: 'Enter your email and we will send you a sign-in link — no password.', login_verify: 'Verify & log in', login_welcome: 'Welcome back! Signing you in...',
     signup_title: 'Create your MEP LAB account', signup_sub: 'Free and takes a minute. Your account unlocks courses, the Player download, the CV checker and your personal page.', signup_verify: 'Verify & create account', signup_welcome: 'Welcome {n}! Setting up your account...',
     no_account: 'No account?', have_account: 'Have an account?', go_signup: 'Sign up', go_login: 'Log in'
   }
@@ -124,6 +124,8 @@ export default function EmailGate({ locale, onDone, nextPath = '/cv-check?resume
     try {
       if (mock) { await new Promise((r) => setTimeout(r, 500)); setStep('code'); return; }
       const sb = supabaseBrowser(); if (!sb) return setErr(t.not_conf);
+      // kept until the member is signed in (the email link may open in another tab) — see DraftSync
+      if (!login) { try { localStorage.setItem('meplab_profile_draft', JSON.stringify(draft())); } catch {} }
       const { error } = await sb.auth.signInWithOtp({
         email: e,
         options: { shouldCreateUser: true, data: name.trim() ? { full_name: name.trim() } : undefined, emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}` }
@@ -143,6 +145,7 @@ export default function EmailGate({ locale, onDone, nextPath = '/cv-check?resume
       const { data, error } = await sb.auth.verifyOtp({ email: email.trim().toLowerCase(), token: c, type: 'email' });
       if (error || !data?.user) return setErr(t.bad_code);
       if (!login) {
+        try { localStorage.removeItem('meplab_profile_draft'); } catch {}
         await sb.auth.updateUser({ data: { full_name: name.trim(), phone: phone.trim() } }).catch(() => {});
         // build the member profile on our side
         await fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(draft()) }).catch(() => {});
@@ -155,7 +158,7 @@ export default function EmailGate({ locale, onDone, nextPath = '/cv-check?resume
   }
   async function google() {
     const sb = supabaseBrowser(); if (!sb) return setErr(t.not_conf);
-    try { sessionStorage.setItem('meplab_profile_draft', JSON.stringify(draft())); } catch {}
+    try { localStorage.setItem('meplab_profile_draft', JSON.stringify(draft())); } catch {}
     await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}` } });
   }
 

@@ -131,7 +131,7 @@ export default function AiReview({ locale, text, res, market, jd = '', loginHref
         d = await r.json().catch(() => ({}));
       }
       if (r && r.status === 401) {
-        try { sessionStorage.setItem(PENDING_KEY, JSON.stringify({ text, market })); } catch {}
+        try { localStorage.setItem(PENDING_KEY, JSON.stringify({ text, market })); } catch {}
         return setState('login');
       }
       if (!d.review) {

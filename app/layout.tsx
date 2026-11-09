@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
+import DraftSync from '@/components/DraftSync';
 import Footer from '@/components/Footer';
 import { getLocale } from '@/lib/i18n';
 
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <DraftSync />
       </body>
     </html>
   );
