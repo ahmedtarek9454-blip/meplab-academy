@@ -1,0 +1,42 @@
+/**
+ * MEP LAB ATS model = learned numbers the engine scores with.
+ * v0 (default) is built from the knowledge graph; training on real job posts
+ * (lib/ats/train.ts) replaces the weights and salary figures over time.
+ */
+import { SKILLS } from './taxonomy';
+import { ROLES, type Market } from '@/lib/cv/data';
+
+export type SalaryStat = { n: number; p25: number; p50: number; p75: number };
+
+export type AtsModel = {
+  version: string;
+  trained_at: string | null;
+  jobs_used: number;
+  /** role -> market|'all' -> skill -> weight 0..1 */
+  weights: Record<string, Record<string, Record<string, number>>>;
+  /** role -> market -> monthly salary stats from job posts (local currency) */
+  salary: Record<string, Partial<Record<Market, SalaryStat>>>;
+  /** role -> market -> number of job posts learned from */
+  samples: Record<string, Partial<Record<Market, number>>>;
+  /** role -> frequent terms in job posts that the knowledge graph does not cover yet */
+  emerging: Record<string, string[]>;
+};
+
+export function priorWeights(roleId: string): Record<string, number> {
+  const w: Record<string, number> = {};
+  for (const s of SKILLS) {
+    const v = s.roles[roleId];
+    if (v) w[s.id] = Math.round((v / 3) * 1000) / 1000;
+  }
+  return w;
+}
+
+export function defaultModel(): AtsModel {
+  const weights: AtsModel['weights'] = {};
+  for (const r of ROLES) weights[r.id] = { all: priorWeights(r.id) };
+  return { version: '0.1-prior', trained_at: null, jobs_used: 0, weights, salary: {}, samples: {}, emerging: {} };
+}
+
+export function weightsFor(model: AtsModel, roleId: string, market: Market) {
+  return model.weights[roleId]?.[market] || model.weights[roleId]?.all || priorWeights(roleId);
+}

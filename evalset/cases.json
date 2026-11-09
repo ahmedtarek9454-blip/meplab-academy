@@ -1,0 +1,782 @@
+[
+  {
+    "id": "cv01",
+    "text": "AHMED SAMIR EL-GOHARY\nSenior HVAC Design Engineer\nNasr City, Cairo, Egypt | +20 100 555 0181 | ahmed.elgohary@example.com | linkedin.com/in/ahmed-elgohary-hvac\n\nPROFESSIONAL SUMMARY\nMechanical engineer with nearly 9 years of HVAC design experience in consultancy, covering commercial towers, hospitals, hotels and residential compounds in Egypt. Strong in cooling load calculation, chilled water and VRF system design, duct and pipe sizing, and producing coordinated drawings in AutoCAD and Revit.\n\nPROFESSIONAL EXPERIENCE\n\nSenior HVAC Design Engineer\nNile Crest Engineering Consultants – Cairo, Egypt\nJan 2019 – Present\n• Lead HVAC design for 30+ projects from concept to IFC, including a 450-bed hospital in New Cairo and a 38-storey mixed-use tower.\n• Perform cooling and heating load calculations using Carrier HAP 5.1 and verify against ASHRAE 90.1 and ASHRAE 62.1 ventilation rates.\n• Design chilled water systems (primary/secondary and variable primary), select air-cooled and water-cooled chillers, pumps and cooling towers.\n• Design VRF systems for villas and office buildings; review manufacturer piping diagrams and refrigerant charge.\n• Duct design and sizing per SMACNA and ASHRAE Fundamentals using equal friction and static regain methods; ESP calculations for AHUs and FCUs.\n• Design smoke management and stair pressurization systems in line with NFPA 92.\n• Prepare BOQs, technical specifications and design reports; review contractor shop drawings and material submittals.\n• Mentor two junior engineers and review their calculations and drawings.\n\nHVAC Design Engineer\nDelta Thermal Engineering – Giza, Egypt\nFeb 2018 – Dec 2018\n• Cooling load calculation and equipment selection for residential and retail projects.\n• Prepared HVAC layouts, sections and details on AutoCAD.\n• Duct and chilled water pipe sizing using Duct Sizer and Excel tools.\n\nEDUCATION\nB.Sc. Mechanical Power Engineering – Cairo University\n2012 – 2017 | Grade: Very Good with Honours\nGraduation Project: HVAC design of a 5-star hotel (Grade: Excellent)\n\nCERTIFICATIONS & MEMBERSHIPS\n• Member, Egyptian Engineers Syndicate (Consultant Grade application in progress)\n• HVAC Design Diploma – 120 hours – 2017\n• Revit MEP Professional – 2020\n\nTECHNICAL SKILLS\nHAP, Elite CHVAC, Revit MEP, AutoCAD, Navisworks (basic), Duct Sizer, Pipe Flow Expert, MS Office\nStandards: ASHRAE, SMACNA, NFPA 90A/92, Egyptian HVAC Code\n\nLANGUAGES\nArabic: Native | English: Very Good\n\nPERSONAL\nMilitary Status: Completed | Nationality: Egyptian",
+    "expected": {
+      "role": "hvac_design",
+      "acceptable_roles": [],
+      "years_min": 8.4,
+      "years_max": 9.2,
+      "level": "senior",
+      "must_find_skills": [
+        "cooling load calculation",
+        "HAP",
+        "chilled water",
+        "VRF",
+        "duct design",
+        "SMACNA",
+        "ASHRAE",
+        "Revit"
+      ],
+      "ats_quality": "good",
+      "notes": "Clean, well-structured. Egypt-only experience with Egyptian Engineers Syndicate but NO SCE accreditation (used for SCE knockout JD). Military status mentioned without dates. ~8.8y, near senior/lead boundary but clearly senior."
+    }
+  },
+  {
+    "id": "cv02",
+    "text": "Mohamed Hany Abdelaziz\nFresh Graduate Mechanical Engineer – HVAC\nMobile: 01155550237 | Email: m.hany.abdelaziz@example.com | Alexandria, Egypt\nMilitary Status: Exempted\n\nObjective:\nFresh mechanical engineering graduate seeking a junior HVAC design engineer position where I can apply my training in load calculation, duct design and HVAC drafting.\n\nEducation:\nBachelor of Mechanical Engineering (Power Department) – Alexandria University\nSep 2020 – Jul 2025 | Grade: Good\nGraduation Project (Grade A): \"Full HVAC Design of a 4-Floor Private Hospital\"\n- Cooling load calculation for all zones using HAP\n- Duct design for operating theatres and patient rooms with pressure cascade\n- Chilled water piping and chiller selection\n- Drawings prepared on AutoCAD; 3D model of one floor in Revit\n\nTraining Courses:\n- HVAC Design Diploma (Carrier HAP, duct design, chilled water, VRF) – Engineering Training Center, Alexandria – Aug 2025 – Oct 2025\n- Revit MEP Course – 60 hours – 2025\n- AutoCAD 2D – 2023\n- Summer Training: Mechanical Trainee, Coastline Air Conditioning Contracting – Jul 2024 – Sep 2024 (3 months)\n   * attended site installation of ducts and split units\n   * assisted the site engineer in daily reports\n\nSkills:\n- HAP 5.1, AutoCAD, Revit MEP (basic), MS Excel\n- Cooling load calculation, duct design, psychrometrics\n- Knowledge of ASHRAE and SMACNA standards\n\nLanguages:\nArabic – mother tongue\nEnglish – good\n\nActivities:\n- Member of ASHRAE Student Chapter, Alexandria University (2022 – 2025)",
+    "expected": {
+      "role": "hvac_design",
+      "acceptable_roles": [],
+      "years_min": 0,
+      "years_max": 0.5,
+      "level": "junior",
+      "must_find_skills": [
+        "HAP",
+        "cooling load calculation",
+        "duct design",
+        "AutoCAD",
+        "Revit"
+      ],
+      "ats_quality": "ok",
+      "notes": "Fresh graduate: only courses, graduation project and a 3-month summer training. Education range Sep 2020 – Jul 2025 and student chapter 2022–2025 must NOT be counted. Expected experience ~0."
+    }
+  },
+  {
+    "id": "cv03",
+    "text": "KARIM SAAD ELMASRY\nHVAC DESIGN ENGINEER\nCONTACT\nPROFILE\n+971 50 555 0142\nHVAC design engineer with 7+ years in MEP consultancy in the UAE and\nkarim.elmasry@example.com\nEgypt. Experienced in high-rise residential, hospitality and district\nDubai, UAE\ncooling connected buildings. Dubai Municipality approved G+ projects.\nlinkedin.com/in/karimelmasry\nWORK EXPERIENCE\nSKILLS\nHVAC Design Engineer\nHAP / Trace 700\nGulfstream MEP Consultants – Dubai, UAE\nRevit MEP\nApr 2021 – Present\nAutoCAD\n• Heat load calculation for G+30 residential towers using HAP and\nNavisworks\n  verification with Trace 700.\nDuct design\n• Design of chilled water systems connected to district cooling\nChilled water\n  energy transfer stations (ETS).\nDistrict cooling\n• Duct design, ESP calculation and AHU/FAHU selection.\nSmoke control\n• Car park ventilation (jet fans) with CFD review and smoke\nASHRAE 62.1 / 90.1\n  control design per NFPA 92 and UAE Fire & Life Safety Code.\nSMACNA\n• Authority submissions to Dubai Municipality and DEWA.\nDubai Green Building Regs\n• Coordination with BIM team; review of Revit models and clash reports.\nLANGUAGES\nHVAC Engineer\nArabic – Native\nCairo Air Systems – Cairo, Egypt\nEnglish – Fluent\nJan 2019 – Mar 2021\nCERTIFICATIONS\n• Prepared HVAC design drawings and shop drawings for VRF and\nLEED Green Associate\n  ducted split systems.\nRevit MEP – Autodesk Certified\n• Cooling load calculations and equipment selection.\nProfessional\n• Site visits and snag lists during handover.\nEDUCATION\nB.Sc. Mechanical Engineering\nHelwan University, 2013 – 2018",
+    "expected": {
+      "role": "hvac_design",
+      "acceptable_roles": [],
+      "years_min": 7.3,
+      "years_max": 8.2,
+      "level": "senior",
+      "must_find_skills": [
+        "HAP",
+        "duct design",
+        "chilled water",
+        "district cooling",
+        "Revit",
+        "ASHRAE",
+        "smoke control"
+      ],
+      "ats_quality": "ok",
+      "notes": "Simulated two-column PDF extraction: left sidebar (contact/skills/languages/certs) interleaved line-by-line with right column (profile/experience). Parser must still find 2 jobs (Apr 2021–Present, Jan 2019–Mar 2021) ~7.8y. Education 2013–2018 must not count."
+    }
+  },
+  {
+    "id": "cv04",
+    "text": "م. يوسف عبد الرحمن الشافعي\nمهندس تصميم تكييف وتهوية – HVAC Design Engineer\nالرياض – المملكة العربية السعودية | جوال: +966 55 000 4821 | البريد الإلكتروني: y.shafei@example.com\n\nالملخص المهني\nمهندس ميكانيكا بخبرة تزيد عن 8 سنوات في تصميم أنظمة التكييف والتهوية للمشروعات التجارية والسكنية والمستشفيات في مصر والمملكة العربية السعودية. عضو الهيئة السعودية للمهندسين (SCE) بدرجة مهندس محترف.\n\nالخبرات العملية\n\nمهندس تصميم تكييف أول – شركة الوادي الأخضر للاستشارات الهندسية – الرياض\nمارس 2020 – حتى الآن\n• حساب الأحمال الحرارية (Cooling Load Calculation) باستخدام برنامج HAP لأكثر من 25 مبنى.\n• تصميم شبكات مجاري الهواء (Duct Design) وفق معايير SMACNA واختيار وحدات مناولة الهواء AHU ووحدات FCU.\n• تصميم أنظمة المياه المبردة (Chilled Water) واختيار المبردات والمضخات وخزانات التمدد.\n• إعداد المخططات على AutoCAD ونمذجة الأنظمة على Revit MEP.\n• مراجعة الاعتمادات الفنية للمواد وتقديم الردود على استفسارات المقاولين (RFI).\n• الالتزام بكود البناء السعودي SBC 501 ومعايير ASHRAE.\n\nمهندس تصميم ميكانيكا – مكتب الهندسة المتحدة للاستشارات – القاهرة\nيوليو 2018 – فبراير 2020\n• تصميم أنظمة التكييف المركزي وأنظمة VRF للفلل والمباني الإدارية.\n• تصميم أنظمة التهوية وشفط دخان الجراجات وفق ASHRAE 62.1.\n• إعداد جداول الكميات والمواصفات الفنية.\n\nالتعليم\nبكالوريوس الهندسة الميكانيكية (قسم القوى الميكانيكية) – جامعة المنصورة\n2013 – 2018 | التقدير: جيد جدًا\n\nالشهادات والعضويات\n• الهيئة السعودية للمهندسين – مهندس محترف – عضوية سارية حتى 2027\n• نقابة المهندسين المصرية\n• دبلومة تصميم أنظمة التكييف – 2018\n\nالمهارات\nHAP – Revit MEP – AutoCAD – Duct Sizer – Pipe Flow Expert – Excel\n\nاللغات\nالعربية: اللغة الأم | الإنجليزية: جيد جدًا\n\nموقف التجنيد: معفى",
+    "expected": {
+      "role": "hvac_design",
+      "acceptable_roles": [],
+      "years_min": 8.0,
+      "years_max": 8.6,
+      "level": "senior",
+      "must_find_skills": [
+        "HAP",
+        "cooling load calculation",
+        "duct design",
+        "chilled water",
+        "VRF",
+        "Revit",
+        "SCE accreditation"
+      ],
+      "ats_quality": "good",
+      "notes": "Arabic-heavy CV with Arabic month names (مارس 2020 – حتى الآن, يوليو 2018 – فبراير 2020). ~8.3y. SCE membership in Arabic (الهيئة السعودية للمهندسين). Skill names mostly embedded in English inside Arabic sentences."
+    }
+  },
+  {
+    "id": "cv05",
+    "text": "ENG. TAREK MOUSTAFA HELMY, PE\nHead of MEP Design | Mechanical Engineering Lead\nRiyadh, Kingdom of Saudi Arabia\nPhone: +966 50 555 7710 | E-mail: tarek.helmy@example.com\n\nSUMMARY\nChartered mechanical engineer with 15 years of MEP design experience across Egypt, UAE and KSA, the last 7 years heading a multi-disciplinary MEP design department of 22 engineers. Delivered mega projects including hospitals, airports terminals, universities and giga-project hospitality schemes. SCE Professional Engineer.\n\nCAREER HISTORY\n\nHead of MEP Design\nArabian Crescent Engineering Consultants – Riyadh, KSA\nOct 2019 – Present\n- Head a team of 22 engineers (HVAC, Plumbing, Fire Protection, Electrical) and 10 BIM modelers.\n- Set department design standards, calculation templates and QA/QC procedures; final technical sign-off on all MEP deliverables.\n- Lead HVAC concept design for district cooling plants (up to 18,000 TR), thermal energy storage and chilled water distribution.\n- Review cooling load calculations, smoke control strategies and CFD studies for atria and car parks.\n- Manage design fees, resource planning and client presentations; interface with Saudi Civil Defense and municipality authorities.\n- Coordinate design reviews per SBC 501/601/801, ASHRAE and NFPA.\n\nSenior Mechanical Engineer\nEmirates Horizon Consultants – Abu Dhabi, UAE\nJul 2014 – Sep 2019\n- Led HVAC and public health design for a 600-bed hospital, two schools and a 5-star resort.\n- Performed load calculations (HAP / IES VE), energy modelling for Estidama Pearl rating.\n- Reviewed contractor shop drawings and attended testing and commissioning witness.\n\nMechanical Design Engineer\nPyramids Design Group – Cairo, Egypt\nSep 2011 – Jun 2014\n- HVAC design for commercial and residential buildings: cooling load calculation, duct design and chilled water piping.\n- Fire fighting and plumbing layouts for small projects.\n\nEDUCATION\nM.Sc. Mechanical Engineering (HVAC & Energy) – Ain Shams University, Cairo (part-time) – 2015 – 2018\nB.Sc. Mechanical Power Engineering – Ain Shams University – 2006 – 2011\n\nPROFESSIONAL REGISTRATION\n- Saudi Council of Engineers (SCE) – Professional Engineer\n- Egyptian Engineers Syndicate – Consultant Mechanical Engineer\n- ASHRAE Member\n\nSOFTWARE\nHAP, IES VE, Revit MEP, AutoCAD, Navisworks, Elite, Pipe Flow Expert, MS Project\n\nLANGUAGES\nArabic (native), English (fluent)",
+    "expected": {
+      "role": "hvac_design",
+      "acceptable_roles": [
+        "pm"
+      ],
+      "years_min": 14.6,
+      "years_max": 15.4,
+      "level": "lead",
+      "must_find_skills": [
+        "cooling load calculation",
+        "chilled water",
+        "district cooling",
+        "smoke control",
+        "ASHRAE",
+        "NFPA",
+        "Revit",
+        "SCE accreditation"
+      ],
+      "ats_quality": "good",
+      "notes": "Lead/Head of MEP design with 15 years. Part-time M.Sc. 2015–2018 overlaps employment and must not add years; B.Sc. range 2006–2011 must not count. Department head = lead; role is design leadership (hvac_design) though pm is an acceptable reading."
+    }
+  },
+  {
+    "id": "cv06",
+    "text": "Nour El-Din Abbas Fawzy\nMEP BIM Coordinator\n\nAbu Dhabi, UAE • +971 52 555 3390 • nour.fawzy@example.com\nDriving licence: UAE\n\nProfile\nMEP BIM Coordinator with 7+ years delivering LOD 350–400 MEP models, coordination and shop drawings for contractors in the UAE and Egypt. Experienced with ISO 19650 workflows, Autodesk Construction Cloud / BIM 360 and Dynamo automation.\n\nExperience\n\nMEP BIM Coordinator — Falcon Ridge Contracting LLC, Abu Dhabi\n06/2021 - Present\n- Coordinate MEP models (HVAC, plumbing, fire fighting, electrical) for a 1.2M sqft mall and two residential towers.\n- Run weekly clash detection in Navisworks Manage; issue clash reports and chair coordination meetings with architectural and structural teams.\n- Produce combined services drawings (CSD), builders work openings and MEP shop drawings from Revit.\n- Manage the common data environment on BIM 360 / ACC: folder structure, naming conventions, model publishing per BEP.\n- Develop Dynamo scripts for sleeve placement and automatic sheet creation, cutting drafting time by ~30%.\n- Prepare as-built models and COBie data for FM handover.\n- Supervise 4 BIM modelers.\n\nBIM Modeler (MEP) — Sinai Digital Engineering, Cairo\n03/2019 - 05/2021\n- Modelled HVAC ductwork, piping, fire fighting and drainage systems in Revit to LOD 350.\n- Created Revit families and project templates.\n- Extracted quantities from models for the estimation team.\n\nEducation\nB.Sc. Mechanical Engineering — Zagazig University — 2013 - 2018\n\nCertifications\n- Autodesk Certified Professional: Revit for Mechanical Design\n- ISO 19650 Foundation — BRE Academy (2022)\n- Navisworks Manage — Advanced (2020)\n\nSoftware\nRevit MEP • Navisworks Manage • BIM 360 / ACC • Dynamo • AutoCAD • Recap • MS Project\n\nLanguages\nArabic (Native) • English (Fluent)",
+    "expected": {
+      "role": "bim",
+      "acceptable_roles": [],
+      "years_min": 7.2,
+      "years_max": 8.0,
+      "level": "senior",
+      "must_find_skills": [
+        "Revit",
+        "Navisworks",
+        "clash detection",
+        "BIM 360",
+        "Dynamo",
+        "shop drawings",
+        "ISO 19650"
+      ],
+      "ats_quality": "good",
+      "notes": "Clean BIM coordinator CV. Numeric MM/YYYY date format (06/2021 - Present, 03/2019 - 05/2021). Supervises modelers but title is Coordinator, so senior not lead."
+    }
+  },
+  {
+    "id": "cv07",
+    "text": "HASSAN ADEL MAHMOUD\nMechanical BIM Modeler (Revit MEP)\nGiza, Egypt | +20 122 555 8841 | hassan.adel.m@example.com\n\nSUMMARY\nMechanical BIM modeler with around 5 years of Revit MEP modeling for HVAC, plumbing and fire fighting systems on projects in KSA, UAE and Egypt (outsourced BIM services).\n\nEXPERIENCE\n\nBIM Modeler – Mechanical | Orbit BIM Services, Cairo (offshore projects for KSA/UAE clients)\nAug 2022 – Present\n• Model supply, return and exhaust ductwork in Revit including fittings, dampers, diffusers and VAV boxes to LOD 400.\n• Size and route ducts following SMACNA and the design engineer's airflow schedules; adjust duct sizes after clash resolution.\n• Model chilled water piping, condensate drains and AHU connections.\n• Run clash detection in Navisworks and resolve MEP vs. structure clashes.\n• Prepare HVAC shop drawings, sections and builders work drawings from the Revit model.\n• Create parametric Revit families for FCUs, AHUs and grilles.\n• Extract quantity take-off schedules (duct area, pipe length) for the client's estimation team.\n\nJunior Revit Modeler | Lotus Engineering Studio, Cairo\nFeb 2022 – Jul 2022\n• Converted AutoCAD MEP drawings to Revit models.\n• Modeled plumbing and fire fighting piping.\n\nEDUCATION\nB.Sc. Mechanical Engineering, Benha University (2016 – 2021)\nGraduation project: Design of HVAC system for a commercial building\n\nSOFTWARE\nRevit MEP, Navisworks Manage, AutoCAD, BIM 360 (viewer), MS Excel\n\nCOURSES\nRevit MEP Mechanical – 2021 | Navisworks – 2022 | HVAC basics – 2021\n\nLANGUAGES\nArabic: native | English: good",
+    "expected": {
+      "role": "bim",
+      "acceptable_roles": [],
+      "years_min": 4.4,
+      "years_max": 5.0,
+      "level": "mid",
+      "must_find_skills": [
+        "Revit",
+        "Navisworks",
+        "clash detection",
+        "shop drawings",
+        "duct modeling",
+        "SMACNA"
+      ],
+      "ats_quality": "good",
+      "notes": "BIM modeler whose bullets heavily mention HVAC ductwork, duct sizing, SMACNA and chilled water — role must still be bim, not hvac_design (no load calcs, no design responsibility). ~4.8y -> mid."
+    }
+  },
+  {
+    "id": "cv08",
+    "text": "OMAR KHALED SOLIMAN\nBIM ENGINEER | MEP | REVIT | NAVISWORKS | DYNAMO | BIM 360 | HVAC | FIRE | PLUMBING | ELECTRICAL\nomar.k.soliman@example.com – 0109 555 6620 – Cairo\n\nKEY SKILLS\nRevit MEP, Revit Architecture, Revit Structure, Navisworks Manage, Navisworks Simulate, BIM 360, ACC, Autodesk Docs, Dynamo, Python, C#, Revit API, AutoCAD, AutoCAD MEP, Civil 3D, Tekla, ArchiCAD, SketchUp, 3ds Max, Lumion, Enscape, Twinmotion, Primavera P6, MS Project, HAP, Elite CHVAC, Trace 700, IES VE, Pipe Flow Expert, Dialux, ETAP, Power BI, Excel VBA, ISO 19650, PAS 1192, COBie, LOD 500, 4D BIM, 5D BIM, 6D BIM, 7D BIM, clash detection, coordination, shop drawings, as-built, quantity take-off, BOQ, cost estimation, scheduling, HVAC design, fire fighting design, plumbing design, electrical design, LEED, WELL, Estidama, project management, Agile, Scrum, leadership, teamwork, communication, problem solving, time management, critical thinking\n\nEXPERIENCE\nRevit Modeler (Freelance) | 2024 – Present\n- Working on Revit models for different clients.\n- MEP modeling and clash detection.\n- Using Navisworks.\n\nAutoCAD Draftsman (Part time) | Delta Steel Works | Jun 2023 – Dec 2023\n- Drafting drawings on AutoCAD.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Higher Technological Institute – 2017 – 2022\n\nCOURSES\nBIM Professional Diploma (Revit Arch, Structure, MEP, Navisworks, Dynamo) – 2023\nPrimavera P6 – 2023\nHAP – 2022\n\nLANGUAGES\nArabic, English",
+    "expected": {
+      "role": "bim",
+      "acceptable_roles": [],
+      "years_min": 0.5,
+      "years_max": 3.0,
+      "level": "junior",
+      "must_find_skills": [
+        "Revit",
+        "Navisworks",
+        "AutoCAD",
+        "clash detection"
+      ],
+      "ats_quality": "poor",
+      "notes": "Keyword-stuffed CV: huge skills list (HAP, Primavera, ETAP, 7D BIM, LEED...) with weak, vague experience (year-only freelance since 2024 + 6-month part-time draftsman). Skills like Primavera/HAP/ETAP are NOT evidenced in experience and should not be counted as strong matches. Experience ambiguous: 2024–Present freelance (~2–3y max) -> junior."
+    }
+  },
+  {
+    "id": "cv09",
+    "text": "Mahmoud Sherif Ragab\nJeddah, Saudi Arabia - mobile +966 56 555 1204 - mahmoud.ragab@example.com\n\nI am a mechanical engineer graduated from Alexandria University in 2017 (Mechanical Power) and I have been working in BIM for MEP since early 2018. Currently I work as MEP BIM Engineer at Red Sands Contracting Co. in Jeddah since May 2020, where I am responsible for coordinating the MEP models of a 420-key hotel and a 12-building residential compound. My daily work includes running clash detection in Navisworks, preparing clash reports and attending coordination meetings with the consultant, updating the Revit models for HVAC, drainage, water supply, fire fighting and electrical services, and issuing coordinated shop drawings and builders work drawings to site. I also upload and manage models on BIM 360 and prepare as-built models at handover.\n\nBefore joining Red Sands I worked from February 2018 to April 2020 as a Revit MEP modeler at Ebdaa Engineering Office in Alexandria where I modeled HVAC duct and pipe systems and plumbing for residential buildings and prepared family libraries.\n\nI am familiar with Revit MEP, Navisworks Manage, AutoCAD, BIM 360 and basic Dynamo. I hold Saudi Council of Engineers membership (Associate Engineer) and I attended a course in ISO 19650 in 2023.\n\nArabic is my mother tongue and my English is very good. I hold a valid Saudi driving licence and a transferable Iqama.",
+    "expected": {
+      "role": "bim",
+      "acceptable_roles": [],
+      "years_min": 8.3,
+      "years_max": 9.0,
+      "level": "senior",
+      "must_find_skills": [
+        "Revit",
+        "Navisworks",
+        "clash detection",
+        "BIM 360",
+        "shop drawings",
+        "as-built"
+      ],
+      "ats_quality": "poor",
+      "notes": "No section headings at all — everything in prose paragraphs. Dates expressed in words ('since May 2020', 'from February 2018 to April 2020'). Graduation year 2017 must not be counted. Total ~8.75y."
+    }
+  },
+  {
+    "id": "cv10",
+    "text": "RAMY NABIL ISKANDER\nFire Protection Engineer\nDubai, United Arab Emirates\nTel: +971 55 555 2716   Email: ramy.iskander@example.com\n\nCAREER OBJECTIVE\nFire Protection Engineer with over 8 years of design, installation and authority approval experience in the UAE, seeking a senior role with a fire & life safety contractor or consultant.\n\nWORK EXPERIENCE\n\nFire Protection Engineer\nAl Waha Fire Safety Contracting LLC, Dubai\nMarch 2018 to date\n• Design of wet and dry sprinkler systems, standpipes and hose reels as per NFPA 13 / NFPA 14 and UAE Fire & Life Safety Code of Practice.\n• Hydraulic calculation of sprinkler and hydrant systems using Elite Fire and PIPENET; fire pump sizing as per NFPA 20.\n• Design of clean agent (FM-200 / Novec 1230) and CO2 suppression systems for server and electrical rooms.\n• Design of foam systems for fuel storage and diesel generator rooms.\n• Preparation of shop drawings and submission to Dubai Civil Defence (DCD) for approval; obtaining completion certificates.\n• Testing and commissioning of fire pumps, sprinkler and fire alarm systems together with Civil Defence inspectors.\n• Coordinate fire fighting with HVAC and plumbing services; review Revit models.\n• Supervision of installation teams of up to 25 technicians.\n\nEDUCATION\nBachelor of Science in Mechanical Engineering, Assiut University, 2012 – 2017\n\nLICENSES & CERTIFICATES\n• UAE Civil Defence – Approved Fire & Life Safety Engineer (Dubai Civil Defence)\n• NFPA Certified Fire Protection Specialist (CFPS) – 2022\n• Revit MEP – 2019\n\nSKILLS\nAutoCAD, Revit, Elite Fire, PIPENET, sprinkler design, hydraulic calculation, fire pumps, clean agent systems, foam systems, fire alarm basics, NFPA 13/14/20/2001\n\nLANGUAGES\nEnglish – Fluent, Arabic – Native",
+    "expected": {
+      "role": "fire",
+      "acceptable_roles": [],
+      "years_min": 8.4,
+      "years_max": 9.0,
+      "level": "senior",
+      "must_find_skills": [
+        "sprinkler design",
+        "hydraulic calculation",
+        "NFPA",
+        "fire pumps",
+        "FM-200",
+        "UAE Civil Defence",
+        "shop drawings",
+        "testing and commissioning"
+      ],
+      "ats_quality": "good",
+      "notes": "Date format 'March 2018 to date'. Single job, ~8.7y. Title has no 'Senior' but years make it senior. Holds UAE Civil Defence approval."
+    }
+  },
+  {
+    "id": "cv11",
+    "text": "Eng. Ali Mostafa Gamal\nFIRE FIGHTING ENGINEER\nRiyadh – KSA | +966 53 555 9024 | ali.m.gamal@example.com | SCE Member No. 000000 (Associate Engineer)\n\nProfessional Summary:\nFire fighting design engineer with ~5 years' experience in fire suppression design and some plumbing/public health design for residential, commercial and industrial projects in KSA and Egypt.\n\nExperience:\n\nFire Fighting Design Engineer – Saudi Fortress Engineering Consultants, Riyadh\nNov 2022 – Present\n- Sprinkler design (light & ordinary hazard) and hydraulic calculation using Elite Fire.\n- Fire pump room layouts and fire water tank sizing as per NFPA 20/22 and SBC 801.\n- Design of fire hydrant and standpipe systems; fire extinguisher layouts.\n- Preparing design submittals to Saudi Civil Defense (Salamah).\n- Occasionally design domestic water supply and drainage risers for small buildings when the plumbing engineer is overloaded.\n\nMechanical Engineer (Fire & Plumbing) – Hayat Consultants, Cairo\nJan 2022 – Oct 2022\n- Fire fighting drawings (sprinklers, hose reels, FM-200) on AutoCAD.\n- Plumbing layouts: water supply, drainage, and booster pump selection for residential buildings.\n\nEducation:\nB.Sc. Mechanical Power Engineering – Menoufia University (2016 – 2021)\n\nCourses:\n- Fire Fighting Systems Design (NFPA) – 2021\n- Plumbing Design – 2022\n- Revit MEP – 2023\n\nSoftware: AutoCAD, Revit, Elite Fire, Excel\n\nLanguages: Arabic (Native), English (Very good)",
+    "expected": {
+      "role": "fire",
+      "acceptable_roles": [
+        "plumbing"
+      ],
+      "years_min": 4.4,
+      "years_max": 5.1,
+      "level": "mid",
+      "must_find_skills": [
+        "sprinkler design",
+        "hydraulic calculation",
+        "NFPA",
+        "fire pumps",
+        "drainage",
+        "booster pumps",
+        "AutoCAD"
+      ],
+      "ats_quality": "good",
+      "notes": "Fire engineer with secondary plumbing tasks (water supply, drainage, booster pumps); main role is fire. Has SCE as Associate (not Professional) Engineer. ~4.8y -> mid."
+    }
+  },
+  {
+    "id": "cv12",
+    "text": "Omar Fathy Saleh – Fire Fighting Engineer – omar.fathy@example.com – +971 56 555 0399\nB.Sc. Mechanical Engineering, Zagazig University, 2019\nSince 2020: Fire Fighting Engineer at Blue Shield Fire Systems, Sharjah – sprinkler and fire pump installation, testing and commissioning, Civil Defence inspections\nSkills: AutoCAD, NFPA 13/20, sprinkler design, hydraulic calculation\nLanguages: Arabic, English",
+    "expected": {
+      "role": "fire",
+      "acceptable_roles": [],
+      "years_min": 5.8,
+      "years_max": 6.9,
+      "level": "senior",
+      "must_find_skills": [
+        "sprinkler design",
+        "hydraulic calculation",
+        "NFPA",
+        "testing and commissioning",
+        "AutoCAD"
+      ],
+      "ats_quality": "poor",
+      "notes": "Very short 5-line CV. Date format 'Since 2020' with no month -> 5.9 to 6.9 years. Level borderline mid/senior; midpoint ~6.4y -> senior. Graduation year 2019 must not count."
+    }
+  },
+  {
+    "id": "cv13",
+    "text": "WALEED HAMDY ABOU ZEID\nFire Protection Engineer – SCE Professional Engineer\nDammam, Eastern Province, KSA | +966 50 555 4473 | waleed.abouzeid@example.com\n\nPROFILE\nFire protection engineer specialised in design and installation of fire suppression systems for industrial, oil & gas support facilities and commercial buildings.\n\nEMPLOYMENT HISTORY\n\nFire Protection Design Engineer\nGulf Shield Safety Contracting – Dammam, KSA\nJan 2020 – Present\n• Sprinkler design and hydraulic calculation (HASS / Elite Fire) for warehouses (ESFR), workshops and offices.\n• Deluge and foam system design for diesel tank farms per NFPA 11, NFPA 15 and NFPA 30.\n• Fire pump selection and pump house design (NFPA 20); fire water network sizing.\n• Prepare shop drawings in AutoCAD and Revit; obtain Civil Defense approvals.\n• Testing and commissioning of fire pumps and deluge valves, witness by client (Aramco-standard projects, SAES-B-017).\n\nFire Fighting Site Engineer\nMisr Fire Protection Co. – Cairo, Egypt\nJan 2018 – Dec 2019\n• Supervised installation of sprinkler, hydrant and fire pump systems in malls and hospitals.\n• Prepared as-built drawings and material inspection requests.\n\nMILITARY SERVICE\nReserve Officer – Egyptian Armed Forces (Engineering Corps)\nMar 2016 – May 2017 – Completed\n\nEDUCATION\nB.Sc. Mechanical Engineering – Mansoura University – 2010 – 2015\n\nCERTIFICATES\n• Saudi Council of Engineers (SCE) – Professional Engineer (valid)\n• NFPA 13 Sprinkler Systems Training – 2019\n• OSHA 30-Hour Construction – 2021\n\nSOFTWARE\nAutoCAD, Revit, Elite Fire, HASS, MS Office\n\nLANGUAGES\nArabic (native), English (fluent)",
+    "expected": {
+      "role": "fire",
+      "acceptable_roles": [],
+      "years_min": 8.6,
+      "years_max": 9.2,
+      "level": "senior",
+      "must_find_skills": [
+        "sprinkler design",
+        "hydraulic calculation",
+        "NFPA",
+        "fire pumps",
+        "foam system",
+        "SCE accreditation",
+        "testing and commissioning"
+      ],
+      "ats_quality": "good",
+      "notes": "Egyptian military service Mar 2016 – May 2017 must NOT be counted as engineering experience. Without it ~8.9y (senior); counting it would push to ~10y (lead). Also a short unexplained gap Jun–Dec 2017."
+    }
+  },
+  {
+    "id": "cv14",
+    "text": "Sara Mohamed Elbanna\nPublic Health Engineer\n\nDubai, UAE | +971 58 555 6612 | sara.elbanna@example.com\n\nPROFILE\nPublic health (plumbing & drainage) design engineer with nearly 7 years of experience in consultancy in Egypt and the UAE. Experienced in high-rise residential, hotels, schools and healthcare projects including Dubai Municipality approvals.\n\nEMPLOYMENT\n\nPublic Health Engineer\nMeridian Design Partners – Dubai, UAE\n01.2023 - present\n• Design of cold and hot water supply systems, booster pumps and water tanks using fixture unit method and BS EN 806.\n• Design of above-ground and below-ground drainage systems per BS EN 12056 and Dubai Municipality regulations; soil, waste and vent stacks.\n• Rainwater drainage and siphonic roof drainage coordination with specialist suppliers.\n• Solar water heating and heat pump sizing per Dubai Green Building Regulations.\n• Irrigation water and grey-water recycling system concepts.\n• Revit modelling of public health services and coordination with architecture and structure.\n• Authority submissions (Dubai Municipality, DEWA) and responding to comments.\n\nPlumbing Design Engineer\nNile Valley Engineering Consultants – Giza, Egypt\n01.2020 - 12.2022\n• Plumbing and drainage design for residential compounds and hospitals following the Egyptian Plumbing Code and IPC.\n• Booster pump and transfer pump selection; hot water calorifier sizing.\n• Prepared AutoCAD drawings, BOQs and specifications.\n• Site visits and review of contractor shop drawings.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Cairo University – 2014 – 2019\n\nPROFESSIONAL\n• Member, Egyptian Engineers Syndicate\n• CIPHE Associate (2024)\n\nSOFTWARE\nRevit MEP, AutoCAD, Navisworks (review), Excel hydraulic tools, Pipe Flow Expert\n\nLANGUAGES\nEnglish – fluent, Arabic – native",
+    "expected": {
+      "role": "plumbing",
+      "acceptable_roles": [],
+      "years_min": 6.5,
+      "years_max": 7.1,
+      "level": "senior",
+      "must_find_skills": [
+        "drainage",
+        "water supply",
+        "booster pumps",
+        "Revit",
+        "AutoCAD",
+        "rainwater",
+        "BOQ"
+      ],
+      "ats_quality": "good",
+      "notes": "Dotted numeric dates '01.2020 - 12.2022' and '01.2023 - present'. Title 'Public Health Engineer' must map to plumbing. ~6.9y."
+    }
+  },
+  {
+    "id": "cv15",
+    "text": "السيرة الذاتية\n\nالاسم: م. محمود إبراهيم السيد\nالمسمى الوظيفي: مهندس تصميم صحي (Plumbing Design Engineer)\nالعنوان: طنطا – الغربية – مصر\nالهاتف: 01005550473\nالبريد الإلكتروني: mahmoud.elsayed.mep@example.com\nالحالة الاجتماعية: متزوج\nموقف التجنيد: أدى الخدمة العسكرية\n\nالمؤهل الدراسي:\nبكالوريوس الهندسة الميكانيكية – جامعة طنطا – دفعة 2020 – تقدير جيد\n\nالخدمة العسكرية:\nمن مارس 2021 إلى مايو 2022 – القوات المسلحة المصرية (جندي مؤهلات عليا)\n\nالخبرات العملية:\n1) مهندس تصميم صحي – مكتب النخبة للاستشارات الهندسية – طنطا\nمن أكتوبر 2022 حتى الآن\n- تصميم شبكات التغذية بالمياه الباردة والساخنة وحساب وحدات التغذية (Fixture Units).\n- تصميم شبكات الصرف الصحي وصرف الأمطار والتهوية (Drainage) للمباني السكنية والإدارية.\n- اختيار طلمبات رفع المياه (Booster Pumps) وطلمبات الصرف وحساب سعة الخزانات.\n- إعداد اللوحات على AutoCAD والنمذجة على Revit.\n- إعداد جداول الكميات (BOQ) والمواصفات الفنية.\n- المرور على المواقع ومراجعة الرسومات التنفيذية للمقاولين.\n\n2) تدريب صيفي – شركة المقاولون العرب – فرع طنطا\nمن يوليو 2019 إلى سبتمبر 2019\n- متابعة أعمال تركيب مواسير التغذية والصرف بالموقع.\n\nالدورات التدريبية:\n- دبلومة تصميم الأعمال الصحية – 2022\n- Revit MEP – 2023\n- مقدمة في أنظمة الحريق – 2023\n\nالمهارات:\nAutoCAD – Revit – Excel – حساب أقطار المواسير – الكود المصري للتركيبات الصحية\n\nاللغات:\nالعربية: اللغة الأم\nالإنجليزية: جيد",
+    "expected": {
+      "role": "plumbing",
+      "acceptable_roles": [],
+      "years_min": 3.9,
+      "years_max": 4.3,
+      "level": "mid",
+      "must_find_skills": [
+        "drainage",
+        "water supply",
+        "booster pumps",
+        "AutoCAD",
+        "Revit",
+        "BOQ"
+      ],
+      "ats_quality": "ok",
+      "notes": "Arabic-heavy CV with Arabic months and 'حتى الآن'. Military service (مارس 2021 – مايو 2022) and summer training (يوليو–سبتمبر 2019) must NOT be counted. Only real job: Oct 2022 – present ~4.1y."
+    }
+  },
+  {
+    "id": "cv16",
+    "text": "YOUSSEF AMR ZAKI\nPlumbing Engineer\nAl Khobar, Saudi Arabia · +966 59 555 3381 · youssef.zaki@example.com\n\nSUMMARY\nPlumbing engineer with 2 years of experience in plumbing design and site follow-up for residential and commercial projects in the Eastern Province.\n\nEXPERIENCE\n\nPlumbing Engineer\nAl Bayan Contracting Est., Dammam, KSA\nOct 2024 – Present\n- Prepare plumbing shop drawings (water supply, drainage, rainwater) for villas and a 6-storey commercial building.\n- Calculate pipe sizes using fixture units and select booster pumps and water heaters.\n- Follow up installation at site, perform pressure testing of water supply lines and flushing.\n- Prepare material submittals and quantity take-off for plumbing materials.\n\nMechanical Engineering Intern\nArab Contractors – Plumbing Division, Cairo\nJan 2024 – Mar 2024 (3-month internship during final year)\n- Assisted site engineers in follow-up of drainage and water supply works.\n- Updated daily reports and material logs.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Fayoum University\n2019 – 2024\n\nTRAINING\nPlumbing Design Course (Uniform Plumbing Code / IPC) – 2024\nAutoCAD MEP – 2023\n\nSKILLS\nAutoCAD · Revit (basic) · plumbing design · drainage · booster pumps · pressure testing · MS Excel\n\nLANGUAGES\nArabic (native) · English (good)",
+    "expected": {
+      "role": "plumbing",
+      "acceptable_roles": [],
+      "years_min": 1.9,
+      "years_max": 2.3,
+      "level": "junior",
+      "must_find_skills": [
+        "drainage",
+        "water supply",
+        "booster pumps",
+        "shop drawings",
+        "quantity take-off",
+        "AutoCAD"
+      ],
+      "ats_quality": "good",
+      "notes": "3-month internship (Jan–Mar 2024, during studies) must NOT count as experience. Real experience: Oct 2024 – Present ~2.1y -> junior. Education 2019–2024 must not count."
+    }
+  },
+  {
+    "id": "cv17",
+    "text": "Ibrahim Fawzy Hegazy\nMEP Site Engineer\nJeddah, KSA | Mobile: +966 54 555 0817 | Email: ibrahim.hegazy@example.com\nSCE Membership: Associate Engineer\n\nPROFESSIONAL SUMMARY\nMEP site engineer with 7+ years supervising HVAC, fire fighting and plumbing installations for high-rise residential, hotel and hospital projects in KSA and Egypt.\n\nWORK EXPERIENCE\n\nMEP Site Engineer – Jeddah Coastline Contracting Co., Jeddah, KSA\n2021/06 – Present\n• Supervise installation of HVAC ductwork, chilled water piping, AHUs, FCUs and chillers for a 32-storey hotel tower.\n• Supervise fire fighting (sprinkler, standpipes, fire pumps) and plumbing (water supply, drainage) installation works.\n• Manage 6 subcontractors and up to 120 workers; daily and weekly progress reports.\n• Raise inspection requests (IR) and material inspection requests (MIR) to the consultant.\n• Prepare some shop drawings and coordination sketches for site modifications when the technical office is overloaded.\n• Pressure testing, flushing and testing and commissioning of chilled water and fire fighting systems.\n• Follow HSE requirements; conduct toolbox talks.\n\nMechanical Site Engineer – Al Masar Construction, Cairo, Egypt\n2019/03 – 2021/05\n• Supervised installation of VRF systems, ducted splits and plumbing in residential compounds.\n• Measured completed quantities for subcontractor invoices.\n• Prepared as-built drawings.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Al-Azhar University, Cairo – 2018\n\nTRAINING\n• HVAC Design – 2018\n• Fire Fighting Systems – 2019\n• Primavera P6 – 2022\n• OSHA 30 – 2023\n\nSKILLS\nAutoCAD, MS Project, Primavera P6 (basic), MS Office, site supervision, testing and commissioning\n\nLANGUAGES\nArabic: Native | English: Very Good",
+    "expected": {
+      "role": "site",
+      "acceptable_roles": [],
+      "years_min": 7.2,
+      "years_max": 8.0,
+      "level": "senior",
+      "must_find_skills": [
+        "site supervision",
+        "chilled water",
+        "testing and commissioning",
+        "inspection requests",
+        "sprinkler",
+        "drainage",
+        "subcontractor management"
+      ],
+      "ats_quality": "good",
+      "notes": "Date format YYYY/MM ('2019/03 – 2021/05', '2021/06 – Present'). Site engineer who also 'prepares some shop drawings' — role must remain site, not tech_office. ~7.7y."
+    }
+  },
+  {
+    "id": "cv18",
+    "text": "MOSTAFA ADEL SHEHATA\nMEP Site Engineer\nRiyadh, Saudi Arabia | +966 55 555 2290 | mostafa.shehata@example.com\n\nSUMMARY\nMechanical engineer with 8+ years of site execution for MEP works in residential, commercial and infrastructure projects.\n\nEXPERIENCE\n\nMEP Site Engineer\nSahara Towers Contracting – Riyadh, KSA\nApr 2021 – Present\n- Site execution of HVAC (VRF, ducted splits, chilled water), fire fighting and plumbing works for a 900-unit residential project.\n- Coordinate with civil team for sleeves, openings and builders works.\n- Track progress vs. Primavera baseline, prepare weekly reports and look-ahead programs.\n- Testing and commissioning of VRF systems and booster pumps with the manufacturer.\n\nMechanical Site Engineer\nHorizon Contracting – Cairo, Egypt\nFeb 2018 – Jun 2021\n- Supervised installation of HVAC ducts, chilled water pipes, fire fighting networks and drainage in an administrative building and a mall.\n- Material inspections, quantity surveys for subcontractor payments, as-built drawings.\n\nSite Supervisor (part-time, weekends)\nGreen Villas Developments – 6th of October, Egypt\nSep 2019 – Dec 2020\n- Weekend supervision of plumbing and AC installation in private villas.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Minia University – 2012 – 2017\n\nSKILLS\nSite supervision, AutoCAD, Primavera P6, testing and commissioning, VRF, chilled water, MS Office\n\nLANGUAGES\nArabic: Native; English: Very good",
+    "expected": {
+      "role": "site",
+      "acceptable_roles": [],
+      "years_min": 8.4,
+      "years_max": 9.0,
+      "level": "senior",
+      "must_find_skills": [
+        "site supervision",
+        "VRF",
+        "chilled water",
+        "testing and commissioning",
+        "Primavera",
+        "booster pumps"
+      ],
+      "ats_quality": "good",
+      "notes": "Overlapping jobs: Horizon Feb 2018 – Jun 2021 overlaps Sahara Towers from Apr 2021 (3 months), and a part-time weekend role Sep 2019 – Dec 2020 runs alongside. Correct union Feb 2018 – Nov 2026 ~8.75y; naive summing gives ~10.3y (lead) which is wrong."
+    }
+  },
+  {
+    "id": "cv19",
+    "text": "Hesham Ramadan Fouad\nMEP SITE ENGINEER\nAbu Dhabi, UAE | +971 50 555 7392 | hesham.fouad@example.com\n\nSummary\nMEP site engineer with ~9 years of hands-on execution experience in Egypt and the UAE. Returned to full-time work in 2021 after a planned career break.\n\nExperience\n\nMEP Site Engineer | Abu Dhabi Pearl Contracting LLC | Abu Dhabi, UAE\nJan 2021 – Present\n• Supervise MEP installation for a 3-tower residential development (G+25): chilled water, FCUs, ductwork, fire fighting, plumbing and drainage.\n• Coordinate inspections with consultant and ADCD (Abu Dhabi Civil Defence) for fire systems.\n• Manage MEP subcontractors, review method statements, follow HSE plan.\n• Witness testing and commissioning of chilled water pumps, AHUs and fire pumps; prepare snag lists and handover dossiers.\n\nCareer Break | Jul 2017 – Dec 2020\nFamily relocation and caring for a family member. Completed online courses in Primavera P6 and MEP estimation during this period.\n\nMechanical Site Engineer | Delta Build Contracting | Cairo, Egypt\nJul 2014 – Jun 2017\n• Supervised installation of HVAC ducting, split units and plumbing for residential and school projects.\n• Prepared daily reports, measured quantities and supported subcontractor invoices.\n\nEducation\nB.Sc. Mechanical Engineering | Suez Canal University | 2008 – 2013\n\nMilitary Service\nExempted (medical) – 2013\n\nSkills\nSite supervision • testing and commissioning • chilled water • fire fighting • plumbing • AutoCAD • Primavera P6 • MS Office\n\nLanguages\nArabic – Native | English – Very good",
+    "expected": {
+      "role": "site",
+      "acceptable_roles": [],
+      "years_min": 8.5,
+      "years_max": 9.1,
+      "level": "senior",
+      "must_find_skills": [
+        "site supervision",
+        "chilled water",
+        "testing and commissioning",
+        "fire fighting",
+        "drainage",
+        "AutoCAD"
+      ],
+      "ats_quality": "good",
+      "notes": "Explicit 3.5-year career gap (Jul 2017 – Dec 2020) listed as its own entry — must NOT count. Real experience: 3.0y + 5.85y = ~8.85y (senior). Counting the gap gives ~12.3y (lead)."
+    }
+  },
+  {
+    "id": "cv20",
+    "text": "AMR TAWFIK NASSAR\nMechanical Site Engineer\nPERSONAL DETAILS          WORK EXPERIENCE\nNationality: Egyptian\nSite Engineer – Mechanical\nDubai, UAE\nCoral Coast Contracting LLC, Dubai | Sep 2023 – Present\n+971 54 555 6230\n- Supervision of HVAC (ducted DX, chilled water FCUs) and\namr.nassar@example.com\n  plumbing installation in a G+12 hotel apartment building.\nVisa: Employment (transferable)\n- Daily coordination with foremen, subcontractors and the\nSKILLS\n  consultant's inspector; raising WIRs and MIRs.\nSite supervision\n- Pressure testing of chilled water and drainage lines;\nAutoCAD\n  duct leakage testing per SMACNA.\nMS Project\n- Support testing and commissioning and snagging.\nTesting & commissioning\nJunior Site Engineer\nDuct leakage testing\nPharos Contracting – Alexandria, Egypt | Feb 2022 – Aug 2023\nHSE awareness\n- Follow-up of fire fighting and plumbing installation in a\nLANGUAGES\n  residential compound (14 buildings).\nArabic (native)\n- Quantity measurement for subcontractor invoices.\nEnglish (good)\n- Preparing as-built mark-ups.\nEDUCATION\nCERTIFICATES\nB.Sc. Mechanical Engineering\nOSHA 30 (2023)\nPharos University in Alexandria, 2016 – 2021\nFirst Aid (2024)",
+    "expected": {
+      "role": "site",
+      "acceptable_roles": [],
+      "years_min": 4.4,
+      "years_max": 5.0,
+      "level": "mid",
+      "must_find_skills": [
+        "site supervision",
+        "testing and commissioning",
+        "chilled water",
+        "SMACNA",
+        "AutoCAD",
+        "drainage"
+      ],
+      "ats_quality": "ok",
+      "notes": "Simulated two-column extraction: left sidebar (personal details, skills, languages, certificates) interleaved line-by-line with right column experience. Jobs: Sep 2023 – Present (3.2y) + Feb 2022 – Aug 2023 (1.6y) = ~4.8y."
+    }
+  },
+  {
+    "id": "cv21",
+    "text": "AHMED GAMAL ABDELMONEIM\nTechnical Office Engineer (MEP)\nNew Cairo, Egypt | +20 111 555 4709 | ahmed.g.abdelmoneim@example.com\nEgyptian Engineers Syndicate – Member (Mechanical)\n\nSUMMARY\nMechanical engineer with 7 years in contracting – 5 years in MEP technical office and 2 years in site execution – on government and private projects in the New Administrative Capital and Greater Cairo.\n\nEXPERIENCE\n\nTechnical Office Engineer (MEP)\nCapital Gate Contractors – New Administrative Capital, Egypt\nOct 2021 – Present\n- Prepare and submit MEP shop drawings (HVAC, fire fighting, plumbing) and coordination drawings to the consultant.\n- Prepare material submittals and technical comparisons for chillers, AHUs, pumps and fire alarm panels.\n- Raise and track RFIs; maintain submittal and drawing logs.\n- Quantity take-off from IFC drawings and preparation of monthly interim payment certificates (IPCs) and subcontractor invoices.\n- Prepare as-built drawings and O&M manuals at handover.\n- Coordinate with BIM team for Revit models and clash detection results.\n\nMechanical Site Engineer\nArabesque Builders – Cairo, Egypt\nSep 2019 – Sep 2021\n- Supervision of HVAC and plumbing installations in a residential compound.\n- Daily reports and material inspections.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Helwan University – 2014 – 2019\n\nCOURSES\nMEP Technical Office – 2021 | Revit MEP – 2022 | Primavera P6 – 2022 | Quantity Surveying – 2023\n\nSKILLS\nAutoCAD, Revit MEP, Navisworks (viewer), Primavera P6, MS Excel, shop drawings, submittals, BOQ\n\nLANGUAGES\nArabic: Native | English: Very good\n\nMILITARY STATUS: Exempted",
+    "expected": {
+      "role": "tech_office",
+      "acceptable_roles": [
+        "estimation"
+      ],
+      "years_min": 6.8,
+      "years_max": 7.4,
+      "level": "senior",
+      "must_find_skills": [
+        "shop drawings",
+        "material submittals",
+        "RFI",
+        "quantity take-off",
+        "as-built",
+        "AutoCAD",
+        "Revit"
+      ],
+      "ats_quality": "good",
+      "notes": "Explicit title 'Technical Office Engineer (MEP)'. Egyptian contracting tech office also does IPCs/quantities, so estimation is a tolerable secondary reading. ~7.1y."
+    }
+  },
+  {
+    "id": "cv22",
+    "text": "Khaled Osama Barakat\nMechanical Engineer – MEP Technical Office\nkhaled.barakat@example.com / +966 57 555 1845 / Al Madinah, KSA\n\nMechanical engineer working in MEP technical office for a building contractor in Madinah. I joined Taibah Gulf Contracting in March 2023 as MEP technical office engineer on a university hospital and labs project. I prepare HVAC, plumbing and fire fighting shop drawings and builders work drawings in AutoCAD and Revit, follow the submittal log, prepare material submittals and technical data sheets, respond to consultant comments, prepare RFIs and track their replies, and do quantity take-off for procurement and subcontractor invoices. I also prepare as-built drawings for completed zones.\nBefore that I worked about one year as a mechanical site engineer with Modern Structures Co. in Yanbu (March 2022 to February 2023) supervising plumbing and HVAC installation in a residential compound.\nB.Sc. Mechanical Engineering, Kafr El Sheikh University, 2021.\nSoftware: AutoCAD, Revit MEP, Navisworks, Excel, Aconex.\nSCE registered – Associate Engineer.\nLanguages Arabic and English.",
+    "expected": {
+      "role": "tech_office",
+      "acceptable_roles": [
+        "site"
+      ],
+      "years_min": 4.4,
+      "years_max": 4.9,
+      "level": "mid",
+      "must_find_skills": [
+        "shop drawings",
+        "material submittals",
+        "RFI",
+        "quantity take-off",
+        "as-built",
+        "Revit",
+        "AutoCAD"
+      ],
+      "ats_quality": "poor",
+      "notes": "No section headings — prose blocks only. Dates written inside sentences ('in March 2023', 'March 2022 to February 2023'). Total ~4.7y -> mid."
+    }
+  },
+  {
+    "id": "cv23",
+    "text": "MOHAMED REDA EL-SHAZLY\nHead of Technical Office – MEP\nRiyadh, KSA | Tel: +966 50 555 3348 | Email: m.elshazly@example.com\nSCE Professional Engineer | PMP-trained\n\nSUMMARY\nMEP technical office professional with 10+ years in contracting, currently heading the MEP technical office of a Tier-1 contractor, leading a team of 14 engineers and draftsmen.\n\nPROFESSIONAL EXPERIENCE\n\nHead of Technical Office – MEP | Golden Sands Contracting, Riyadh, KSA | 2022 – Present\n- Lead MEP technical office for a 1.5 billion SAR mixed-use project; manage 14 engineers, BIM modelers and document controllers.\n- Approve shop drawings, coordination drawings and material submittals before submission to the consultant.\n- Manage MEP quantity take-off, BOQ reconciliation, variation orders and claims.\n- Review MEP sub-contractor schedules in Primavera P6 and integrate into the master programme.\n- Manage document control on Aconex; set up submittal and RFI procedures.\n\nSenior Technical Office Engineer – MEP | Golden Sands Contracting, Riyadh, KSA | 2019 – 2022\n- Prepared and reviewed HVAC, fire fighting and plumbing shop drawings and as-built drawings.\n- Prepared monthly progress invoices and variation pricing.\n\nTechnical Office Engineer | Maadi Engineering Contractors, Cairo, Egypt | 2016-2019\n- Shop drawings, submittals and quantity take-off for MEP works in hospitals and residential buildings.\n\nEDUCATION\nB.Sc. Mechanical Engineering, Ain Shams University (2011 – 2016)\n\nCERTIFICATIONS\n- SCE – Professional Engineer\n- PMP preparation course (35 PDUs) – 2023\n- Primavera P6 Advanced – 2020\n\nSOFTWARE\nAutoCAD, Revit MEP, Navisworks, Primavera P6, Aconex, MS Excel\n\nLANGUAGES\nArabic (Native), English (Fluent)",
+    "expected": {
+      "role": "tech_office",
+      "acceptable_roles": [
+        "pm"
+      ],
+      "years_min": 9.8,
+      "years_max": 10.9,
+      "level": "lead",
+      "must_find_skills": [
+        "shop drawings",
+        "material submittals",
+        "BOQ",
+        "quantity take-off",
+        "Primavera",
+        "SCE accreditation",
+        "variation orders"
+      ],
+      "ats_quality": "good",
+      "notes": "Year-only dates ('2016-2019', '2019 – 2022', '2022 – Present') -> 9.9–10.9y. 'Head of Technical Office' -> lead by title. 'PMP preparation course' / 'PMP-trained' is NOT a PMP certification."
+    }
+  },
+  {
+    "id": "cv24",
+    "text": "Tamer Abdelhamid Farouk\nMEP Estimation Engineer / QS\nRiyadh, Saudi Arabia\nMobile: +966 56 555 8204 | E-mail: tamer.farouk@example.com\nSCE Professional Engineer (Mechanical) – valid until 2027\n\nPROFILE\nMEP estimation engineer and quantity surveyor with 11 years of tendering and cost estimation experience for MEP contractors in Egypt and KSA. Priced tenders worth more than SAR 4 billion including hospitals, universities, airports and residential communities.\n\nEXPERIENCE\n\nMEP Estimation Engineer / QS\nAl Noor Mechanical & Electrical Co. – Riyadh, KSA\nSep. 2018 – Present\n• Quantity take-off for HVAC, plumbing, fire fighting and electrical works from tender drawings (manual, Bluebeam and CostX).\n• Prepare priced BOQs, cost build-ups (material, labour, overheads, margin) and tender summaries.\n• Send RFQs to suppliers and subcontractors; prepare technical/commercial comparisons.\n• Prepare value engineering proposals and alternatives for chillers, VRF and fire pumps.\n• Attend tender clarification meetings and prepare post-tender negotiations.\n• Support project teams with variation orders and final account.\n\nEstimation Engineer – MEP\nCairo MEP Contractors – Cairo, Egypt\nSep. 2015 – Aug. 2018\n• Quantity take-off and pricing of HVAC and plumbing works for private sector tenders.\n• Price analysis and preparation of tender documents.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Assiut University – 2010 – 2015\n\nCERTIFICATES\n• Saudi Council of Engineers – Professional Engineer\n• CostX Takeoff & Estimating – 2019\n• Contracts & FIDIC – 2021\n\nSKILLS\nQuantity take-off, BOQ, pricing, tendering, value engineering, CostX, Bluebeam, AutoCAD, Excel (advanced)\n\nLANGUAGES\nArabic – Native | English – Fluent",
+    "expected": {
+      "role": "estimation",
+      "acceptable_roles": [],
+      "years_min": 10.9,
+      "years_max": 11.4,
+      "level": "lead",
+      "must_find_skills": [
+        "quantity take-off",
+        "BOQ",
+        "pricing",
+        "tendering",
+        "CostX",
+        "value engineering",
+        "SCE accreditation"
+      ],
+      "ats_quality": "good",
+      "notes": "Date format 'Sep. 2015 – Aug. 2018'. 11.2y with no manager title -> lead by years only. Explicit 'MEP Estimation Engineer / QS' title."
+    }
+  },
+  {
+    "id": "cv25",
+    "text": "NADA SAMEH EL-ZAYAT\nMEP ESTIMATION ENGINEER\nHeliopolis, Cairo • 01005551992 • nada.elzayat@example.com\n\nSUMMARY\nMechanical engineer with 6+ years in an HVAC contracting company, currently in estimation and tendering. Background in shop drawing preparation which helps in accurate take-off and technical review of tenders.\n\nWORK EXPERIENCE\n\nMEP Estimation Engineer — Pyramid Air Conditioning Co., Cairo\nJan 2022 – Present\n– Quantity take-off of HVAC, plumbing and fire fighting systems from tender drawings and specifications.\n– Pricing and preparing BOQs and tender submissions for commercial, healthcare and industrial projects.\n– Collect supplier quotations for chillers, AHUs, VRF and pumps and prepare comparison sheets.\n– Prepare technical and commercial offers including compliance statements.\n– For awarded projects, prepare initial HVAC shop drawings to hand over to the project team.\n\nMechanical Technical Office Engineer — Pyramid Air Conditioning Co., Cairo\nJul 2020 – Dec 2021\n– Prepared HVAC shop drawings (ducts, chilled water pipes) on AutoCAD and Revit.\n– Material submittals and quantity surveys.\n\nEDUCATION\nB.Sc. Mechanical Power Engineering — Cairo University — 2015 – 2020\n\nCOURSES\nMEP Estimation & Tendering — 2021 • Revit MEP — 2020 • Advanced Excel — 2022\n\nSKILLS\nQuantity take-off • BOQ • pricing • tendering • shop drawings • AutoCAD • Revit • Excel\n\nLANGUAGES\nArabic (Native) • English (Very good)",
+    "expected": {
+      "role": "estimation",
+      "acceptable_roles": [
+        "tech_office"
+      ],
+      "years_min": 6.0,
+      "years_max": 6.6,
+      "level": "senior",
+      "must_find_skills": [
+        "quantity take-off",
+        "BOQ",
+        "pricing",
+        "tendering",
+        "shop drawings",
+        "AutoCAD"
+      ],
+      "ats_quality": "good",
+      "notes": "Estimation engineer who also prepared shop drawings (and spent 1.5y in technical office) — primary role estimation. ~6.4y."
+    }
+  },
+  {
+    "id": "cv26",
+    "text": "Bassem Lotfy Morsi\nQuantity Surveyor – MEP\nSharjah, UAE | +971 52 555 4113 | bassem.morsi@example.com\n\nSummary:\nMEP quantity surveyor with 7.5 years of experience in MEP contracting in the UAE, plus part-time freelance estimation for small contractors.\n\nExperience:\n\nMEP Quantity Surveyor – Emirates Bay Contracting LLC, Sharjah\nMay 2020 – Present\n* Quantity take-off and BOQ preparation for HVAC, plumbing, fire fighting and electrical works.\n* Monthly payment applications, subcontractor valuations and variation pricing.\n* Cost tracking and cost-to-complete reports.\n* Tender pricing support to the estimation department.\n\nFreelance MEP Estimator (part-time, remote)\nJan 2022 – Present\n* Prepare quantity take-off and priced BOQs for villa and fit-out contractors on a per-project basis (evenings/weekends).\n\nJunior Quantity Surveyor – Al Rowad Technical Services, Ajman\nMay 2019 – Apr 2020\n* Measured quantities from drawings and prepared BOQ sheets.\n\nEducation:\nB.Sc. Mechanical Engineering – Zagazig University – 2013 – 2018\n\nCertifications:\n* RICS APC candidate (in progress)\n* CostX – 2021\n* Planswift – 2020\n\nSoftware: CostX, Planswift, AutoCAD, Excel, Bluebeam\n\nLanguages: Arabic, English",
+    "expected": {
+      "role": "estimation",
+      "acceptable_roles": [],
+      "years_min": 7.2,
+      "years_max": 7.8,
+      "level": "senior",
+      "must_find_skills": [
+        "quantity take-off",
+        "BOQ",
+        "variation pricing",
+        "CostX",
+        "AutoCAD"
+      ],
+      "ats_quality": "good",
+      "notes": "Part-time freelance work (Jan 2022 – Present) runs alongside the full-time job and must not be added. Correct total May 2019 – Nov 2026 ~7.5y; summing gives ~12.4y."
+    }
+  },
+  {
+    "id": "cv27",
+    "text": "Mariam Ashraf Fathallah\nJunior Tendering Engineer – MEP\nAlexandria, Egypt | 0127 555 3021 | mariam.fathallah@example.com\n\nEducation\nBachelor of Mechanical Engineering – Alexandria University – 2019 – 2024 – Very Good\nGraduation project: Energy audit and HVAC retrofit of a university building\n\nExperience\nJunior Tendering Engineer – MEP | Mediterranean Contracting Co., Alexandria | Jan 2025 – Present\n- Quantity take-off for plumbing and fire fighting works from tender drawings.\n- Fill priced BOQs using company price database and supplier quotations.\n- Prepare tender cover letters and clarifications list.\n\nSummer Training | Alex Cool HVAC Contracting | Jul 2023 – Aug 2023\n- Site visits and introduction to HVAC installation.\n\nCourses\n- MEP Quantity Surveying & Estimation – 2024\n- AutoCAD – 2022\n- Excel for Engineers – 2024\n\nSkills\nAutoCAD, Excel, quantity take-off, BOQ, Bluebeam (basic)\n\nLanguages\nArabic – native; English – very good; French – basic",
+    "expected": {
+      "role": "estimation",
+      "acceptable_roles": [],
+      "years_min": 1.7,
+      "years_max": 2.0,
+      "level": "junior",
+      "must_find_skills": [
+        "quantity take-off",
+        "BOQ",
+        "tendering",
+        "AutoCAD",
+        "Excel"
+      ],
+      "ats_quality": "good",
+      "notes": "Junior: Jan 2025 – Present ~1.9y. Summer training Jul–Aug 2023 and education 2019–2024 must not count. Education listed first."
+    }
+  },
+  {
+    "id": "cv28",
+    "text": "ENG. SHERIF ANWAR KAMEL, PMP\nMEP Project Manager\nRiyadh, KSA | +966 50 555 9921 | sherif.kamel@example.com\nPMP (PMI) | SCE Professional Engineer\n\nEXECUTIVE SUMMARY\nMEP Project Manager with 18 years of experience — started as an HVAC design engineer, then HVAC site and project engineering, and for the last 9 years managing MEP packages for main contractors in KSA. Delivered projects worth over SAR 2.5 billion.\n\nPROFESSIONAL EXPERIENCE\n\nMEP Project Manager | Riyadh Skyline Developments | Riyadh, KSA | 2017 – Till Now\n• Manage full MEP scope (HVAC, plumbing, fire protection, electrical, ELV) for a 2,000-bed hospital city and a 5-star hotel.\n• Lead team of 40 engineers and supervisors and 9 MEP subcontractors.\n• Responsible for MEP budget, cash flow, procurement plan and Primavera P6 programme.\n• Chair weekly progress meetings with client and consultant; manage variations and claims.\n• Drive testing and commissioning and handover; achieved early completion by 6 weeks on hotel project.\n\nSenior HVAC Engineer / Project Engineer | Al Yamama Contracting | Jeddah, KSA | 2012 – 2017\n• Execution of central chilled water systems (6 x 1,000 TR chillers), AHUs and BMS integration.\n• Reviewed HVAC shop drawings and material submittals; managed HVAC subcontractor.\n\nHVAC Design Engineer | Cairo Design Consult | Cairo, Egypt | 2008 – 2012\n• Cooling load calculation (HAP), duct design and chilled water piping design for commercial buildings.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Cairo University – 2003 – 2008\n\nCERTIFICATIONS\n• Project Management Professional (PMP) – PMI – 2016 (active)\n• SCE – Professional Engineer\n• LEED AP BD+C\n\nSKILLS\nPrimavera P6, MS Project, contract management (FIDIC), cost control, risk management, HAP, AutoCAD\n\nLANGUAGES\nArabic (native), English (fluent)",
+    "expected": {
+      "role": "pm",
+      "acceptable_roles": [],
+      "years_min": 17.9,
+      "years_max": 18.9,
+      "level": "lead",
+      "must_find_skills": [
+        "PMP",
+        "Primavera",
+        "chilled water",
+        "testing and commissioning",
+        "cost control",
+        "SCE accreditation",
+        "HAP"
+      ],
+      "ats_quality": "good",
+      "notes": "Date format '2017 – Till Now' (year only). PM with explicit HVAC design background — role must be pm, not hvac_design. Year-only dates -> 17.9–18.9y."
+    }
+  },
+  {
+    "id": "cv29",
+    "text": "CURRICULUM VITAE\n\nNAME:            Eng. Hossam El-Din Mahmoud Abdallah\nPOSITION:        Senior MEP Project Manager\nNATIONALITY:     Egyptian\nLOCATION:        Dubai, UAE (willing to relocate to KSA)\nMOBILE:          +971 50 555 0066\nEMAIL:           hossam.abdallah.pm@example.com\nDATE OF BIRTH:   1983\nMARITAL STATUS:  Married\nDRIVING LICENSE: UAE, KSA, Egypt\n\n====================================================================\nPROFESSIONAL SUMMARY\n====================================================================\nSenior MEP Project Manager with over 20 years of progressive experience in the construction industry across Egypt, the United Arab Emirates and the Kingdom of Saudi Arabia. Career progression from MEP site engineer to senior MEP engineer, MEP manager and senior MEP project manager. Proven record of delivering complex MEP packages for high-rise towers, hospitals, airports, shopping malls, hotels and infrastructure on time and within budget. Strong commercial awareness, contract administration (FIDIC 1987/1999/2017), subcontract procurement, planning and cost control. Experienced in leading large multi-disciplinary teams and managing client, consultant and authority relationships (Dubai Municipality, DEWA, UAE Civil Defence, Etisalat/du, SEC, Saudi Civil Defense).\n\n====================================================================\nKEY COMPETENCIES\n====================================================================\n- MEP project management from pre-construction through handover and DLP\n- Planning and scheduling: Primavera P6, MS Project, look-ahead programs\n- Cost control, budgeting, cash flow forecasting and earned value analysis\n- Procurement strategy, subcontractor selection and negotiation\n- Contract administration, variations, claims and EOT submissions\n- Design management and value engineering\n- Testing and commissioning management and integrated systems testing\n- Authority approvals (UAE Civil Defence, DEWA, SEC)\n- HSE leadership and quality management (ISO 9001)\n- Team leadership and stakeholder management\n\n====================================================================\nPROFESSIONAL EXPERIENCE\n====================================================================\n\n1) Senior MEP Project Manager\n   Emirates Pinnacle Construction LLC – Dubai, UAE\n   Sep 2018 – Present\n\n   Projects:\n   a) Marina Crest Towers – twin residential towers G+4P+52, 1,100 apartments, AED 1.4 billion\n   b) Al Barsha Community Hospital – 250 beds, AED 650 million\n   c) Desert Pearl Resort – 320-key hotel and villas, AED 900 million\n\n   Responsibilities & achievements:\n   - Overall responsibility for MEP delivery on three concurrent projects with a combined MEP value of AED 780 million.\n   - Lead an MEP team of 6 MEP managers, 25 engineers, 4 planners/QS and 60 supervisors.\n   - Prepare and control MEP budgets; monthly cost reports, cost-to-complete and cash flow forecasts.\n   - Manage procurement of major equipment: chillers, cooling towers, AHUs, transformers, LV panels, generators, fire pumps, lifts.\n   - Negotiate and award MEP subcontracts (HVAC, fire fighting, plumbing, electrical, ELV, BMS) with total value of AED 420 million.\n   - Lead weekly progress meetings with client and consultant; prepare monthly progress reports.\n   - Manage variations and claims; secured AED 38 million in approved variations.\n   - Coordinate design development with the consultant and the in-house BIM team; drive clash-free coordinated models before construction.\n   - Value engineering on chilled water plant saved AED 9 million while maintaining performance.\n   - Manage authority approvals and inspections with Dubai Municipality, DEWA and UAE Civil Defence (DCD); obtained building completion certificates for all three projects.\n   - Lead testing and commissioning (T&C) programme and integrated systems testing (IST) for life safety systems.\n   - Handover to FM operator including O&M manuals, as-built drawings, training and asset registers.\n   - Achieved 4 million safe man-hours without LTI on Marina Crest.\n\n2) MEP Manager\n   Arabian Gulf Builders – Riyadh, KSA\n   Jan 2013 – Aug 2018\n\n   Projects:\n   a) King's Gate Business District – 6 office towers, SAR 1.2 billion\n   b) Riyadh Northern Mall – 210,000 m2 GLA, SAR 1.6 billion\n   c) Al Qassim University Campus Expansion – SAR 700 million\n\n   Responsibilities & achievements:\n   - Managed MEP construction teams of up to 80 engineers and supervisors.\n   - Prepared MEP execution plans, method statements and inspection & test plans.\n   - Prepared and monitored MEP schedules in Primavera P6 integrated with the master programme.\n   - Managed HVAC works including 12,000 TR district cooling plant, thermal storage tank and chilled water network.\n   - Managed fire protection works and Saudi Civil Defense approvals.\n   - Coordinated with SEC for power connections and substations.\n   - Controlled subcontractor payments and back-charges.\n   - Implemented quality management procedures; reduced NCRs by 35%.\n\n3) Senior MEP Engineer\n   Nile Delta Contracting – Cairo, Egypt\n   Apr 2009 – Dec 2012\n\n   Projects:\n   a) Cairo Horizon Towers – office towers\n   b) New Cairo Medical Center – 300-bed hospital\n\n   Responsibilities:\n   - Supervised MEP installation works and subcontractors.\n   - Reviewed shop drawings, material submittals and method statements.\n   - Prepared MEP quantity surveys and monthly invoices.\n   - Led testing and commissioning of chilled water and fire fighting systems.\n\n4) MEP Site Engineer\n   Nile Delta Contracting – Cairo, Egypt\n   Jul 2006 – Mar 2009\n\n   Responsibilities:\n   - Site supervision of HVAC, plumbing and fire fighting installation.\n   - Daily reports, material inspections, as-built mark-ups.\n\n====================================================================\nEDUCATION\n====================================================================\nB.Sc. Mechanical Engineering (Power) – Ain Shams University, Cairo – 2001 – 2006 – Good\nDiploma in Construction Management – American University in Cairo (evening program) – 2010 – 2011\n\n====================================================================\nPROFESSIONAL CERTIFICATIONS & MEMBERSHIPS\n====================================================================\n- Project Management Professional (PMP) – PMI – 2014 (renewed 2023)\n- Saudi Council of Engineers – Professional Engineer (2013 – 2018, inactive)\n- Society of Engineers UAE – Member\n- UAE Civil Defence – Approved MEP Engineer (contractor registration)\n- NEBOSH IGC – 2015\n- Certified Energy Manager (CEM) – AEE – 2020\n- Egyptian Engineers Syndicate – Member\n\n====================================================================\nTRAINING\n====================================================================\n- FIDIC Contracts (Red & Yellow Book) – 2016\n- Advanced Primavera P6 – 2014\n- Leadership for Construction Managers – 2019\n- Commissioning Management (CIBSE Codes) – 2017\n- Risk Management in Construction – 2021\n- BIM for Managers – 2022\n\n====================================================================\nCOMPUTER SKILLS\n====================================================================\nPrimavera P6, MS Project, MS Office, AutoCAD, Navisworks (review), Aconex, Procore\n\n====================================================================\nLANGUAGES\n====================================================================\nArabic – Native\nEnglish – Fluent\nFrench – Basic\n\n====================================================================\nREFERENCES\n====================================================================\nAvailable upon request.",
+    "expected": {
+      "role": "pm",
+      "acceptable_roles": [],
+      "years_min": 20.1,
+      "years_max": 20.6,
+      "level": "lead",
+      "must_find_skills": [
+        "PMP",
+        "Primavera",
+        "cost control",
+        "testing and commissioning",
+        "procurement",
+        "UAE Civil Defence",
+        "district cooling",
+        "value engineering"
+      ],
+      "ats_quality": "ok",
+      "notes": "Very long, old-style CV with '=====' separators and a personal-details block (DOB 1983 must not be read as a date range). Evening diploma 2010–2011 overlaps employment and must not count. Continuous Jul 2006 – Nov 2026 ~20.4y. Two roles at the same company (site engineer -> senior MEP engineer) must not double count. ATS quality ok: complete but long and heavy formatting."
+    }
+  },
+  {
+    "id": "cv30",
+    "text": "Wael Saber Hamouda\nMEP Project Manager\n\nContact: +20 100 555 7120 | wael.hamouda@example.com | 6th of October City, Giza\n\nProfessional Summary\nMEP project manager with 12 years of experience with Egyptian main contractors on residential, commercial and government projects. Currently managing MEP works for a 45-building gated community.\n\nProfessional Experience\n\nMEP Project Manager — Giza Heights Contracting\nJan 2020 – Present\n• Manage MEP execution (HVAC, plumbing, fire fighting, electrical, low current) across 45 residential buildings and a clubhouse.\n• Lead 12 site engineers, 2 technical office engineers and 6 subcontractors.\n• Prepare MEP time schedules on Primavera P6 and monitor progress weekly.\n• Control MEP budget and subcontractor payments; prepare monthly cost reports.\n• Coordinate with the consultant on approvals and site instructions.\n• Manage testing and commissioning and handover to the client.\n\nMEP Project Engineer — Ain Shams Builders\nJun 2014 – Dec 2019\n• Supervised MEP works for an administrative building and a private hospital.\n• Reviewed shop drawings and material submittals.\n• Measured quantities and prepared subcontractor invoices.\n\nEducation\nB.Sc. Mechanical Engineering — Ain Shams University — 2008 – 2013\n\nTraining & Certificates\n• PMP Exam Preparation Course (35 contact hours) — 2024 — exam not yet taken\n• Primavera P6 — 2016\n• Egyptian Engineers Syndicate — Member\n\nSkills\nPrimavera P6, MS Project, cost control, team leadership, AutoCAD, MS Office\n\nLanguages\nArabic (native), English (very good)",
+    "expected": {
+      "role": "pm",
+      "acceptable_roles": [],
+      "years_min": 12.1,
+      "years_max": 12.7,
+      "level": "lead",
+      "must_find_skills": [
+        "Primavera",
+        "cost control",
+        "testing and commissioning",
+        "shop drawings",
+        "team leadership"
+      ],
+      "ats_quality": "good",
+      "notes": "MEP PM with 12.4y but NOT PMP certified — only a 'PMP Exam Preparation Course ... exam not yet taken'. A naive keyword match on 'PMP' would wrongly credit the certification."
+    }
+  },
+  {
+    "id": "cv31",
+    "text": "LINA HATEM SOBHY\nSales Engineer – HVAC\nDubai, UAE | +971 55 555 4482 | lina.sobhy@example.com\n\nPROFILE\nHVAC sales and application engineer with 7 years' experience selling chillers, AHUs, VRF and FCUs to consultants and contractors in the UAE and Egypt. Combines technical depth (load calculations, equipment selection) with account management and closing skills.\n\nEXPERIENCE\n\nSales Engineer – HVAC | Arctic Breeze Trading LLC (authorised distributor), Dubai\nJun 2022 - Current\n• Manage key accounts with 25+ MEP contractors and 10 consultants; achieved 128% of AED 18M annual target in 2025.\n• Prepare techno-commercial offers, compliance statements and equipment selections (chillers, AHUs, FCUs, VRF) using manufacturer selection software.\n• Perform quick cooling load calculations (HAP block loads) to support contractors in value engineering proposals.\n• Get products specified with consultants through technical presentations and CPD seminars.\n• Follow up on LPOs, payment collection and after-sales coordination.\n• Maintain pipeline in Salesforce CRM.\n\nApplication Engineer | CoolTech Egypt (chiller & AHU distributor), Cairo\nAug 2019 – May 2022\n• Equipment selection for chillers and AHUs; prepared submittals and data sheets.\n• Supported sales team with technical clarifications and load calculations.\n• Attended factory acceptance tests and site start-ups.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Mansoura University – 2014 – 2019\n\nTRAINING\nCarrier HAP – 2019 | Consultative Selling – 2023 | Negotiation Skills – 2024\n\nSKILLS\nEquipment selection, load calculation, HAP, techno-commercial offers, CRM (Salesforce), negotiation, key account management\n\nLANGUAGES\nEnglish – fluent | Arabic – native",
+    "expected": {
+      "role": "sales",
+      "acceptable_roles": [],
+      "years_min": 6.9,
+      "years_max": 7.5,
+      "level": "senior",
+      "must_find_skills": [
+        "HVAC sales",
+        "equipment selection",
+        "cooling load calculation",
+        "HAP",
+        "techno-commercial offers",
+        "CRM",
+        "key account management"
+      ],
+      "ats_quality": "good",
+      "notes": "Date format 'Jun 2022 - Current'. Sales/application engineer whose bullets mention load calculations, HAP and selections — role must be sales, not hvac_design. ~7.2y."
+    }
+  },
+  {
+    "id": "cv32",
+    "text": "Abdelrahman Nasser Qandil\nTechnical Sales Engineer – Pumps & Fire Fighting Equipment\nJeddah, KSA | +966 58 555 7034 | a.qandil@example.com | SCE Associate Engineer\n\nSUMMARY\nTechnical sales engineer with 3.5+ years in pumps and fire fighting equipment sales in KSA, covering booster sets, fire pump packages (UL/FM) and drainage pumps.\n\nEXPERIENCE\n\nTechnical Sales Engineer | Red Sea Pumps Trading Co., Jeddah\nMar 2023 – Present\n- Sell booster pump sets, UL/FM listed fire pump packages and submersible drainage pumps to contractors and consultants.\n- Pump selection from duty point (flow/head) and preparation of techno-commercial offers.\n- Visit consultants to get products approved in project specifications.\n- Achieved SAR 9.5M sales in 2025 (115% of target).\n- Coordinate deliveries and support testing and commissioning of fire pump packages on site.\n\nEDUCATION\nB.Sc. Mechanical Engineering | Benha University | 2017 – 2022\n\nTRAINING\nPump Selection Workshop – 2023\nNFPA 20 Fundamentals – 2024\nSales Excellence – 2024\n\nSKILLS\nPump selection, booster pumps, fire pumps, NFPA 20, techno-commercial offers, CRM (Zoho), MS Office\n\nLANGUAGES\nArabic (native), English (very good)",
+    "expected": {
+      "role": "sales",
+      "acceptable_roles": [],
+      "years_min": 3.5,
+      "years_max": 3.8,
+      "level": "mid",
+      "must_find_skills": [
+        "pump selection",
+        "booster pumps",
+        "fire pumps",
+        "NFPA",
+        "techno-commercial offers"
+      ],
+      "ats_quality": "good",
+      "notes": "Sales engineer selling fire pumps/booster pumps — mentions NFPA 20 and testing and commissioning but role is sales, not fire or plumbing. Mar 2023 – Present ~3.7y."
+    }
+  },
+  {
+    "id": "cv33",
+    "text": "KHALED MAGDY ATTIA\nSales Engineer – HVAC\nRiyadh, KSA | +966 54 555 6640 | khaled.attia@example.com\n\nPROFILE\nHVAC sales professional with 8+ years selling split units, packaged units, VRF and ventilation fans to contractors, developers and end users in Egypt and KSA.\n\nEXPERIENCE\n\nHVAC Sales Engineer | Riyadh Cool Systems Co. | Riyadh, KSA\nJan 2021 – Present\n- Sell VRF, ducted split and packaged units for villas, retail and small commercial projects.\n- Prepare quotations and techno-commercial offers with support from the company's application engineer.\n- Manage a portfolio of 60+ contractor accounts; annual sales SAR 12M.\n- Participate in exhibitions and dealer events.\n\nSales Executive – HVAC | Frost Line Air Conditioning | Cairo, Egypt\nApr 2018 – Dec 2020\n- Retail and project sales of split units and VRF systems.\n- Follow-up of collections and customer complaints.\n\nEDUCATION\nBachelor of Commerce (Marketing) – Zagazig University – 2013 – 2017\nDiploma in Refrigeration & Air Conditioning Technology – Industrial Training Institute, Cairo – 2018 (1 year, evening)\n\nTRAINING\nVRF Systems Fundamentals – 2019\nNegotiation & Closing Skills – 2021\n\nSKILLS\nHVAC sales, VRF, key account management, quotations, CRM, negotiation, Excel\n\nLANGUAGES\nArabic (native), English (good)",
+    "expected": {
+      "role": "sales",
+      "acceptable_roles": [],
+      "years_min": 8.3,
+      "years_max": 8.8,
+      "level": "senior",
+      "must_find_skills": [
+        "HVAC sales",
+        "VRF",
+        "key account management",
+        "quotations",
+        "negotiation"
+      ],
+      "ats_quality": "good",
+      "notes": "Title 'Sales Engineer – HVAC' but NO engineering degree: Bachelor of Commerce + 1-year technical diploma (used for degree-knockout JD). Apr 2018 – Nov 2026 ~8.6y."
+    }
+  },
+  {
+    "id": "cv34",
+    "text": "Mohamed Saeed Elkholy\nMaintenance Engineer – Facilities\nRiyadh, Saudi Arabia | +966 55 555 0927 | m.elkholy.fm@example.com\nSCE Professional Engineer | CMRP (2024)\n\nSummary\nFacilities maintenance engineer with 8+ years operating and maintaining HVAC central plants and MEP systems in hospitals and shopping malls. Hands-on with chillers, cooling towers, AHUs, BMS and CMMS-based preventive maintenance programs.\n\nProfessional Experience\n\nMaintenance Engineer – Facilities\nPrime Facility Services – King's Medical City (500-bed hospital), Riyadh\nFeb 2021 – Ongoing\n• Responsible for O&M of central chilled water plant: 5 x 1,200 TR centrifugal chillers, cooling towers, primary/secondary pumps.\n• Plan and execute preventive maintenance (PPM) and corrective maintenance through IBM Maximo CMMS; PPM compliance 97%.\n• Monitor and optimise plant operation via the BMS (Honeywell EBI); adjust setpoints, schedules and alarms.\n• Maintain AHUs with HEPA filtration for operating theatres and isolation rooms; pressure-differential monitoring per ASHRAE 170.\n• Manage a team of 18 technicians in 3 shifts; prepare monthly KPI reports for the client.\n• Energy savings initiatives (chiller sequencing, VFD optimisation) reduced plant kW/TR by 12%.\n• Coordinate with OEMs for annual chiller overhauls and eddy current tests.\n\nHVAC Maintenance Engineer\nDelta Facility Management – Nile Gate Mall, Cairo\nJul 2018 – Jan 2021\n• Preventive maintenance of air-cooled chillers, AHUs, FCUs and smoke exhaust fans.\n• Troubleshooting of VFDs and BMS points; work orders in CMMS.\n• Maintenance of fire pumps and plumbing booster sets.\n\nEducation\nB.Sc. Mechanical Engineering – Tanta University – 2013 – 2018\n\nCertifications\n• SCE – Professional Engineer\n• CMRP – Certified Maintenance & Reliability Professional – 2024\n• Chiller Operation & Maintenance (OEM training) – 2022\n\nSkills\nChillers • cooling towers • BMS • CMMS (Maximo) • preventive maintenance • AHU • energy management • team leadership\n\nLanguages\nArabic (native) • English (fluent)",
+    "expected": {
+      "role": "fm",
+      "acceptable_roles": [],
+      "years_min": 8.0,
+      "years_max": 8.6,
+      "level": "senior",
+      "must_find_skills": [
+        "preventive maintenance",
+        "chillers",
+        "BMS",
+        "CMMS",
+        "AHU",
+        "cooling towers",
+        "SCE accreditation"
+      ],
+      "ats_quality": "good",
+      "notes": "Date format 'Feb 2021 – Ongoing'. FM/maintenance engineer with chillers & BMS — role must be fm, not hvac_design. ~8.3y."
+    }
+  },
+  {
+    "id": "cv35",
+    "text": "Ahmed Fouad Zidan\nMEP Facilities Engineer\nAbu Dhabi, UAE – +971 56 555 2207 – ahmed.zidan.fm@example.com\n\nPROFILE\nMEP facilities engineer with 4 years in hard-services FM for government buildings and schools in Abu Dhabi.\n\nEXPERIENCE\nMEP Facilities Engineer – Blue Lagoon Facilities Management LLC, Abu Dhabi\nSep 2022 – Present\n- Supervise planned preventive maintenance of package units, split units, FAHUs, pumps, fire alarm and fire fighting systems for 22 schools.\n- Raise and close work orders in the CMMS (FM:Systems); track SLA response times.\n- Coordinate annual fire system inspections with Abu Dhabi Civil Defence (UAE Civil Defence) and AMC contractors.\n- Prepare monthly maintenance reports, spare parts requests and asset condition surveys.\n- Supervise 10 technicians (HVAC, plumbing, electrical).\n\nEDUCATION\nB.Sc. Mechanical Engineering – Kafr El Sheikh University – 2016 – 2021\n\nTRAINING\nSummer training – Egyptian Electricity Company – Jul 2019 – Sep 2019\nHVAC Maintenance course – 2022\nNEBOSH IGC – 2024\n\nSKILLS\nPreventive maintenance, CMMS, HVAC maintenance, fire alarm, plumbing, team supervision, MS Excel\n\nLANGUAGES\nArabic (native), English (good)",
+    "expected": {
+      "role": "fm",
+      "acceptable_roles": [],
+      "years_min": 4.0,
+      "years_max": 4.3,
+      "level": "mid",
+      "must_find_skills": [
+        "preventive maintenance",
+        "CMMS",
+        "HVAC maintenance",
+        "UAE Civil Defence",
+        "work orders"
+      ],
+      "ats_quality": "good",
+      "notes": "Short FM CV; summer training (Jul–Sep 2019) must not count. Sep 2022 – Present ~4.2y -> mid."
+    }
+  },
+  {
+    "id": "cv36",
+    "text": "MEDHAT KAMAL ROSHDY\nMEP MAINTENANCE MANAGER\n\nHurghada / Cairo, Egypt   |   +20 100 555 3354   |   medhat.roshdy@example.com\n\nCAREER SUMMARY\nMaintenance professional with 13+ years in hospitality facilities, the last 8 years as MEP Maintenance Manager for a group of five resorts on the Red Sea. Responsible for budgets, energy, life safety and asset reliability.\n\nEXPERIENCE\n\nMEP Maintenance Manager\nNile Plaza Hotels & Resorts (Red Sea Cluster) | Jan 2018 – Present\n• Head the engineering department for 5 resorts (2,100 rooms) with 95 staff.\n• Own the annual maintenance budget (EGP 85M) and capex plans.\n• Implemented a CMMS for preventive maintenance and work orders; PPM compliance raised from 60% to 94%.\n• Oversee O&M of chillers (screw and absorption), cooling towers, boilers, heat pumps, RO desalination plants and STPs.\n• Upgraded BMS controls and chiller plant optimisation — 18% energy cost reduction.\n• Manage AMC contractors for lifts, fire alarm, kitchen equipment.\n• Lead fire & life safety compliance with Civil Defense.\n\nMaintenance Engineer\nSinai Resorts Company, Sharm El Sheikh | Mar 2013 – Dec 2017\n• Preventive and corrective maintenance of HVAC, plumbing and pool systems.\n• Shift engineer for chiller plant and desalination plant.\n\nEDUCATION\nB.Sc. Mechanical Engineering – Assiut University – 2007 – 2012\n\nCERTIFICATES\nCertified Facility Manager (CFM) – IFMA – 2021\nCertified Energy Manager (CEM) – 2019\n\nSKILLS\nPreventive maintenance, CMMS, BMS, chillers, budget management, energy management, team leadership\n\nLANGUAGES\nArabic (native), English (fluent), Italian (basic)",
+    "expected": {
+      "role": "fm",
+      "acceptable_roles": [],
+      "years_min": 13.4,
+      "years_max": 13.9,
+      "level": "lead",
+      "must_find_skills": [
+        "preventive maintenance",
+        "CMMS",
+        "BMS",
+        "chillers",
+        "budget management",
+        "energy management"
+      ],
+      "ats_quality": "good",
+      "notes": "FM manager title -> lead. Jan 2018 – Present + Mar 2013 – Dec 2017 = ~13.7y."
+    }
+  }
+]

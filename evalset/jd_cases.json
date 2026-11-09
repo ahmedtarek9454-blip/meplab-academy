@@ -1,0 +1,142 @@
+[
+  {
+    "id": "jd01",
+    "cv_id": "cv07",
+    "jd": "Job Title: Senior Mechanical BIM Engineer\nCompany: Oasis Build Contracting LLC – Dubai, UAE\nEmployment type: Full-time\n\nAbout the role\nWe are looking for a Senior Mechanical BIM Engineer to lead the mechanical BIM workstream on a large hospitality project and coordinate a team of modelers.\n\nRequirements\n- Bachelor's degree in Mechanical Engineering.\n- Minimum 8 years of experience in MEP BIM, of which at least 3 years in a coordination or lead role.\n- Expert in Revit MEP and Navisworks Manage (clash detection and clash reporting).\n- Experience producing HVAC, plumbing and fire fighting shop drawings and combined services drawings.\n- Experience with BIM 360 / Autodesk Construction Cloud.\n- Ability to lead coordination meetings with consultants and subcontractors.\n\nPreferred\n- Dynamo scripting.\n- ISO 19650 knowledge.\n- UAE project experience.",
+    "expected": {
+      "knocked_out": true,
+      "knockout_reasons": [
+        "years"
+      ],
+      "fit": "possible",
+      "notes": "Candidate has ~4.8y vs required minimum 8 -> years knockout. Tool/skill match is good (Revit, Navisworks, clash detection, shop drawings, ducts) but no coordination/lead experience, Dynamo or ISO 19650, so fit is possible rather than strong."
+    }
+  },
+  {
+    "id": "jd02",
+    "cv_id": "cv01",
+    "jd": "Senior HVAC Design Engineer – Riyadh, Saudi Arabia\nAl Fanar Engineering Consultants (MEP consultancy)\n\nResponsibilities\n• HVAC design from concept to IFC for healthcare, commercial and residential projects.\n• Cooling load calculations, chilled water and VRF system design, duct and pipe sizing.\n• Prepare specifications, BOQs and design reports; review contractor submittals.\n• Coordinate with BIM team and other disciplines.\n\nRequirements\n• B.Sc. in Mechanical Engineering.\n• 7+ years of HVAC design experience with a consultancy.\n• Valid Saudi Council of Engineers (SCE) Professional Engineer accreditation is MANDATORY at the time of application.\n• Proficiency in HAP (or Trace 700), AutoCAD and Revit MEP.\n• Strong knowledge of ASHRAE, SMACNA and the Saudi Building Code (SBC 501).\n\nPreferred\n• Healthcare design experience.\n• Smoke control / stair pressurization design.",
+    "expected": {
+      "knocked_out": true,
+      "knockout_reasons": [
+        "cert"
+      ],
+      "fit": "strong",
+      "notes": "Candidate matches the technical requirements very well (8.8y consultancy HVAC design, HAP, chilled water, VRF, Revit, hospital and smoke control experience) but holds no SCE accreditation (Egypt-only, Engineers Syndicate). Mandatory SCE -> cert knockout."
+    }
+  },
+  {
+    "id": "jd03",
+    "cv_id": "cv30",
+    "jd": "MEP Project Manager\nLocation: New Administrative Capital, Egypt\nCompany: Delta Tower Developments (main contractor)\n\nJob Purpose\nManage the complete MEP scope of a high-rise mixed-use development from mobilisation to handover.\n\nKey Responsibilities\n- Plan and control MEP works, budgets and subcontractors.\n- Prepare and monitor MEP programmes in Primavera P6.\n- Coordinate with consultant, client and authorities.\n- Lead testing and commissioning and handover.\n\nQualifications\n- B.Sc. Mechanical or Electrical Engineering.\n- Minimum 10 years of MEP experience including at least 4 years as MEP Project Manager.\n- PMP certification (PMI) is mandatory.\n- Strong cost control and contract administration skills.\n- Member of the Egyptian Engineers Syndicate.\n\nNice to have\n- High-rise experience.\n- FIDIC knowledge.",
+    "expected": {
+      "knocked_out": true,
+      "knockout_reasons": [
+        "cert"
+      ],
+      "fit": "strong",
+      "notes": "Candidate is a strong fit on experience (12.4y, ~6.9y as MEP PM in Egypt, Primavera, cost control, T&C, Syndicate member) but has only a PMP preparation course, exam not taken. Mandatory PMP -> cert knockout. A keyword ATS may wrongly pass him because 'PMP' appears."
+    }
+  },
+  {
+    "id": "jd04",
+    "cv_id": "cv33",
+    "jd": "HVAC Sales Engineer – Projects (VRF & Unitary)\nRiyadh, KSA – HVAC manufacturer's regional office\n\nWhat you will do\n- Develop and close VRF and unitary HVAC sales with contractors, developers and consultants.\n- Prepare techno-commercial offers and equipment selections.\n- Manage key accounts and achieve annual sales targets.\n\nRequirements\n- Bachelor's degree in Mechanical Engineering (B.Sc.) – required.\n- Minimum 5 years of HVAC sales experience in KSA or GCC.\n- Proven track record with VRF / split / packaged systems.\n- Good English communication and CRM usage.\n\nPreferred\n- SCE membership.\n- Existing network of MEP contractors in Riyadh.",
+    "expected": {
+      "knocked_out": true,
+      "knockout_reasons": [
+        "degree"
+      ],
+      "fit": "strong",
+      "notes": "Candidate has 8.6y HVAC (VRF/split/packaged) sales in KSA and Egypt with key accounts and CRM — strong fit — but holds a Bachelor of Commerce plus a technical diploma, not a B.Sc. in Mechanical Engineering. Required degree -> degree knockout."
+    }
+  },
+  {
+    "id": "jd05",
+    "cv_id": "cv10",
+    "jd": "Fire Protection Engineer\nFire & life safety contractor – Dubai, UAE\n\nResponsibilities:\n* Design sprinkler, standpipe, fire pump and clean agent systems as per NFPA and the UAE Fire & Life Safety Code.\n* Perform hydraulic calculations and fire pump sizing.\n* Prepare shop drawings and obtain Dubai Civil Defence approvals.\n* Testing and commissioning with Civil Defence inspectors.\n\nRequirements:\n* B.Sc. in Mechanical Engineering.\n* 6+ years of fire protection experience in the UAE.\n* Knowledge of NFPA 13, 14, 20 and 2001.\n* Proficiency in AutoCAD and hydraulic calculation software (Elite Fire, PIPENET or similar).\n\nPreferred:\n* UAE Civil Defence approved engineer.\n* Revit experience.\n* Foam system experience.",
+    "expected": {
+      "knocked_out": false,
+      "knockout_reasons": [],
+      "fit": "strong",
+      "notes": "All must-haves met: 8.7y UAE fire protection, NFPA 13/14/20/2001, Elite Fire/PIPENET, DCD approvals; also has all preferred items (UAE Civil Defence approval, Revit, foam)."
+    }
+  },
+  {
+    "id": "jd06",
+    "cv_id": "cv24",
+    "jd": "Senior MEP Estimation Engineer\nRiyadh, Saudi Arabia | MEP Contractor (Grade 1)\n\nRole summary\nLead MEP estimation for major tenders (healthcare, education, infrastructure).\n\nRequirements\n• B.Sc. Mechanical Engineering.\n• Minimum 8 years of MEP estimation / tendering experience, including KSA.\n• Valid SCE accreditation (mandatory).\n• Expert in quantity take-off and priced BOQ preparation for HVAC, plumbing and fire fighting.\n• Experience in supplier/subcontractor RFQs and comparison sheets.\n\nPreferred\n• CostX or similar take-off software.\n• Value engineering experience.",
+    "expected": {
+      "knocked_out": false,
+      "knockout_reasons": [],
+      "fit": "strong",
+      "notes": "11.2y MEP estimation (8y in KSA), SCE Professional Engineer, QTO/BOQ/RFQs, CostX and value engineering — every must-have and preferred item is met."
+    }
+  },
+  {
+    "id": "jd07",
+    "cv_id": "cv34",
+    "jd": "Maintenance Engineer – Hospital Facilities (HVAC)\nRiyadh, KSA – Facilities management company\n\nResponsibilities\n- Operation and maintenance of central chilled water plant, AHUs and cooling towers in a tertiary hospital.\n- Plan preventive maintenance and manage work orders in CMMS.\n- Monitor systems via BMS and drive energy improvements.\n- Supervise technicians and report KPIs to the client.\n\nRequirements\n- B.Sc. Mechanical Engineering.\n- 6+ years of HVAC maintenance experience, hospital experience preferred.\n- SCE accreditation required.\n- Hands-on experience with centrifugal chillers, BMS and CMMS.\n\nPreferred\n- IBM Maximo.\n- ASHRAE 170 knowledge.\n- CMRP or similar maintenance certification.",
+    "expected": {
+      "knocked_out": false,
+      "knockout_reasons": [],
+      "fit": "strong",
+      "notes": "8.4y HVAC FM, current hospital chiller plant O&M, BMS, Maximo CMMS, SCE Professional Engineer, ASHRAE 170, CMRP — full match."
+    }
+  },
+  {
+    "id": "jd08",
+    "cv_id": "cv06",
+    "jd": "MEP BIM Coordinator\nAbu Dhabi, UAE – Main Contractor\n\nKey responsibilities\n- Coordinate MEP models with architectural and structural models; run clash detection and chair coordination meetings.\n- Produce combined services drawings and MEP shop drawings from Revit.\n- Manage the CDE (BIM 360 / ACC) per the project BEP.\n- Supervise MEP BIM modelers.\n\nRequirements\n- Bachelor's degree in Mechanical or Electrical Engineering.\n- 5+ years of MEP BIM experience, at least 2 years as coordinator.\n- Advanced Revit MEP and Navisworks Manage.\n- BIM 360 / Autodesk Construction Cloud.\n\nPreferred\n- Dynamo.\n- ISO 19650 certification.\n- UAE experience.",
+    "expected": {
+      "knocked_out": false,
+      "knockout_reasons": [],
+      "fit": "strong",
+      "notes": "7.7y MEP BIM, ~5.4y as coordinator in Abu Dhabi, Revit/Navisworks/BIM 360, CSDs, Dynamo, ISO 19650 — full match."
+    }
+  },
+  {
+    "id": "jd09",
+    "cv_id": "cv17",
+    "jd": "HVAC Design Engineer (Consultancy)\nJeddah, KSA\n\nResponsibilities\n- Perform cooling load calculations using HAP and select HVAC equipment.\n- Design chilled water, VRF and ventilation systems; duct and pipe sizing.\n- Prepare design drawings, specifications and calculation reports.\n- Model HVAC systems in Revit MEP.\n\nRequirements\n- B.Sc. Mechanical Engineering.\n- 5+ years of HVAC design experience in a design consultancy.\n- SCE membership (Associate or Professional).\n- Proficiency in HAP, AutoCAD and Revit MEP.\n- Good knowledge of ASHRAE and SMACNA.",
+    "expected": {
+      "knocked_out": false,
+      "knockout_reasons": [],
+      "fit": "weak",
+      "notes": "Different role: candidate is a site engineer (7.7y) with no design consultancy experience, no HAP, no Revit, no load calculations. Not knocked out (degree, SCE Associate and total years satisfy the screens), but weak fit on must-haves."
+    }
+  },
+  {
+    "id": "jd10",
+    "cv_id": "cv11",
+    "jd": "Plumbing / Public Health Design Engineer\nRiyadh, KSA – MEP consultant\n\nResponsibilities\n• Design water supply, drainage, rainwater and irrigation systems for residential and commercial buildings.\n• Size booster pumps, water tanks and water heaters.\n• Prepare plumbing drawings, BOQs and specifications.\n\nRequirements\n• B.Sc. Mechanical Engineering.\n• 4+ years of plumbing / public health design experience.\n• SCE membership (any grade).\n• Knowledge of IPC / UPC and SBC 701.\n• AutoCAD; Revit is a plus.",
+    "expected": {
+      "knocked_out": false,
+      "knockout_reasons": [],
+      "fit": "possible",
+      "notes": "Candidate (4.8y) is primarily a fire fighting engineer with secondary plumbing experience (water supply, drainage, booster pumps). Passes screens (degree, SCE Associate, total years) but dedicated plumbing design experience is limited -> possible."
+    }
+  },
+  {
+    "id": "jd11",
+    "cv_id": "cv31",
+    "jd": "HVAC Design Engineer\nDubai, UAE – MEP Consultancy\n\nResponsibilities\n- Heat load calculations (HAP / IES), equipment selection and schematic design.\n- Duct and chilled water pipe design and sizing; ESP calculations.\n- Produce design drawings in Revit MEP and AutoCAD.\n- Authority submissions to Dubai Municipality and DEWA.\n\nRequirements\n- B.Sc. Mechanical Engineering.\n- 5+ years of HVAC experience (design consultancy preferred).\n- Proficiency in HAP and Revit MEP.\n- Knowledge of ASHRAE and SMACNA.",
+    "expected": {
+      "knocked_out": false,
+      "knockout_reasons": [],
+      "fit": "possible",
+      "notes": "Different role (sales/application engineer, 7.3y). Has HAP, load calculations and equipment selection, but no duct/pipe design, drawings, Revit or authority submissions -> possible, leaning weak."
+    }
+  },
+  {
+    "id": "jd12",
+    "cv_id": "cv35",
+    "jd": "MEP Estimation Engineer\nAbu Dhabi, UAE – MEP Contractor\n\nResponsibilities\n- Quantity take-off for HVAC, plumbing, fire fighting and electrical works from tender drawings.\n- Prepare priced BOQs and cost build-ups.\n- Obtain supplier and subcontractor quotations and prepare comparisons.\n- Support tender submissions and post-tender clarifications.\n\nRequirements\n- B.Sc. Mechanical Engineering.\n- Minimum 3 years of experience (MEP estimation/tendering preferred).\n- Strong skills in quantity take-off, BOQ pricing and Excel.\n- CostX or Planswift is a plus.",
+    "expected": {
+      "knocked_out": false,
+      "knockout_reasons": [],
+      "fit": "weak",
+      "notes": "Different role: FM engineer (4.2y) with no estimation, QTO, BOQ or tendering experience. Not knocked out (degree and total years satisfy screens) but weak fit."
+    }
+  }
+]
