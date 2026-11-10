@@ -4,7 +4,7 @@ import JobCard, { ago } from './JobCard';
 import AiReview, { PENDING_KEY } from './AiReview';
 import JdMatch from './JdMatch';
 import CvRewrite from './CvRewrite';
-import EmailGate, { currentUser, type GateUser } from './EmailGate';
+import { currentUser, type GateUser } from './EmailGate';
 import AboutMeplab, { type CourseLite } from './AboutMeplab';
 import CvSave from './CvSave';
 import { ocrImageFile, ocrPdfPages } from '@/lib/cv/ocr';
@@ -310,14 +310,9 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         if (isImg) setOcrUsed(true);
       }
       if (!text || text.trim().length < 20) { setBusy(''); return setErr(t.err_scan); }
-      // membership gate: the result is shown only to signed-up members (email code / Google)
+      // no sign-up needed: the check runs for everyone; members also get it saved to their profile
       const u = user === undefined ? await currentUser().catch(() => null) : user;
-      if (!u) {
-        try { localStorage.setItem(PENDING_KEY, JSON.stringify({ text, market: mkt })); } catch {}
-        setPending({ text, pages, market: mkt }); setBusy('');
-        setTimeout(() => document.getElementById('cv-gate')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-        return;
-      }
+      if (user === undefined) setUser(u);
       await finish(text, pages, mkt, u);
     } catch (e) {
       console.error(e);
@@ -327,7 +322,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
     }
   }
 
-  async function finish(text: string, pages: number, mkt: Market, u: GateUser) {
+  async function finish(text: string, pages: number, mkt: Market, u: GateUser | null) {
     setBusy(t.analyzing);
     await new Promise((r) => setTimeout(r, 450));
     setCvText(text);
@@ -335,7 +330,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
     setRes(r); setBusy(''); setPending(null);
     // record the lead (email + result) — never the CV text
     try {
-      if (!(window as any).__AUTH_MOCK__) {
+      if (u && !(window as any).__AUTH_MOCK__) {
         fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role_id: r.roles[0].role.id, market: mkt, score: r.score, years: r.years, level: r.level, name: u.name }) }).catch(() => {});
         // keep the member profile up to date with the latest check (+ flush a Google sign-up draft if any)
         let extra: any = {};
@@ -348,14 +343,6 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
 
   const cur = MARKETS[market][locale === 'ar' ? 'cur_ar' : 'cur_en'];
   const fmt = (n: number) => n.toLocaleString('en-US');
-
-  /* ---------- membership gate ---------- */
-  if (!res && pending)
-    return (
-      <div id="cv-gate" className="scroll-mt-24">
-        <EmailGate locale={locale} defaultMarket={pending.market} onDone={(u) => { setUser(u); finish(pending.text, pending.pages, pending.market, u); }} />
-      </div>
-    );
 
   /* ---------- form ---------- */
   if (!res)
@@ -524,7 +511,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         </div>
       )}
 
-      <CvSave file={file} locale={locale} profileHref={`${hrefBase}/profile`} />
+      <CvSave file={file} locale={locale} profileHref={`${hrefBase}/profile`} signedIn={!!user} signupHref={`${hrefBase}/signup?next=/cv-check`} />
       <CvRewrite locale={locale} text={cvText} res={res} market={market} model={model} whatsapp={whatsapp} />
 
       <JdMatch locale={locale} cvText={cvText} years={res.years} jd={jd} setJd={setJd} />

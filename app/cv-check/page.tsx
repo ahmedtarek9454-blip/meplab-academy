@@ -17,7 +17,7 @@ export default async function CvCheckPage() {
       <section className="relative overflow-hidden bg-ink text-white">
         <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
         <div className="container-x relative py-14 text-center md:py-16">
-          <span className="badge bg-green-500/20 px-3 py-1 text-sm text-green-300">{ar ? 'مجاني 100% — بس سجّل بإيميلك' : '100% free — just sign up with your email'}</span>
+          <span className="badge bg-green-500/20 px-3 py-1 text-sm text-green-300">{ar ? 'مجاني 100% — من غير تسجيل' : '100% free — no sign-up needed'}</span>
           <h1 className="mt-4 text-3xl font-bold md:text-4xl">{ar ? 'فحص الـ CV بنظام ATS' : 'ATS CV Checker'}</h1>
           <p className="mx-auto mt-3 max-w-2xl text-lg leading-8 text-slate-300">
             {ar
