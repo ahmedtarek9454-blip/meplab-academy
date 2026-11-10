@@ -71,7 +71,7 @@ const ar = {
   lang_switch: 'English',
 
   hero_title: 'اتعلم تصميم أنظمة التكييف والـ MEP زي ما بتتعمل في المشاريع الحقيقية',
-  hero_sub: 'افحص الـ CV بتاعك بمحرك ATS متخصص في MEP، وعدّله أوتوماتيك، وشوف وظايف تناسبك. وكورسات عملية من مهندس شغال في مشاريع كبيرة.',
+  hero_sub: 'افحص الـ CV بتاعك بمحرك ATS متخصص في MEP، وعدّله أوتوماتيك، واعرف أقرب وظيفة ليك ومرتبها. وكورسات عملية من مهندس شغال في مشاريع كبيرة.',
   hero_cta: 'افحص الـ CV بتاعك مجانًا',
   hero_cta_courses: 'شوف الكورسات',
   hero_cta2: 'إزاي أشترك؟',
@@ -239,7 +239,7 @@ const ar = {
   about_p2: 'هدفنا واحد: المهندس يخرج من عندنا عارف يعمل حاجة حقيقية في الشغل — موديل يتسلّم، حسابات يدافع عنها، وCV يعدّي الـ ATS.',
   about_v1_t: 'عملي 100%', about_v1_d: 'كل درس على مشروع حقيقي، ومع كل جزء تاسك بنصحّحه لك.',
   about_v2_t: 'بلغتك', about_v2_d: 'شرح بالعربي المصري مع المصطلحات الإنجليزية اللي هتقابلها في الشغل.',
-  about_v3_t: 'متابعة بعد الكورس', about_v3_d: 'وظايف يومية، فحص CV، وجروب دعم على واتساب.',
+  about_v3_t: 'متابعة بعد الكورس', about_v3_d: 'فحص وتعديل الـ CV، وجروب دعم على واتساب.',
   about_s1: 'كورسات مسجّلة', about_s2: 'أداة مجانية للـ Revit', about_s3: 'فحص ATS للـ MEP',
   // ---- tasks (member) ----
   task_submit: 'تسليم التاسك', task_resubmit: 'إعادة التسليم', task_file: 'ارفع ملف التاسك', task_file_hint: 'PDF / DOCX / XLSX / RVT / DWG / ZIP / صور — حتى 50 ميجا',
@@ -333,7 +333,7 @@ const en: Dict = {
   lang_switch: 'عربي',
 
   hero_title: 'Learn HVAC & MEP design the way it is done on real projects',
-  hero_sub: 'Check your CV with an MEP-specialised ATS engine, rewrite it automatically and find matching jobs. Plus practical courses from an engineer working on major projects.',
+  hero_sub: 'Check your CV with an MEP-specialised ATS engine, rewrite it automatically, and see your closest role and salary. Plus practical courses from an engineer working on major projects.',
   hero_cta: 'Check my CV for free',
   hero_cta_courses: 'Browse courses',
   hero_cta2: 'How to enroll',
@@ -501,7 +501,7 @@ const en: Dict = {
   about_p2: 'One goal: an engineer leaves us able to do real work — a model that gets accepted, calculations they can defend, and a CV that passes ATS.',
   about_v1_t: '100% practical', about_v1_d: 'Every lesson is on a real project, and every module has a graded assignment.',
   about_v2_t: 'In your language', about_v2_d: 'Egyptian Arabic explanations with the English terms you will meet at work.',
-  about_v3_t: 'Support after the course', about_v3_d: 'Daily jobs, CV checks, and a WhatsApp support group.',
+  about_v3_t: 'Support after the course', about_v3_d: 'CV checks and rewrites, and a WhatsApp support group.',
   about_s1: 'Recorded courses', about_s2: 'Free Revit tool', about_s3: 'MEP ATS check',
   // ---- tasks (member) ----
   task_submit: 'Submit assignment', task_resubmit: 'Resubmit', task_file: 'Upload your file', task_file_hint: 'PDF / DOCX / XLSX / RVT / DWG / ZIP / images — up to 50 MB',

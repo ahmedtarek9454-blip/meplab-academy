@@ -92,7 +92,7 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
 
   return (
     <div className="card overflow-hidden">
-      <div className="relative bg-gradient-to-br from-[#064e3b] via-[#047857] to-emerald-500 p-6 text-white md:p-8">
+      <div className="relative bg-sys-plumb p-6 text-white md:p-8">
         <div className="bg-grid absolute inset-0 opacity-30" />
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl">
@@ -111,9 +111,9 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
           </button>
         )}
         {!out && left <= 0 && (
-          <div className="rounded-xl bg-slate-50 p-5 ring-1 ring-slate-200">
-            <div className="font-bold text-brand-navy">{t.limit_t}</div>
-            <p className="mt-1 text-sm text-slate-600">{t.limit_d}</p>
+          <div className="rounded-sheet bg-paper p-5 ring-1 ring-line">
+            <div className="font-bold text-ink">{t.limit_t}</div>
+            <p className="mt-1 text-sm text-ink-soft">{t.limit_d}</p>
             {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" className="btn mt-3 bg-green-600 text-white hover:bg-green-700">💬 {t.wa}</a>}
           </div>
         )}
@@ -121,32 +121,32 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
         {out && (
           <div id="cv-rewrite-result" className="scroll-mt-24 space-y-6">
             <div className="grid gap-4 sm:grid-cols-[1fr,auto,1fr] sm:items-center">
-              <div className="rounded-2xl bg-slate-50 p-5 text-center ring-1 ring-slate-200"><div className="text-xs font-bold text-slate-500">{t.before} · {t.ats}</div><div className="text-4xl font-black text-slate-500">{res.score}</div></div>
+              <div className="rounded-sheet bg-paper p-5 text-center ring-1 ring-line"><div className="text-xs font-bold text-ink-mute">{t.before} · {t.ats}</div><div className="text-4xl font-bold text-ink-mute">{res.score}</div></div>
               <div className="text-center text-3xl text-emerald-600">{locale === 'ar' ? '←' : '→'}</div>
-              <div className="rounded-2xl bg-emerald-50 p-5 text-center ring-2 ring-emerald-400"><div className="text-xs font-bold text-emerald-700">{t.after} · {t.ats}</div><div className="text-4xl font-black text-emerald-700">{out.after}</div></div>
+              <div className="rounded-sheet bg-emerald-50 p-5 text-center ring-2 ring-emerald-400"><div className="text-xs font-bold text-emerald-700">{t.after} · {t.ats}</div><div className="text-4xl font-bold text-emerald-700">{out.after}</div></div>
             </div>
-            {out.report.entries === 0 && <p className="rounded-xl bg-amber-50 p-4 text-sm font-semibold text-amber-900">⚠️ {t.nojobs}</p>}
+            {out.report.entries === 0 && <p className="rounded-sheet bg-amber-50 p-4 text-sm font-semibold text-amber-900">⚠️ {t.nojobs}</p>}
 
             <div>
-              <h4 className="mb-2 font-bold text-brand-navy">✓ {t.changes}</h4>
-              <ul className="grid gap-2 sm:grid-cols-2">{out.report.changes.map((k) => <li key={k} className="rounded-xl bg-emerald-50 p-3 text-sm text-slate-700">✓ {ch(k)}</li>)}</ul>
-              {out.report.removed.length > 0 && <details className="mt-2 text-xs text-slate-500"><summary className="cursor-pointer">{t.removed}</summary><ul className="mt-1 list-disc ps-5">{out.report.removed.map((x, i) => <li key={i} dir="auto">{x}</li>)}</ul></details>}
+              <h4 className="mb-2 font-bold text-ink">✓ {t.changes}</h4>
+              <ul className="grid gap-2 sm:grid-cols-2">{out.report.changes.map((k) => <li key={k} className="rounded-sheet bg-emerald-50 p-3 text-sm text-ink-soft">✓ {ch(k)}</li>)}</ul>
+              {out.report.removed.length > 0 && <details className="mt-2 text-xs text-ink-mute"><summary className="cursor-pointer">{t.removed}</summary><ul className="mt-1 list-disc ps-5">{out.report.removed.map((x, i) => <li key={i} dir="auto">{x}</li>)}</ul></details>}
             </div>
 
             <div className="flex flex-wrap gap-3">
               <button onClick={downloadDocx} className="btn-blue px-6 py-3">{t.docx}</button>
               <button onClick={printPdf} className="btn-ghost px-6 py-3">{t.pdf}</button>
-              <span className="self-center text-xs text-slate-500">{t.pdf_hint}</span>
+              <span className="self-center text-xs text-ink-mute">{t.pdf_hint}</span>
             </div>
-            <p className="text-sm text-slate-600">✏️ {t.edit_hint}</p>
+            <p className="text-sm text-ink-soft">✏️ {t.edit_hint}</p>
 
-            <details open={showText} onToggle={(e) => setShowText((e.target as HTMLDetailsElement).open)} className="rounded-xl bg-slate-50 ring-1 ring-slate-200">
-              <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-brand-navy">{t.preview}</summary>
-              <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap px-4 pb-4 font-sans text-xs leading-5 text-slate-700" dir="ltr">{out.text}</pre>
+            <details open={showText} onToggle={(e) => setShowText((e.target as HTMLDetailsElement).open)} className="rounded-sheet bg-paper ring-1 ring-line">
+              <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-ink">{t.preview}</summary>
+              <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap px-4 pb-4 font-sans text-xs leading-5 text-ink-soft" dir="ltr">{out.text}</pre>
             </details>
           </div>
         )}
-        <p className="mt-4 text-xs leading-5 text-slate-500">{t.note}</p>
+        <p className="mt-4 text-xs leading-5 text-ink-mute">{t.note}</p>
       </div>
     </div>
   );

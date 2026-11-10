@@ -33,7 +33,7 @@ const T = {
     err: 'حصلت مشكلة، جرّب تاني بعد شوية.',
     not_conf: 'التسجيل مش متفعّل على الموقع لسه.',
     why: ['بروفايلك بيتحفظ، وكل فحص جديد بيتسجّل فيه',
-      'نتيجة ATS كاملة ومطابقة مع إعلانات الوظايف', 'تعديل الـ CV أوتوماتيك وتحميله Word و PDF', 'وظايف MEP مناسبة ليك كل يوم', 'إشعار بأي كورس جديد من MEP LAB'],
+      'نتيجة ATS كاملة ومطابقة مع إعلانات الوظايف', 'تعديل الـ CV أوتوماتيك وتحميله Word و PDF', 'إشعار بأي كورس جديد من MEP LAB'],
     privacy: 'الـ CV بيتحلل على جهازك ومش بيترفع. بنحفظ إيميلك ونتيجتك بس، ومش بنشاركهم مع حد.',
     welcome: 'أهلًا {n}! بنجهّز النتيجة...',
     login_title: 'ادخل على حسابك في MEP LAB', login_sub: 'اكتب إيميلك وهنبعتلك لينك دخول — من غير باسورد.', login_verify: 'تأكيد ودخول', login_welcome: 'أهلًا بيك تاني! بندخّلك...',
@@ -67,7 +67,7 @@ const T = {
     err: 'Something went wrong, try again shortly.',
     not_conf: 'Sign-up is not enabled on this site yet.',
     why: ['Your profile is saved and every new check is recorded in it',
-      'Full ATS score and job-post matching', 'Automatic CV rewrite with Word & PDF download', 'Matching MEP jobs every day', 'Updates on new MEP LAB courses'],
+      'Full ATS score and job-post matching', 'Automatic CV rewrite with Word & PDF download', 'Updates on new MEP LAB courses'],
     privacy: 'Your CV is analysed on your device and never uploaded. We only keep your email and result, and never share them.',
     welcome: 'Welcome {n}! Preparing your results...',
     login_title: 'Log in to MEP LAB', login_sub: 'Enter your email and we will send you a sign-in link — no password.', login_verify: 'Verify & log in', login_welcome: 'Welcome back! Signing you in...',
@@ -169,10 +169,10 @@ export default function EmailGate({ locale, onDone, nextPath = '/cv-check?resume
           <div className="mb-2 flex items-center gap-2 text-xs font-bold">
             <span className={`rounded-full px-2.5 py-0.5 ${step === 'email' ? 'bg-brand-red text-white' : 'bg-green-100 text-green-700'}`}>1 · {t.step1}</span>
             <span className="h-px w-6 bg-slate-300" />
-            <span className={`rounded-full px-2.5 py-0.5 ${step === 'email' ? 'bg-slate-100 text-slate-500' : step === 'code' ? 'bg-brand-red text-white' : 'bg-green-100 text-green-700'}`}>2 · {t.step2}</span>
+            <span className={`rounded-full px-2.5 py-0.5 ${step === 'email' ? 'bg-slate-100 text-ink-mute' : step === 'code' ? 'bg-brand-red text-white' : 'bg-green-100 text-green-700'}`}>2 · {t.step2}</span>
           </div>
-          <h3 className="text-xl font-extrabold text-brand-navy">{title}</h3>
-          <p className="mt-1 text-sm leading-6 text-slate-600">{sub}</p>
+          <h3 className="text-xl font-extrabold text-ink">{title}</h3>
+          <p className="mt-1 text-sm leading-6 text-ink-soft">{sub}</p>
 
           {step === 'email' && (
             <div className="mt-5 space-y-3">
@@ -207,31 +207,31 @@ export default function EmailGate({ locale, onDone, nextPath = '/cv-check?resume
 
           {step === 'code' && (
             <div className="mt-5 space-y-3">
-              <p className="rounded-xl bg-green-50 p-3 text-sm text-green-800">✉️ {t.code_sent.replace('{e}', email.trim())}</p>
+              <p className="rounded-sheet bg-green-50 p-3 text-sm text-green-800">✉️ {t.code_sent.replace('{e}', email.trim())}</p>
               <div><label className="label">{t.code}</label><input ref={codeRef} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} onKeyDown={(e) => e.key === 'Enter' && verify()} className="input text-center font-mono text-2xl tracking-[0.5em]" dir="ltr" inputMode="numeric" autoComplete="one-time-code" placeholder="••••••" /></div>
               <button onClick={verify} disabled={busy} className="btn-red w-full py-3">{busy ? t.verifying : verifyLabel}</button>
               <div className="flex justify-between text-sm">
                 <button type="button" onClick={send} disabled={busy} className="font-semibold text-brand-blue">{t.resend}</button>
-                <button type="button" onClick={() => { setStep('email'); setCode(''); }} className="text-slate-500">{t.change}</button>
+                <button type="button" onClick={() => { setStep('email'); setCode(''); }} className="text-ink-mute">{t.change}</button>
               </div>
             </div>
           )}
 
-          {step === 'ok' && <p className="mt-5 rounded-xl bg-green-50 p-4 font-bold text-green-800">✓ {welcome.replace('{n}', name.trim() || '')}</p>}
+          {step === 'ok' && <p className="mt-5 rounded-sheet bg-green-50 p-4 font-bold text-green-800">✓ {welcome.replace('{n}', name.trim() || '')}</p>}
           {mode !== 'cv' && step === 'email' && (
-            <p className="mt-4 text-center text-sm text-slate-600">{login ? t.no_account : t.have_account}{' '}
+            <p className="mt-4 text-center text-sm text-ink-soft">{login ? t.no_account : t.have_account}{' '}
               <a href={`${login ? '/signup' : '/login'}?next=${encodeURIComponent(nextPath)}`} className="font-bold text-brand-blue">{login ? t.go_signup : t.go_login}</a></p>
           )}
 
-          {err && <p role="alert" className="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {err}</p>}
-          {mode === 'cv' && <p className="mt-4 text-xs leading-5 text-slate-500">🔒 {t.privacy}</p>}
+          {err && <p role="alert" className="mt-3 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {err}</p>}
+          {mode === 'cv' && <p className="mt-4 text-xs leading-5 text-ink-mute">🔒 {t.privacy}</p>}
         </div>
 
-        <div className="relative hidden bg-brand-navy p-6 text-white md:block">
+        <div className="relative hidden bg-ink p-6 text-white md:block">
           <div className="bg-grid absolute inset-0 opacity-40" />
           <div className="relative">
             <Mark className="h-12 w-12" mono="#fff" center="#E53935" />
-            <div className="mt-3 text-lg font-black" dir="ltr">MEP <span className="text-brand-red">LAB</span></div>
+            <div className="mt-3 text-lg font-bold" dir="ltr">MEP <span className="text-brand-red">LAB</span></div>
             <ul className="mt-4 space-y-2 text-sm text-slate-200">{t.why.map((w) => <li key={w}>✓ {w}</li>)}</ul>
           </div>
         </div>

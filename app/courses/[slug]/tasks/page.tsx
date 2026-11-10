@@ -24,9 +24,9 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
     return (
       <section className="container-x max-w-2xl py-14 text-center">
         <div className="card p-10">
-          <div className="text-5xl">🔒</div>
-          <h1 className="mt-4 text-2xl font-extrabold text-brand-navy">{t.task_not_enrolled}</h1>
-          <p className="mt-2 text-slate-600">{L(c, 'title', locale)}</p>
+          <div className="text-5xl"></div>
+          <h1 className="mt-4 text-2xl font-extrabold text-ink">{t.task_not_enrolled}</h1>
+          <p className="mt-2 text-ink-soft">{L(c, 'title', locale)}</p>
           <Link href={`/courses/${slug}`} className="btn-red mt-6">{t.enroll}</Link>
         </div>
       </section>
@@ -53,17 +53,17 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="eyebrow">{t.tasks_title}</p>
-          <h1 className="text-2xl font-extrabold text-brand-navy">{L(c, 'title', locale)}</h1>
+          <h1 className="text-2xl font-extrabold text-ink">{L(c, 'title', locale)}</h1>
         </div>
-        <div className="text-sm font-semibold text-slate-600">{done} {t.tasks_done} {t.tasks_total} {list.length}</div>
+        <div className="text-sm font-semibold text-ink-soft">{done} {t.tasks_done} {t.tasks_total} {list.length}</div>
       </div>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full bg-green-500 transition-all" style={{ width: `${list.length ? (done / list.length) * 100 : 0}%` }} /></div>
 
-      {sp.sent && <p className="mt-4 rounded-xl bg-green-50 p-3 font-semibold text-green-800">{t.task_sent}</p>}
-      {sp.error && <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {errMsg[sp.error] || sp.error}</p>}
+      {sp.sent && <p className="mt-4 rounded-sheet bg-green-50 p-3 font-semibold text-green-800">{t.task_sent}</p>}
+      {sp.error && <p className="mt-4 rounded-sheet bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {errMsg[sp.error] || sp.error}</p>}
 
       {list.length === 0 ? (
-        <div className="card mt-6 p-10 text-center text-slate-600">{t.task_no_tasks}</div>
+        <div className="card mt-6 p-10 text-center text-ink-soft">{t.task_no_tasks}</div>
       ) : (
         <div className="mt-6 space-y-5">
           {list.map((task: any, i: number) => {
@@ -73,14 +73,14 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
             const canSubmit = !graded;
             return (
               <div key={task.id} id={`task-${task.id}`} className="card overflow-hidden">
-                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 p-5">
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line p-5">
                   <div className="flex gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-navy font-black text-white">{i + 1}</span>
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sheet bg-ink font-bold text-white">{i + 1}</span>
                     <div>
-                      <h2 className="text-lg font-bold text-brand-navy">{L(task, 'title', locale)}</h2>
-                      <div className="mt-1 flex flex-wrap gap-2 text-xs text-slate-500">
-                        <span className="badge bg-slate-100 text-slate-600">{task.kind === 'quiz' ? '☑️ ' + t.task_kind_quiz : '📎 ' + t.task_kind_file}</span>
-                        <span className="badge bg-slate-100 text-slate-600" dir="ltr">{task.max_score} pts</span>
+                      <h2 className="text-lg font-bold text-ink">{L(task, 'title', locale)}</h2>
+                      <div className="mt-1 flex flex-wrap gap-2 text-xs text-ink-mute">
+                        <span className="badge bg-slate-100 text-ink-soft">{task.kind === 'quiz' ? '☑️ ' + t.task_kind_quiz : '📎 ' + t.task_kind_file}</span>
+                        <span className="badge bg-slate-100 text-ink-soft" dir="ltr">{task.max_score} pts</span>
                         {task.due_at && <span className="badge bg-amber-50 text-amber-700">{t.task_due}: {new Date(task.due_at).toLocaleDateString(ar ? 'ar-EG' : 'en-GB')}</span>}
                       </div>
                     </div>
@@ -88,18 +88,18 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
                   {s ? (
                     graded ? <span className="badge bg-green-100 text-green-800">✓ {t.task_graded} · {t.task_score}: <b dir="ltr">{s.score}/{task.max_score}</b></span>
                       : <span className="badge bg-amber-100 text-amber-800">⏳ {t.task_submitted}</span>
-                  ) : <span className="badge bg-slate-100 text-slate-600">—</span>}
+                  ) : <span className="badge bg-slate-100 text-ink-soft">—</span>}
                 </div>
 
                 <div className="p-5">
-                  {L(task, 'desc', locale) && <p className="whitespace-pre-line leading-7 text-slate-700">{L(task, 'desc', locale)}</p>}
+                  {L(task, 'desc', locale) && <p className="whitespace-pre-line leading-7 text-ink-soft">{L(task, 'desc', locale)}</p>}
 
                   {/* previous submission */}
                   {s && (
-                    <div className="mt-4 rounded-xl bg-slate-50 p-4 text-sm">
-                      <div className="text-xs text-slate-500" dir="ltr">{t.task_attempt} {s.attempt} · {fmt(s.submitted_at)}</div>
-                      {s.file_name && <div className="mt-1 font-semibold text-slate-700">📎 {t.task_your_file}: <span dir="ltr">{s.file_name}</span></div>}
-                      {s.note && <div className="mt-1 text-slate-600">💬 {s.note}</div>}
+                    <div className="mt-4 rounded-sheet bg-paper p-4 text-sm">
+                      <div className="text-xs text-ink-mute" dir="ltr">{t.task_attempt} {s.attempt} · {fmt(s.submitted_at)}</div>
+                      {s.file_name && <div className="mt-1 font-semibold text-ink-soft">📎 {t.task_your_file}: <span dir="ltr">{s.file_name}</span></div>}
+                      {s.note && <div className="mt-1 text-ink-soft">💬 {s.note}</div>}
                       {task.kind === 'quiz' && graded && Array.isArray(s.answers) && (
                         <ul className="mt-3 space-y-1.5">
                           {quiz.map((q, qi) => {
@@ -111,7 +111,7 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
                       {graded && s.feedback && (
                         <div className="mt-3 rounded-lg border border-green-200 bg-white p-3">
                           <div className="text-xs font-bold text-green-700">{t.task_feedback}</div>
-                          <p className="mt-1 whitespace-pre-line leading-6 text-slate-700">{s.feedback}</p>
+                          <p className="mt-1 whitespace-pre-line leading-6 text-ink-soft">{s.feedback}</p>
                         </div>
                       )}
                     </div>
@@ -124,14 +124,14 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
                       <input type="hidden" name="task_id" value={task.id} />
                       {task.kind === 'quiz' ? (
                         <>
-                          <p className="text-sm font-semibold text-slate-600">{t.task_quiz} <span className="font-normal text-slate-400">· {t.task_answers_hint}</span></p>
+                          <p className="text-sm font-semibold text-ink-soft">{t.task_quiz} <span className="font-normal text-slate-400">· {t.task_answers_hint}</span></p>
                           <ol className="space-y-3">
                             {quiz.map((q, qi) => (
-                              <li key={qi} className="rounded-xl border border-slate-200 p-4">
-                                <div className="font-semibold text-brand-navy">{qi + 1}. {q.q}</div>
+                              <li key={qi} className="rounded-sheet border border-line p-4">
+                                <div className="font-semibold text-ink">{qi + 1}. {q.q}</div>
                                 <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
                                   {q.options.map((o, oi) => (
-                                    <label key={oi} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-50">
+                                    <label key={oi} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-paper">
                                       <input type="radio" name={`q${qi}`} value={oi} required className="h-4 w-4" /> {o}
                                     </label>
                                   ))}
@@ -144,7 +144,7 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
                         <div>
                           <label className="label">{t.task_file}</label>
                           <input type="file" name="file" required className="input" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.rvt,.rfa,.dwg,.dxf,.nwc,.nwd,.ifc,.zip,.rar,.7z,.png,.jpg,.jpeg,.webp,.txt,.csv" />
-                          <p className="mt-1 text-xs text-slate-500" dir="ltr">{t.task_file_hint}</p>
+                          <p className="mt-1 text-xs text-ink-mute" dir="ltr">{t.task_file_hint}</p>
                         </div>
                       )}
                       <div>
@@ -163,7 +163,7 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href={`/courses/${slug}`} className="btn-ghost">← {L(c, 'title', locale)}</Link>
-        <Link href="/profile" className="btn-ghost">👤 {t.nav_profile}</Link>
+        <Link href="/profile" className="btn-ghost"> {t.nav_profile}</Link>
         {wa && <a href={`https://wa.me/${wa}`} target="_blank" className="btn bg-green-600 text-white hover:bg-green-700">{t.need_help}</a>}
       </div>
     </section>

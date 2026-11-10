@@ -6,7 +6,7 @@ export function Mark({ className = 'h-9 w-9', center = '#0B1B3A', mono }: { clas
   return (
     <svg viewBox="0 0 48 48" className={className} aria-hidden>
       {[0, 60, 120, 180, 240, 300].map((a, i) => (
-        <g key={a} transform={`rotate(${a} 24 24)`} stroke={mono || (i % 2 ? '#1E5BD6' : '#E53935')} strokeWidth="3.2" strokeLinecap="round" fill="none">
+        <g key={a} transform={`rotate(${a} 24 24)`} stroke={mono || (i % 2 ? '#1F6FB2' : '#E53935')} strokeWidth="3.2" strokeLinecap="round" fill="none">
           <path d="M24 24V5" />
           <path d="M24 11l-5-4M24 11l5-4" />
         </g>
@@ -25,7 +25,7 @@ export default function Logo({ light = false }: { light?: boolean }) {
       ) : (
         <Mark center={light ? '#fff' : '#0B1B3A'} />
       )}
-      <span className={`text-xl font-black tracking-wide ${light ? 'text-white' : 'text-brand-navy'}`} dir="ltr">
+      <span className={`text-lg font-bold tracking-wide ${light ? 'text-white' : 'text-ink'}`} dir="ltr">
         MEP <span className="text-brand-red">LAB</span>
       </span>
     </span>

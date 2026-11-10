@@ -51,9 +51,9 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
   return (
     <section className="space-y-6">
       <div className="card relative overflow-hidden">
-        <div className="grid items-center gap-6 bg-brand-navy p-6 text-white md:grid-cols-[auto,1fr] md:p-8">
+        <div className="grid items-center gap-6 bg-ink p-6 text-white md:grid-cols-[auto,1fr] md:p-8">
           <div className="bg-grid absolute inset-0 opacity-30" />
-          <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-white/10 ring-1 ring-white/15"><Mark className="h-16 w-16" mono="#fff" center="#E53935" /></div>
+          <div className="relative flex h-24 w-24 items-center justify-center rounded-sheet bg-white/10 ring-1 ring-white/15"><Mark className="h-16 w-16" mono="#fff" center="#E53935" /></div>
           <div className="relative">
             <span className="badge bg-brand-red text-white">{t.tag}</span>
             <h3 className="mt-2 text-2xl font-extrabold">{t.title}</h3>
@@ -70,27 +70,27 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <div className="mb-3 flex items-end justify-between">
-            <h3 className="text-xl font-extrabold text-brand-navy">🎓 {t.courses}</h3>
+            <h3 className="text-xl font-extrabold text-ink">🎓 {t.courses}</h3>
             <a href={hrefs.courses} className="text-sm font-bold text-brand-blue">{t.all} {locale === 'ar' ? '←' : '→'}</a>
           </div>
           {courses.length ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {courses.slice(0, 4).map((c) => (
-                <a key={c.slug} href={hrefs.course(c.slug)} className="card group flex flex-col p-5 transition hover:-translate-y-0.5 hover:shadow-md">
-                  <div className="font-bold text-brand-navy group-hover:text-brand-blue">{L(c, 'title')}</div>
-                  <p className="mt-1 line-clamp-2 flex-1 text-sm leading-6 text-slate-600">{L(c, 'desc')}</p>
+                <a key={c.slug} href={hrefs.course(c.slug)} className="card group flex flex-col p-5 transition">
+                  <div className="font-bold text-ink group-hover:text-brand-blue">{L(c, 'title')}</div>
+                  <p className="mt-1 line-clamp-2 flex-1 text-sm leading-6 text-ink-soft">{L(c, 'desc')}</p>
                   <div className="mt-3 flex items-center justify-between text-sm">
-                    <span className="font-black text-brand-red">{c.price_egp} <span className="text-xs font-bold">{t.egp}</span></span>
-                    <span className="text-xs text-slate-500">{c.access_days ? `${c.access_days} ${t.days}` : t.lifetime} · <span className="font-bold text-brand-blue">{t.view}</span></span>
+                    <span className="font-bold text-brand-red">{c.price_egp} <span className="text-xs font-bold">{t.egp}</span></span>
+                    <span className="text-xs text-ink-mute">{c.access_days ? `${c.access_days} ${t.days}` : t.lifetime} · <span className="font-bold text-brand-blue">{t.view}</span></span>
                   </div>
                 </a>
               ))}
             </div>
-          ) : <div className="card p-6 text-sm text-slate-600">{t.no_courses}</div>}
+          ) : <div className="card p-6 text-sm text-ink-soft">{t.no_courses}</div>}
         </div>
 
         <div className="card flex flex-col overflow-hidden">
-          <div className="bg-gradient-to-br from-brand-navy to-brand-blue p-5 text-white">
+          <div className="bg-ink p-5 text-white">
             <div className="text-3xl">🎬</div>
             <div className="mt-2 text-lg font-extrabold" dir="ltr" style={{ textAlign: 'inherit' }}>{t.player_t}</div>
             <p className="mt-1 text-sm leading-6 text-slate-200">{t.player_d}</p>

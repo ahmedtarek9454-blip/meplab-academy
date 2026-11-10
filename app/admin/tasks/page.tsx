@@ -43,17 +43,17 @@ export default async function AdminTasks({ searchParams }: { searchParams: Promi
     <div className="card p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="font-bold text-brand-navy">{s.profiles?.full_name || '—'}</div>
-          <div className="text-xs text-slate-500" dir="ltr">{s.profiles?.email}{s.profiles?.phone ? ` · ${s.profiles.phone}` : ''}</div>
-          <div className="mt-1 text-sm font-semibold text-slate-700">📝 {L(s.course_tasks, 'title', locale)} <span className="text-xs text-slate-400">· {t.task_attempt} {s.attempt} · {fmt(s.submitted_at)}</span></div>
+          <div className="font-bold text-ink">{s.profiles?.full_name || '—'}</div>
+          <div className="text-xs text-ink-mute" dir="ltr">{s.profiles?.email}{s.profiles?.phone ? ` · ${s.profiles.phone}` : ''}</div>
+          <div className="mt-1 text-sm font-semibold text-ink-soft">📝 {L(s.course_tasks, 'title', locale)} <span className="text-xs text-slate-400">· {t.task_attempt} {s.attempt} · {fmt(s.submitted_at)}</span></div>
         </div>
         <span className={`badge ${s.status === 'graded' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>{s.status === 'graded' ? `${t.task_graded} · ${s.score}/${s.course_tasks?.max_score}` : t.waiting_grade}</span>
       </div>
-      {s.note && <p className="mt-2 rounded-lg bg-slate-50 p-2 text-sm text-slate-600">💬 {s.note}</p>}
+      {s.note && <p className="mt-2 rounded-lg bg-paper p-2 text-sm text-ink-soft">💬 {s.note}</p>}
       {s.file_path && (urls[s.id]
         ? <a href={urls[s.id]} target="_blank" rel="noopener" className="btn-blue btn-sm mt-3">⬇ {t.download_file} <span dir="ltr" className="font-mono text-xs">{s.file_name}</span></a>
         : <p className="mt-2 text-xs text-slate-400" dir="ltr">{s.file_name}</p>)}
-      {s.course_tasks?.kind === 'quiz' && Array.isArray(s.answers) && <p className="mt-2 text-xs text-slate-500" dir="ltr">answers: {s.answers.join(', ')}</p>}
+      {s.course_tasks?.kind === 'quiz' && Array.isArray(s.answers) && <p className="mt-2 text-xs text-ink-mute" dir="ltr">answers: {s.answers.join(', ')}</p>}
       <form action={gradeSubmission} className="mt-4 grid gap-2 sm:grid-cols-[110px,1fr,auto]">
         <input type="hidden" name="id" value={s.id} /><input type="hidden" name="back" value={back} />
         <input name="score" type="number" step="0.5" min="0" max={s.course_tasks?.max_score || 10} defaultValue={s.score ?? ''} required className="input" dir="ltr" placeholder={`/${s.course_tasks?.max_score}`} />
@@ -62,7 +62,7 @@ export default async function AdminTasks({ searchParams }: { searchParams: Promi
       </form>
       {s.status === 'graded' && (
         <form action={reopenSubmission} className="mt-2"><input type="hidden" name="id" value={s.id} /><input type="hidden" name="back" value={back} />
-          <button className="text-xs font-semibold text-slate-500 hover:text-brand-blue">↺ {ar ? 'افتح لإعادة التسليم' : 'Reopen for resubmission'}</button></form>
+          <button className="text-xs font-semibold text-ink-mute hover:text-brand-blue">↺ {ar ? 'افتح لإعادة التسليم' : 'Reopen for resubmission'}</button></form>
       )}
     </div>
   );
@@ -81,14 +81,14 @@ export default async function AdminTasks({ searchParams }: { searchParams: Promi
       {/* course tabs */}
       <div className="mt-6 flex flex-wrap gap-2">
         {cs.map((c: any) => (
-          <Link key={c.id} href={`/admin/tasks?course=${c.id}`} className={`rounded-full px-4 py-1.5 text-sm font-semibold ${c.id === courseId ? 'bg-brand-navy text-white' : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50'}`}>{L(c, 'title', locale)}</Link>
+          <Link key={c.id} href={`/admin/tasks?course=${c.id}`} className={`rounded-full px-4 py-1.5 text-sm font-semibold ${c.id === courseId ? 'bg-ink text-white' : 'bg-white text-ink-soft ring-1 ring-line hover:bg-paper'}`}>{L(c, 'title', locale)}</Link>
         ))}
       </div>
 
       {showForm && (
         <form action={saveTask} className="card mt-6 space-y-4 p-6">
-          <h2 className="text-lg font-bold text-brand-navy">{editing ? t.edit_task : t.new_task}</h2>
-          {sp.error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700" dir="ltr">{sp.error}</p>}
+          <h2 className="text-lg font-bold text-ink">{editing ? t.edit_task : t.new_task}</h2>
+          {sp.error && <p className="rounded-sheet bg-red-50 p-3 text-sm text-red-700" dir="ltr">{sp.error}</p>}
           <input type="hidden" name="id" value={tk.id ?? ''} /><input type="hidden" name="course_id" value={courseId} />
           <div className="grid gap-4 md:grid-cols-2">
             <div><label className="label">{t.task_title_ar} *</label><input name="title_ar" required defaultValue={tk.title_ar ?? ''} className="input" /></div>
@@ -103,7 +103,7 @@ export default async function AdminTasks({ searchParams }: { searchParams: Promi
             <div className="md:col-span-2">
               <label className="label">{t.quiz_label} <span className="font-normal text-slate-400">({t.task_kind_quiz})</span></label>
               <textarea name="quiz_text" rows={8} defaultValue={quizToText(tk.quiz)} className="input font-mono text-sm" dir="auto" placeholder={'ما وحدة الضغط الاستاتيكي؟\n- m³/h\n* Pa\n- kW\n\nسؤال تاني...\n* ...'} />
-              <p className="mt-1 text-xs text-slate-500">{t.quiz_hint}</p>
+              <p className="mt-1 text-xs text-ink-mute">{t.quiz_hint}</p>
             </div>
           </div>
           <label className="flex items-center gap-2 font-semibold"><input type="checkbox" name="published" defaultChecked={tk.published ?? true} className="h-5 w-5" /> {t.published}</label>
@@ -112,22 +112,22 @@ export default async function AdminTasks({ searchParams }: { searchParams: Promi
       )}
 
       {/* tasks list */}
-      <h2 className="mt-8 mb-3 text-xl font-bold text-brand-navy">{t.tasks_title} ({list.length})</h2>
-      {list.length === 0 ? <div className="card p-8 text-center text-slate-500">{t.task_no_tasks}</div> : (
-        <div className="card divide-y divide-slate-100">
+      <h2 className="mt-8 mb-3 text-xl font-bold text-ink">{t.tasks_title} ({list.length})</h2>
+      {list.length === 0 ? <div className="card p-8 text-center text-ink-mute">{t.task_no_tasks}</div> : (
+        <div className="card divide-y divide-line">
           {list.map((x: any, i: number) => {
             const n = allSubs.filter((s: any) => s.task_id === x.id).length;
             return (
               <div key={x.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-sm font-bold text-slate-600">{i + 1}</span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-sm font-bold text-ink-soft">{i + 1}</span>
                   <div>
-                    <div className="font-bold text-brand-navy">{x.title_ar}</div>
-                    <div className="text-xs text-slate-500">{x.kind === 'quiz' ? `☑️ ${t.task_kind_quiz} · ${Array.isArray(x.quiz) ? x.quiz.length : 0} Q` : `📎 ${t.task_kind_file}`} · {x.max_score} pts · {n} {t.submissions}</div>
+                    <div className="font-bold text-ink">{x.title_ar}</div>
+                    <div className="text-xs text-ink-mute">{x.kind === 'quiz' ? `☑️ ${t.task_kind_quiz} · ${Array.isArray(x.quiz) ? x.quiz.length : 0} Q` : `📎 ${t.task_kind_file}`} · {x.max_score} pts · {n} {t.submissions}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`badge ${x.published ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'}`}>{x.published ? t.published : t.draft}</span>
+                  <span className={`badge ${x.published ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-ink-soft'}`}>{x.published ? t.published : t.draft}</span>
                   <Link href={`${back}&edit=${x.id}`} className="btn-ghost btn-sm">{t.edit}</Link>
                   <form action={deleteTask}><input type="hidden" name="id" value={x.id} /><input type="hidden" name="course_id" value={courseId} /><button className="btn-ghost btn-sm text-red-600">✕</button></form>
                 </div>
@@ -138,12 +138,12 @@ export default async function AdminTasks({ searchParams }: { searchParams: Promi
       )}
 
       {/* submissions */}
-      <h2 className="mt-10 mb-3 text-xl font-bold text-brand-navy">{t.waiting_grade} ({pendingSubs.length})</h2>
-      {pendingSubs.length === 0 ? <div className="card p-8 text-center text-slate-500">{t.no_submissions}</div> : <div className="grid gap-4 lg:grid-cols-2">{pendingSubs.map((s: any) => <SubCard key={s.id} s={s} />)}</div>}
+      <h2 className="mt-10 mb-3 text-xl font-bold text-ink">{t.waiting_grade} ({pendingSubs.length})</h2>
+      {pendingSubs.length === 0 ? <div className="card p-8 text-center text-ink-mute">{t.no_submissions}</div> : <div className="grid gap-4 lg:grid-cols-2">{pendingSubs.map((s: any) => <SubCard key={s.id} s={s} />)}</div>}
 
       {gradedSubs.length > 0 && (
         <>
-          <h2 className="mt-10 mb-3 text-xl font-bold text-brand-navy">{t.task_graded} ({gradedSubs.length})</h2>
+          <h2 className="mt-10 mb-3 text-xl font-bold text-ink">{t.task_graded} ({gradedSubs.length})</h2>
           <div className="grid gap-4 lg:grid-cols-2">{gradedSubs.map((s: any) => <SubCard key={s.id} s={s} />)}</div>
         </>
       )}

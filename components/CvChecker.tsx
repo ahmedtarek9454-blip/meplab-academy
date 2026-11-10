@@ -272,7 +272,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
 
   // after analysis: load matching jobs for the detected role & market
   useEffect(() => {
-    if (!res) { setJobs([]); return; }
+    if (!res || process.env.NEXT_PUBLIC_JOBS !== '1') { setJobs([]); return; }
     const role = res.roles[0].role.id;
     const mock = (window as any).__JOBS_MOCK__ as any[] | undefined;
     if (mock) { setJobs(mock.filter((j) => j.market === market && j.role_id === role).slice(0, 5)); return; }
@@ -366,12 +366,12 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
           onDragLeave={() => setDrag(false)}
           onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files?.[0]; if (f) setFile(f); }}
-          className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-10 text-center transition ${drag ? 'border-brand-blue bg-blue-50' : needFile ? 'animate-pulse border-red-400 bg-red-50' : file ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-brand-blue hover:bg-slate-50'}`}
+          className={`flex cursor-pointer flex-col items-center justify-center rounded-sheet border-2 border-dashed p-10 text-center transition ${drag ? 'border-brand-blue bg-blue-50' : needFile ? 'animate-pulse border-red-400 bg-red-50' : file ? 'border-green-400 bg-green-50' : 'border-line hover:border-brand-blue hover:bg-paper'}`}
         >
           <input ref={inp} type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-navy text-2xl text-white">{file ? '✓' : '⬆'}</div>
-          <div className="mt-4 font-bold text-brand-navy">{file ? file.name : t.drop}</div>
-          <div className="mt-1 text-sm text-slate-500">{t.types}</div>
+          <div className="flex h-14 w-14 items-center justify-center rounded-sheet bg-ink text-2xl text-white">{file ? '✓' : '⬆'}</div>
+          <div className="mt-4 font-bold text-ink">{file ? file.name : t.drop}</div>
+          <div className="mt-1 text-sm text-ink-mute">{t.types}</div>
         </div>
 
         <details className="mt-4">
@@ -384,18 +384,18 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           <div className="grid grid-cols-3 gap-2">
             {(Object.keys(MARKETS) as Market[]).map((m) => (
               <button key={m} type="button" onClick={() => setMarket(m)}
-                className={`rounded-xl border-2 px-3 py-2.5 text-sm font-bold transition ${market === m ? 'border-brand-blue bg-blue-50 text-brand-blue' : 'border-slate-200 text-slate-600 hover:border-slate-300'}`}>
+                className={`rounded-sheet border-2 px-3 py-2.5 text-sm font-bold transition ${market === m ? 'border-brand-blue bg-blue-50 text-brand-blue' : 'border-line text-ink-soft hover:border-line'}`}>
                 {MARKETS[m][locale === 'ar' ? 'name_ar' : 'name_en']}
               </button>
             ))}
           </div>
         </div>
 
-        {err && <p role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {err}</p>}
+        {err && <p role="alert" className="mt-4 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {err}</p>}
         <button onClick={() => run()} disabled={!!busy} className="btn-red mt-6 w-full py-3 text-lg">
           {busy ? <><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> {busy}</> : t.analyze}
         </button>
-        <p className="mt-4 text-center text-xs text-slate-500">{t.privacy}</p>
+        <p className="mt-4 text-center text-xs text-ink-mute">{t.privacy}</p>
       </div>
     );
 
@@ -412,7 +412,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       <div className="grid gap-6 lg:grid-cols-3">
         {/* score */}
         <div className="card flex flex-col items-center p-6 text-center">
-          <div className="text-sm font-bold text-slate-500">{t.score}</div>
+          <div className="text-sm font-bold text-ink-mute">{t.score}</div>
           <svg viewBox="0 0 128 128" className="my-3 h-40 w-40 -rotate-90">
             <circle cx="64" cy="64" r={R} fill="none" stroke="#e2e8f0" strokeWidth="12" />
             <circle cx="64" cy="64" r={R} fill="none" stroke={col} strokeWidth="12" strokeLinecap="round"
@@ -420,28 +420,28 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
             <text x="64" y="64" transform="rotate(90 64 64)" textAnchor="middle" dominantBaseline="central" fontSize="34" fontWeight="900" fill="#0B1B3A">{res.score}</text>
           </svg>
           <div className="font-bold" style={{ color: col }}>{verdict}</div>
-          <div className="mt-1 text-xs text-slate-500">{fmt(res.words)} {t.words}</div>
-          <div className="mt-3 rounded-lg bg-slate-50 px-3 py-1.5 text-[11px] text-slate-500">
+          <div className="mt-1 text-xs text-ink-mute">{fmt(res.words)} {t.words}</div>
+          <div className="mt-3 rounded-lg bg-paper px-3 py-1.5 text-[11px] text-ink-mute">
             🧠 {t.engine} <span dir="ltr">v{res.model.version}</span> · {res.model.jobs_used ? t.model_trained.replace('{n}', fmt(res.model.jobs_used)) : t.model_prior}
           </div>
         </div>
 
         {/* role */}
         <div className="card p-6">
-          <div className="text-sm font-bold text-slate-500">{t.best_role}</div>
-          <div className="mt-2 text-xl font-extrabold leading-snug text-brand-navy">{locale === 'ar' ? top.role.ar : top.role.en}</div>
+          <div className="text-sm font-bold text-ink-mute">{t.best_role}</div>
+          <div className="mt-2 text-xl font-extrabold leading-snug text-ink">{locale === 'ar' ? top.role.ar : top.role.en}</div>
           <div className="mt-3 flex items-center gap-3">
             <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-brand-blue" style={{ width: `${top.pct}%` }} /></div>
-            <span className="text-sm font-black text-brand-blue">{top.pct}%</span>
+            <span className="text-sm font-bold text-brand-blue">{top.pct}%</span>
           </div>
           {others.length > 0 && (
             <>
-              <div className="mt-5 text-xs font-bold text-slate-500">{t.other_roles}</div>
+              <div className="mt-5 text-xs font-bold text-ink-mute">{t.other_roles}</div>
               <ul className="mt-2 space-y-2">
                 {others.map((r) => (
                   <li key={r.role.id} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="text-slate-700">{locale === 'ar' ? r.role.ar : r.role.en}</span>
-                    <span className="font-bold text-slate-500">{r.pct}%</span>
+                    <span className="text-ink-soft">{locale === 'ar' ? r.role.ar : r.role.en}</span>
+                    <span className="font-bold text-ink-mute">{r.pct}%</span>
                   </li>
                 ))}
               </ul>
@@ -450,18 +450,18 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         </div>
 
         {/* salary */}
-        <div className="card relative overflow-hidden bg-brand-navy p-6 text-white ring-0">
+        <div className="card relative overflow-hidden bg-ink p-6 text-white ring-0">
           <div className="bg-grid absolute inset-0 opacity-60" />
           <div className="relative">
             <div className="text-sm font-bold text-slate-300">{t.salary} — {MARKETS[market][locale === 'ar' ? 'name_ar' : 'name_en']}</div>
-            <div className="mt-3 text-3xl font-black leading-tight">
+            <div className="mt-3 text-3xl font-bold leading-tight">
               <span dir="ltr">{fmt(res.salary.min)} – {fmt(res.salary.max)}</span>
               <span className="ms-2 text-base font-bold text-red-300">{cur}</span>
             </div>
             <div className="text-sm text-slate-300">{t.per_month}</div>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div className="rounded-xl bg-white/10 p-3"><div className="text-xs text-slate-300">{t.exp}</div><div className="font-bold">{res.years} {t.years}</div></div>
-              <div className="rounded-xl bg-white/10 p-3"><div className="text-xs text-slate-300">{t.level}</div><div className="font-bold">{LEVELS[res.level][locale]}</div></div>
+              <div className="rounded-sheet bg-white/10 p-3"><div className="text-xs text-slate-300">{t.exp}</div><div className="font-bold">{res.years} {t.years}</div></div>
+              <div className="rounded-sheet bg-white/10 p-3"><div className="text-xs text-slate-300">{t.level}</div><div className="font-bold">{LEVELS[res.level][locale]}</div></div>
             </div>
             <p className="mt-3 text-[11px] leading-5 text-slate-400">{res.salary.source === 'model' ? t.salary_model.replace('{n}', String(res.salary.n)) : t.salary_note}</p>
           </div>
@@ -471,16 +471,16 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       <div className="grid gap-6 lg:grid-cols-5">
         {/* checks */}
         <div className="card p-6 lg:col-span-3">
-          <h3 className="mb-4 text-lg font-bold text-brand-navy">{t.checks}</h3>
+          <h3 className="mb-4 text-lg font-bold text-ink">{t.checks}</h3>
           <ul className="space-y-3">
             {sorted.map((c) => {
               const [title, tip] = CHECKS[c.id][locale];
               return (
                 <li key={c.id} className="flex gap-3">
-                  <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-black ${ST[c.status].cls}`}>{ST[c.status].icon}</span>
+                  <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${ST[c.status].cls}`}>{ST[c.status].icon}</span>
                   <div>
-                    <div className={`font-semibold ${c.status === 'pass' ? 'text-slate-600' : 'text-brand-navy'}`}>{title}</div>
-                    {c.status !== 'pass' && <div className="text-sm text-slate-500">{tip}</div>}
+                    <div className={`font-semibold ${c.status === 'pass' ? 'text-ink-soft' : 'text-ink'}`}>{title}</div>
+                    {c.status !== 'pass' && <div className="text-sm text-ink-mute">{tip}</div>}
                   </div>
                 </li>
               );
@@ -491,13 +491,13 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         {/* keywords */}
         <div className="space-y-6 lg:col-span-2">
           <div className="card p-6">
-            <h3 className="mb-3 font-bold text-brand-navy">{t.missing_kw}</h3>
+            <h3 className="mb-3 font-bold text-ink">{t.missing_kw}</h3>
             <div className="flex flex-wrap gap-2" dir="ltr">
               {top.missing.map((k) => <span key={k} className="rounded-lg border border-dashed border-red-300 bg-red-50 px-2.5 py-1 text-sm font-semibold text-red-700">+ {k}</span>)}
             </div>
           </div>
           <div className="card p-6">
-            <h3 className="mb-3 font-bold text-brand-navy">{t.found_kw} ({res.skills.length})</h3>
+            <h3 className="mb-3 font-bold text-ink">{t.found_kw} ({res.skills.length})</h3>
             <div className="space-y-3">
               {Object.entries(res.skills.reduce((g: Record<string, typeof res.skills>, k) => ((g[k.cat] ||= []).push(k), g), {})).map(([cat, list]) => (
                 <div key={cat}>
@@ -509,18 +509,18 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
               ))}
             </div>
           </div>
-          <div className="card bg-gradient-to-br from-brand-red to-[#b71c1c] p-6 text-white ring-0">
+          <div className="card bg-brand-red p-6 text-white ring-0">
             <div className="font-bold">{t.cta_t}</div>
             <a href={coursesHref} className="btn mt-3 bg-white text-brand-red hover:bg-red-50">{t.cta_b}</a>
           </div>
         </div>
       </div>
 
-      {ocrUsed && <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">📷 {t.ocr_note}</p>}
+      {ocrUsed && <p className="rounded-sheet border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">📷 {t.ocr_note}</p>}
 
       {res.alerts.length > 0 && (
         <div className="space-y-2">
-          {res.alerts.map((a) => <p key={a} className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">⚠️ {(t as any)[`alert_${a}`]}</p>)}
+          {res.alerts.map((a) => <p key={a} className="rounded-sheet border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">⚠️ {(t as any)[`alert_${a}`]}</p>)}
         </div>
       )}
 
@@ -534,7 +534,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       {jobs.length > 0 && (
         <div>
           <div className="mb-3 flex items-end justify-between">
-            <h3 className="text-xl font-extrabold text-brand-navy">💼 {t.jobs_t}</h3>
+            <h3 className="text-xl font-extrabold text-ink">💼 {t.jobs_t}</h3>
             <a href={`${jobsHref}?market=${market}&role=${top.role.id}`} className="text-sm font-bold text-brand-blue">{t.jobs_all} {locale === 'ar' ? '←' : '→'}</a>
           </div>
           <div className="space-y-3">

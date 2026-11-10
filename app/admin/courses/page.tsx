@@ -41,8 +41,8 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
 
       {showForm && (
         <form action={saveCourse} className="card mt-6 space-y-4 p-6">
-          <h2 className="text-lg font-bold text-brand-navy">{editing ? t.edit_course : t.new_course}</h2>
-          {sp.error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700" dir="ltr">{sp.error}</p>}
+          <h2 className="text-lg font-bold text-ink">{editing ? t.edit_course : t.new_course}</h2>
+          {sp.error && <p className="rounded-sheet bg-red-50 p-3 text-sm text-red-700" dir="ltr">{sp.error}</p>}
           <input type="hidden" name="id" value={c.id ?? ''} />
           <div className="grid gap-4 md:grid-cols-2">
             <F name="title_ar" label={t.title_ar} required />
@@ -80,15 +80,15 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
         </form>
       )}
 
-      <div className="card mt-6 divide-y divide-slate-100">
+      <div className="card mt-6 divide-y divide-line">
         {courses.map((x: any) => (
           <div key={x.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
             <div>
-              <div className="font-bold text-brand-navy">{L(x, 'title', locale)}</div>
-              <div className="text-xs text-slate-500" dir="ltr">/courses/{x.slug} · {x.price_egp} EGP</div>
+              <div className="font-bold text-ink">{L(x, 'title', locale)}</div>
+              <div className="text-xs text-ink-mute" dir="ltr">/courses/{x.slug} · {x.price_egp} EGP</div>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`badge ${x.published ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'}`}>{x.published ? t.published : t.draft}</span>
+              <span className={`badge ${x.published ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-ink-soft'}`}>{x.published ? t.published : t.draft}</span>
               <Link href={`/admin/tasks?course=${x.id}`} className="btn-ghost btn-sm">📝 {t.tasks_title}</Link>
               <Link href={`/admin/courses?edit=${x.id}`} className="btn-ghost btn-sm">{t.edit}</Link>
             </div>

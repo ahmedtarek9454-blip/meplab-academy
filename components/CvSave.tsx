@@ -33,9 +33,9 @@ export default function CvSave({ file, locale, profileHref = '/profile' }: { fil
     <div className="card mt-6 flex flex-col items-start gap-4 border-blue-100 bg-blue-50/60 p-5 sm:flex-row sm:items-center">
       <div className="text-3xl">💾</div>
       <div className="flex-1">
-        <h3 className="font-bold text-brand-navy">{t.t}</h3>
-        <p className="mt-1 text-sm leading-6 text-slate-600">{t.d}</p>
-        <p className="mt-1 text-xs text-slate-500" dir="ltr">📎 {file.name}</p>
+        <h3 className="font-bold text-ink">{t.t}</h3>
+        <p className="mt-1 text-sm leading-6 text-ink-soft">{t.d}</p>
+        <p className="mt-1 text-xs text-ink-mute" dir="ltr">📎 {file.name}</p>
         {msg && <p role="alert" className="mt-2 text-sm font-semibold text-red-700">{msg}</p>}
       </div>
       {st === 'ok' ? (

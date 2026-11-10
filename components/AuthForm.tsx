@@ -13,10 +13,10 @@ export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup';
     <section className="container-x flex justify-center py-14">
       <div className="card w-full max-w-md p-8">
         <div className="mb-6 flex justify-center"><Logo /></div>
-        <h1 className="mb-6 text-center text-2xl font-extrabold text-brand-navy">{isLogin ? t.login_title : t.signup_title}</h1>
+        <h1 className="mb-6 text-center text-2xl font-extrabold text-ink">{isLogin ? t.login_title : t.signup_title}</h1>
 
-        {sp.check && <p className="mb-4 rounded-xl bg-green-50 p-3 text-sm text-green-800">{t.check_email}</p>}
-        {sp.error && <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{t.auth_error}</p>}
+        {sp.check && <p className="mb-4 rounded-sheet bg-green-50 p-3 text-sm text-green-800">{t.check_email}</p>}
+        {sp.error && <p className="mb-4 rounded-sheet bg-red-50 p-3 text-sm text-red-700">{t.auth_error}</p>}
 
         <form action={isLogin ? signIn : signUp} className="space-y-4">
           <input type="hidden" name="next" value={next} />
@@ -40,7 +40,7 @@ export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup';
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm text-ink-soft">
           {isLogin ? t.no_account : t.have_account}{' '}
           <Link href={(isLogin ? '/signup' : '/login') + q} className="font-bold text-brand-blue">{isLogin ? t.nav_signup : t.nav_login}</Link>
         </p>

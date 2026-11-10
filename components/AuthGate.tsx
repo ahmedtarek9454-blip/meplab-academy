@@ -6,7 +6,7 @@ export default function AuthGate({ mode, next, locale, notice }: { mode: GateMod
   const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
   return (
     <section className="container-x max-w-3xl py-12">
-      {notice && <p className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-center text-sm font-semibold text-amber-900">🔒 {notice}</p>}
+      {notice && <p className="mb-4 rounded-sheet border border-amber-200 bg-amber-50 p-3 text-center text-sm font-semibold text-amber-900">🔒 {notice}</p>}
       <EmailGate locale={locale} mode={mode} nextPath={safeNext} onDone={() => { window.location.assign(safeNext); }} />
     </section>
   );
