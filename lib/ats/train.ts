@@ -13,6 +13,9 @@ import { ROLES, MARKETS, type Market } from '@/lib/cv/data';
 import { SKILLS } from './taxonomy';
 import { findSkills, keywords } from './match';
 import { priorWeights, type AtsModel, type SalaryStat } from './model';
+import { labelOf, learnTerms, type SignalRow } from './learn';
+
+const SKILL_IDS = new Set(SKILLS.map((s) => s.id));
 
 export type TrainJob = { title: string; snippet?: string | null; role_id: string | null; market: Market; salary?: string | null };
 
@@ -49,7 +52,9 @@ const q = (sorted: number[], p: number) => {
 };
 
 /* ---------- training ---------- */
-export function trainModel(jobs: TrainJob[]): AtsModel {
+const BETA = 0.7; // one confirmed CV is worth 0.7 of a job post when learning skill weights
+
+export function trainModel(jobs: TrainJob[], cvs: SignalRow[] = [], blocked: Set<string> = new Set()): AtsModel {
   const covered = new Set(SKILLS.flatMap((s) => s.syn.flatMap((x) => x.toLowerCase().split(/\s+/))));
   const model: AtsModel = { version: '', trained_at: new Date().toISOString(), jobs_used: 0, weights: {}, salary: {}, samples: {}, emerging: {} };
 
@@ -62,6 +67,15 @@ export function trainModel(jobs: TrainJob[]): AtsModel {
     });
   model.jobs_used = parsed.length;
 
+  // CVs people checked: labelled by their confirmation (or, at half weight, a confident engine)
+  const labelled = cvs.map((s) => ({ s, l: labelOf(s) })).filter((x): x is { s: SignalRow; l: { role: string; w: number } } => !!x.l);
+  model.cvs_used = cvs.length;
+  model.cvs_confirmed = cvs.filter((s) => s.confirmed_role).length;
+  model.learned = learnTerms(cvs, blocked);
+  const conf = new Map<string, number>();
+  for (const s of cvs) if (s.confirmed_role && s.confirmed_role !== s.role_id) conf.set(`${s.role_id}>${s.confirmed_role}`, (conf.get(`${s.role_id}>${s.confirmed_role}`) || 0) + 1);
+  model.confusions = [...conf.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => ({ from: k.split('>')[0], to: k.split('>')[1], n }));
+
   for (const role of ROLES) {
     const prior = priorWeights(role.id);
     const posts = parsed.filter((p) => p.role_id === role.id);
@@ -69,10 +83,15 @@ export function trainModel(jobs: TrainJob[]): AtsModel {
     model.samples[role.id] = {};
     model.salary[role.id] = {};
 
-    const learn = (subset: typeof posts) => {
-      const n = subset.length;
+    const roleCvs = labelled.filter((x) => x.l.role === role.id);
+    const learn = (subset: typeof posts, cvSub: typeof roleCvs) => {
+      let n = subset.length;
       const df: Record<string, number> = {};
       for (const p of subset) for (const id of p.skills) df[id] = (df[id] || 0) + 1;
+      for (const { s, l } of cvSub) {
+        n += BETA * l.w;
+        for (const id of new Set(s.skills || [])) if (SKILL_IDS.has(id)) df[id] = (df[id] || 0) + BETA * l.w;
+      }
       const ids = new Set([...Object.keys(prior), ...Object.keys(df)]);
       const w: Record<string, number> = {};
       for (const id of ids) {
@@ -84,14 +103,16 @@ export function trainModel(jobs: TrainJob[]): AtsModel {
       // normalise so the most-demanded skill = 1
       const mx = Math.max(...Object.values(w), 0.0001);
       for (const id in w) w[id] = Math.round((w[id] / mx) * 1000) / 1000;
+      // vocabulary learned from this role's CVs joins the role profile
+      for (const x of model.learned?.[role.id] || []) w[`l:${x.term}`] = Math.round(Math.min(0.6, x.share * 2) * 1000) / 1000;
       return w;
     };
 
-    model.weights[role.id].all = learn(posts);
+    model.weights[role.id].all = learn(posts, roleCvs);
     for (const m of MARKET_LIST) {
       const sub = posts.filter((p) => p.market === m);
       model.samples[role.id][m] = sub.length;
-      if (sub.length >= 15) model.weights[role.id][m] = learn(sub); // only when enough market data
+      if (sub.length >= 15) model.weights[role.id][m] = learn(sub, roleCvs.filter((x) => x.s.market === m)); // only when enough market data
 
       const pays = sub.map((p) => parseSalary(p.salary, m)).filter((v): v is number => v !== null).sort((a, b) => a - b);
       if (pays.length >= 3) model.salary[role.id][m] = { n: pays.length, p25: q(pays, 0.25), p50: q(pays, 0.5), p75: q(pays, 0.75) } as SalaryStat;

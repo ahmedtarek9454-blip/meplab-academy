@@ -11,7 +11,9 @@ import { ocrImageFile, ocrPdfPages } from '@/lib/cv/ocr';
 import { defaultModel, type AtsModel } from '@/lib/ats/model';
 import type { Cat } from '@/lib/ats/taxonomy';
 import { analyzeCv, type CvResult, type CheckStatus } from '@/lib/cv/analyze';
-import { MARKETS, LEVELS, type Market } from '@/lib/cv/data';
+import { MARKETS, LEVELS, roleGroups, type Market } from '@/lib/cv/data';
+import { findSections } from '@/lib/cv/analyze';
+import { unknownSkillTerms } from '@/lib/ats/learn';
 
 type Loc = 'ar' | 'en';
 
@@ -20,7 +22,8 @@ const T = {
     title: 'فحص الـ CV بنظام ATS',
     sub: 'ارفع الـ CV بتاعك وفي ثواني تعرف: نسبة توافقه مع أنظمة الـ ATS، أقرب وظيفة ليه في تخصصك الهندسي، والمرتب التقريبي في السوق.',
     free: 'مجاني 100%',
-    privacy: '🔒 الـ CV بيتحلل جوه متصفحك بس، ومش بيترفع على أي سيرفر.',
+    privacy: '🔒 الـ CV بيتحلل جوه متصفحك ومش بيترفع على أي سيرفر. علشان الأداة تتعلم بنحفظ بس المهارات اللي اتعرفت والنتيجة، من غير اسم أو إيميل أو تليفون.',
+    fb_q: 'الوظيفة دي مظبوطة؟', fb_yes: 'أيوه', fb_no: 'لأ', fb_pick: 'اختار وظيفتك الصح', fb_send: 'ابعت', fb_thanks: 'شكرًا! الأداة هتتعلم من ردك وتبقى أدق للي بعدك.',
     drop: 'اسحب الـ CV هنا أو اضغط للاختيار',
     types: 'PDF أو Word أو صورة (JPG/PNG) أو CV متصوّر',
     ocr_load: 'بنحمّل قارئ الصور (أول مرة بس، حوالي 10 ثواني)...',
@@ -55,7 +58,7 @@ const T = {
     salary_note: 'تقدير تقريبي من مواقع رواتب عامة، والرقم الفعلي بيختلف حسب الشركة والمشروع والبدلات.',
     checks: 'تفاصيل الفحص',
     found_kw: 'المهارات اللي المحرك لقاها في الـ CV',
-    cats: { design: 'تصميم تكييف', systems: 'أنظمة تكييف', fire: 'حريق', plumbing: 'صحي', software: 'برامج', codes: 'أكواد ومعايير', execution: 'تنفيذ و BIM', office: 'مكتب فني', commercial: 'تجاري', management: 'إدارة وجودة وسلامة', cert: 'شهادات', civil: 'مدني', structural: 'إنشائي', survey: 'مساحة', arch: 'عمارة وديكور', electrical: 'كهرباء', mech: 'ميكانيكا وتصنيع', process: 'عمليات كيميائية', petroleum: 'بترول', automation: 'تحكم وأوتوميشن', it: 'برمجيات و IT', telecom: 'اتصالات وإلكترونيات', biomed: 'أجهزة طبية' } as Record<string, string>,
+    cats: { design: 'تصميم تكييف', systems: 'أنظمة تكييف', fire: 'حريق', plumbing: 'صحي', software: 'برامج', codes: 'أكواد ومعايير', execution: 'تنفيذ و BIM', office: 'مكتب فني', commercial: 'تجاري', management: 'إدارة وجودة وسلامة', cert: 'شهادات', learned: 'مهارات اتعلمها المحرك من CVs تانية', civil: 'مدني', structural: 'إنشائي', survey: 'مساحة', arch: 'عمارة وديكور', electrical: 'كهرباء', mech: 'ميكانيكا وتصنيع', process: 'عمليات كيميائية', petroleum: 'بترول', automation: 'تحكم وأوتوميشن', it: 'برمجيات و IT', telecom: 'اتصالات وإلكترونيات', biomed: 'أجهزة طبية' } as Record<string, string>,
     engine: 'محرك MEP LAB ATS',
     model_prior: 'نسخة أولية من شبكة المعرفة',
     model_trained: 'متدرّب على {n} إعلان وظيفة حقيقي',
@@ -79,7 +82,8 @@ const T = {
     title: 'ATS CV Checker',
     sub: 'Upload your CV and in seconds see its ATS score, the closest job title in your engineering discipline, and an estimated market salary.',
     free: '100% free',
-    privacy: '🔒 Your CV is analysed inside your browser only — it is never uploaded to a server.',
+    privacy: '🔒 Your CV is analysed inside your browser and never uploaded. To keep improving, we store only the skills found and the score — no name, e-mail or phone.',
+    fb_q: 'Is this the right job title?', fb_yes: 'Yes', fb_no: 'No', fb_pick: 'Pick your actual role', fb_send: 'Send', fb_thanks: 'Thanks! The engine learns from your answer and gets more accurate for the next person.',
     drop: 'Drop your CV here or click to choose',
     types: 'PDF, Word, image (JPG/PNG) or scanned CV',
     ocr_load: 'Loading the image reader (first time only, ~10 s)...',
@@ -114,7 +118,7 @@ const T = {
     salary_note: 'Rough estimate from public salary sources — actual pay varies by company, project and allowances.',
     checks: 'Check details',
     found_kw: 'Skills the engine found in your CV',
-    cats: { design: 'HVAC design', systems: 'HVAC systems', fire: 'Fire', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & standards', execution: 'Execution & BIM', office: 'Technical office', commercial: 'Commercial', management: 'Management, quality & safety', cert: 'Certifications', civil: 'Civil', structural: 'Structural', survey: 'Surveying', arch: 'Architecture & interior', electrical: 'Electrical', mech: 'Mechanical & manufacturing', process: 'Process', petroleum: 'Petroleum', automation: 'Automation & control', it: 'Software & IT', telecom: 'Telecom & electronics', biomed: 'Biomedical' } as Record<string, string>,
+    cats: { design: 'HVAC design', systems: 'HVAC systems', fire: 'Fire', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & standards', execution: 'Execution & BIM', office: 'Technical office', commercial: 'Commercial', management: 'Management, quality & safety', cert: 'Certifications', learned: 'Learned by the engine from other CVs', civil: 'Civil', structural: 'Structural', survey: 'Surveying', arch: 'Architecture & interior', electrical: 'Electrical', mech: 'Mechanical & manufacturing', process: 'Process', petroleum: 'Petroleum', automation: 'Automation & control', it: 'Software & IT', telecom: 'Telecom & electronics', biomed: 'Biomedical' } as Record<string, string>,
     engine: 'MEP LAB ATS engine',
     model_prior: 'initial knowledge-graph version',
     model_trained: 'trained on {n} real job posts',
@@ -246,6 +250,9 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
   const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
   const [res, setRes] = useState<CvResult | null>(null);
+  const [sigId, setSigId] = useState<string | null>(null);
+  const [fb, setFb] = useState<'ask' | 'pick' | 'done'>('ask');
+  const [fbRole, setFbRole] = useState('');
   const [drag, setDrag] = useState(false);
   const [needFile, setNeedFile] = useState(false);
   const [ocrUsed, setOcrUsed] = useState(false);
@@ -336,7 +343,19 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
     await new Promise((r) => setTimeout(r, 450));
     setCvText(text);
     const r = analyzeCv(text, mkt, pages, model);
-    setRes(r); setBusy(''); setPending(null);
+    setRes(r); setBusy(''); setPending(null); setFb('ask'); setSigId(null);
+    // anonymous learning signal: no CV text or personal data — only what the engine recognised
+    try {
+      const secs = findSections(text);
+      const sk = secs.find((x) => x.key === 'skills');
+      const next = sk ? secs.filter((x) => x.pos > sk.pos).sort((a, b) => a.pos - b.pos)[0]?.pos ?? text.length : 0;
+      const terms = sk ? unknownSkillTerms(text.slice(sk.pos, Math.min(next, sk.pos + 2500)).split('\n').slice(1).join('\n')) : [];
+      const payload = { role_id: r.roles[0].role.id, pct: r.roles[0].pct, discipline: r.discipline?.id ?? null, market: mkt, years: r.years, score: r.score,
+        skills: r.skills.map((x) => x.id).filter((id) => !id.startsWith('l:')), terms, failing: r.checks.filter((c) => c.status !== 'pass').map((c) => c.id), model_version: r.model.version };
+      if ((window as any).__AUTH_MOCK__) { (window as any).__LAST_SIGNAL__ = payload; setSigId('demo'); }
+      else fetch('/api/ats/signal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+        .then((x) => x.json()).then((d) => d?.id && setSigId(d.id)).catch(() => {});
+    } catch {}
     // record the lead (email + result) — never the CV text
     try {
       if (u && !(window as any).__AUTH_MOCK__) {
@@ -348,6 +367,11 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       }
     } catch {}
     setTimeout(() => document.getElementById('cv-result')?.scrollIntoView({ behavior: 'smooth' }), 50);
+  }
+
+  function sendFb(role: string) {
+    if (!sigId || sigId === 'demo') { (window as any).__LAST_FEEDBACK__ = role; return; }
+    fetch('/api/ats/signal', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: sigId, confirmed_role: role }) }).catch(() => {});
   }
 
   const cur = MARKETS[market][locale === 'ar' ? 'cur_ar' : 'cur_en'];
@@ -445,6 +469,27 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
                 ))}
               </ul>
             </>
+          )}
+          {sigId && (
+            <div className="mt-5 border-t border-line pt-4 text-sm">
+              {fb === 'ask' && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold text-ink">{t.fb_q}</span>
+                  <button onClick={() => { setFb('done'); sendFb(top.role.id); }} className="btn-ghost btn-sm">{t.fb_yes}</button>
+                  <button onClick={() => setFb('pick')} className="btn-ghost btn-sm">{t.fb_no}</button>
+                </div>
+              )}
+              {fb === 'pick' && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <select value={fbRole} onChange={(e) => setFbRole(e.target.value)} className="input max-w-full py-1.5 text-sm sm:w-auto" aria-label={t.fb_pick}>
+                    <option value="">{t.fb_pick}</option>
+                    {roleGroups(locale).map((g) => <optgroup key={g.id} label={g.label}>{g.roles.map((x) => <option key={x.id} value={x.id}>{x[locale]}</option>)}</optgroup>)}
+                  </select>
+                  <button disabled={!fbRole} onClick={() => { setFb('done'); sendFb(fbRole); }} className="btn-blue btn-sm">{t.fb_send}</button>
+                </div>
+              )}
+              {fb === 'done' && <p className="text-sys-plumb">{t.fb_thanks}</p>}
+            </div>
           )}
         </div>
 

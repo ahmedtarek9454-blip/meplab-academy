@@ -1,7 +1,7 @@
 import { SECTIONS, BANDS, LEVELS, MARKETS, type Market, type Level, type Role } from './data';
 import { findSkills, rankRoles, detectDisciplines } from '@/lib/ats/engine';
 import { DISCIPLINES } from './roles-extra';
-import { defaultModel, type AtsModel } from '@/lib/ats/model';
+import { defaultModel, learnedSkills, type AtsModel } from '@/lib/ats/model';
 import { SKILL_BY_ID } from '@/lib/ats/taxonomy';
 import type { Found } from '@/lib/ats/match';
 import { extractExperience, type Range } from '@/lib/ats/experience';
@@ -77,7 +77,7 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const has = (k: string) => sections.some((s) => s.key === k);
 
   /* ---- roles (MEP LAB ATS engine, learned weights) ---- */
-  const found = findSkills(text);
+  const found = findSkills(text, learnedSkills(model));
   const exp0 = extractExperience(text);
   const firstWork = exp0.ranges.filter((r) => r.kind === 'work').sort((a, b) => b.end - a.end || b.start - a.start)[0]?.line;
   const ds = detectDisciplines(text, found);

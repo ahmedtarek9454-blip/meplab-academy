@@ -455,3 +455,38 @@ create policy "cvs_delete_own" on storage.objects
 drop policy if exists "cvs_read_own_or_admin" on storage.objects;
 create policy "cvs_read_own_or_admin" on storage.objects
   for select using (bucket_id = 'cvs' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin()));
+
+-- =====================================================================
+-- CV learning — الأداة بتتعلم من كل CV بيتفحص (من غير الـ CV نفسه)
+-- بنخزن بس: الوظيفة المكتشفة، التخصص، المهارات اللي اتعرفت، كلمات جديدة
+-- من قسم المهارات، والدرجة. مفيش اسم ولا إيميل ولا تليفون ولا نص.
+-- =====================================================================
+create table if not exists public.cv_signals (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  model_version text,
+  role_id text not null,
+  pct integer,
+  discipline text,
+  market text,
+  years integer,
+  score integer,
+  skills text[] not null default '{}',
+  terms text[] not null default '{}',
+  failing text[] not null default '{}',
+  confirmed_role text,
+  feedback_at timestamptz,
+  ip_hash text
+);
+create index if not exists cv_signals_created_idx on public.cv_signals (created_at desc);
+create index if not exists cv_signals_ip_idx on public.cv_signals (ip_hash, created_at desc);
+alter table public.cv_signals enable row level security;
+-- no policies: only the server (service role) reads/writes
+
+create table if not exists public.ats_term_blocks (
+  term text primary key,
+  created_at timestamptz not null default now()
+);
+alter table public.ats_term_blocks enable row level security;
+drop policy if exists "term_blocks_admin" on public.ats_term_blocks;
+create policy "term_blocks_admin" on public.ats_term_blocks for all using (public.is_admin()) with check (public.is_admin());

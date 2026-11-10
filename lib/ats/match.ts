@@ -4,9 +4,7 @@ import { SKILLS, type Skill } from './taxonomy';
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 type Compiled = { skill: Skill; res: RegExp[] };
 let compiled: Compiled[] | null = null;
-function compile() {
-  if (compiled) return compiled;
-  compiled = SKILLS.map((skill) => ({
+const compileOne = (skill: Skill): Compiled => ({
     skill,
     res: skill.syn.map((syn) => {
       const body = esc(syn.toLowerCase()).replace(/\\-|\s+/g, '[\\s\\-_/]*');
@@ -14,9 +12,13 @@ function compile() {
         ? new RegExp(`(?:^|[^a-z0-9])(${body}(?:s|es)?)(?=[^a-z0-9]|$)`, 'gi')
         : new RegExp(`(${body})`, 'g');
     })
-  }));
+  });
+function compile() {
+  if (compiled) return compiled;
+  compiled = SKILLS.map(compileOne);
   return compiled;
 }
+const extraCache = new Map<string, Compiled>();
 
 export function normText(t: string) {
   return t.replace(/\r/g, '').replace(/[–—]/g, '-').replace(/[“”]/g, '"').replace(/[ \t]+/g, ' ');
@@ -25,11 +27,12 @@ export function normText(t: string) {
 export type Found = { id: string; label: string; cat: Skill['cat']; hits: number; evidence: string };
 
 /** find all taxonomy skills in a text, with a short evidence snippet */
-export function findSkills(text: string): Map<string, Found> {
+export function findSkills(text: string, extra: Skill[] = []): Map<string, Found> {
   const t = normText(text);
   const lower = t.toLowerCase();
   const out = new Map<string, Found>();
-  for (const { skill, res } of compile()) {
+  const ex = extra.map((k) => { let c = extraCache.get(k.id); if (!c) { c = compileOne(k); extraCache.set(k.id, c); } return c; });
+  for (const { skill, res } of [...compile(), ...ex]) {
     let hits = 0, at = -1;
     for (const re of res) {
       re.lastIndex = 0;

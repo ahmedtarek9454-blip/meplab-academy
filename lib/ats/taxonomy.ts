@@ -10,7 +10,7 @@
 import { EXTRA_SKILLS, SKILL_ROLE_ADDS } from './taxonomy-extra';
 
 export type Cat = 'design' | 'systems' | 'fire' | 'plumbing' | 'software' | 'codes' | 'execution' | 'office' | 'commercial' | 'management' | 'cert'
-  | 'civil' | 'structural' | 'survey' | 'arch' | 'electrical' | 'mech' | 'process' | 'petroleum' | 'automation' | 'it' | 'telecom' | 'biomed';
+  | 'learned' | 'civil' | 'structural' | 'survey' | 'arch' | 'electrical' | 'mech' | 'process' | 'petroleum' | 'automation' | 'it' | 'telecom' | 'biomed';
 
 export type Skill = {
   id: string;

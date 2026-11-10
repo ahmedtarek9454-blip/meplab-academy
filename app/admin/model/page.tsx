@@ -5,7 +5,7 @@ import { ROLES, MARKETS, type Market } from '@/lib/cv/data';
 import { SKILL_BY_ID } from '@/lib/ats/taxonomy';
 import { defaultModel, type AtsModel } from '@/lib/ats/model';
 import SubmitButton from '@/components/SubmitButton';
-import { trainNow } from './actions';
+import { trainNow, blockTerm } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +25,7 @@ export default async function ModelAdmin({ searchParams }: { searchParams: Promi
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="h-section">🧠 MEP LAB ATS Model</h1>
-          <p className="mt-1 text-sm text-ink-mute">{ar ? 'الموديل بيتدرّب لوحده كل يوم اتنين من إعلانات الوظايف اللي اتجمعت آخر 90 يوم.' : 'Trains itself every Monday on job posts collected in the last 90 days.'}</p>
+          <p className="mt-1 text-sm text-ink-mute">{ar ? 'الموديل بيتدرّب لوحده كل يوم الساعة 7 الصبح: من الـ CVs اللي اتفحصت (آخر 12 شهر) ومن إعلانات الوظايف.' : 'Retrains itself every day at 07:00 from checked CVs (last 12 months) and job posts.'}</p>
         </div>
         <div className="flex gap-2">
           <Link href="/admin" className="btn-ghost">{t.admin_title}</Link>
@@ -40,6 +40,44 @@ export default async function ModelAdmin({ searchParams }: { searchParams: Promi
         <div className="card p-5"><div className="text-sm text-ink-mute">{ar ? 'اتدرّب على' : 'Trained on'}</div><div className="text-xl font-bold text-ink">{latest.jobs_used} {ar ? 'إعلان' : 'posts'}</div></div>
         <div className="card p-5"><div className="text-sm text-ink-mute">{ar ? 'آخر تدريب' : 'Last training'}</div><div className="text-sm font-bold text-ink" dir="ltr">{latest.trained_at ? new Date(latest.trained_at).toLocaleString('en-GB') : '—'}</div></div>
         <div className="card p-5"><div className="text-sm text-ink-mute">{ar ? 'المهارات في شبكة المعرفة' : 'Skills in knowledge graph'}</div><div className="text-xl font-bold text-ink">{SKILL_BY_ID.size}</div></div>
+      </div>
+
+
+      {/* ---- learning from CVs ---- */}
+      <div className="card mt-6 p-6">
+        <h2 className="text-lg font-bold text-ink">{ar ? 'اللي الأداة اتعلمته من الـ CVs' : 'What the engine learned from CVs'}</h2>
+        <p className="mt-1 text-sm text-ink-mute">{ar ? 'كل فحص بيبعت المهارات اللي اتعرفت والكلمات الجديدة من قسم المهارات (من غير أي بيانات شخصية). لما الناس تأكد أو تصحح الوظيفة، التصحيح ده هو اللي المحرك بيتعلم منه. الكلمة بتتعلم بس لو ظهرت في 8 CVs على الأقل من نفس الوظيفة.' : 'Each check sends the recognised skills and new words from the skills section (no personal data). Confirmations and corrections are the labels the engine learns from. A word is learned only after it appears in 8+ CVs of the same role.'}</p>
+        <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3">
+          <div className="rounded-sheet border border-line p-4"><div className="text-sm text-ink-mute">{ar ? 'CVs اتفحصت' : 'CVs checked'}</div><div className="text-xl font-bold text-ink">{latest.cvs_used ?? 0}</div></div>
+          <div className="rounded-sheet border border-line p-4"><div className="text-sm text-ink-mute">{ar ? 'أكّدوا أو صحّحوا الوظيفة' : 'Confirmed / corrected'}</div><div className="text-xl font-bold text-ink">{latest.cvs_confirmed ?? 0}</div></div>
+          <div className="rounded-sheet border border-line p-4"><div className="text-sm text-ink-mute">{ar ? 'كلمات اتعلمها' : 'Words learned'}</div><div className="text-xl font-bold text-ink">{Object.values(latest.learned || {}).flat().length}</div></div>
+        </div>
+        {(latest.confusions?.length ?? 0) > 0 && (
+          <div className="mt-5">
+            <div className="text-sm font-semibold text-ink">{ar ? 'أكتر تصحيحات الناس (المحرك قال ← الصح)' : 'Most frequent corrections (engine said → actual)'}</div>
+            <ul className="mt-2 space-y-1 text-sm text-ink-soft">
+              {latest.confusions!.map((c) => <li key={c.from + c.to}>{ROLES.find((x) => x.id === c.from)?.[locale] || c.from} ← {ROLES.find((x) => x.id === c.to)?.[locale] || c.to} <b className="text-ink">({c.n})</b></li>)}
+            </ul>
+          </div>
+        )}
+        {Object.keys(latest.learned || {}).length > 0 && (
+          <div className="mt-5 space-y-3">
+            {Object.entries(latest.learned!).map(([role, list]) => (
+              <div key={role}>
+                <div className="text-sm font-semibold text-ink">{ROLES.find((x) => x.id === role)?.[locale] || role}</div>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {list.map((x) => (
+                    <form key={x.term} action={blockTerm} className="inline-flex items-center gap-1 rounded-full border border-line bg-paper py-0.5 pe-1 ps-3 text-xs" dir="ltr">
+                      <span className="font-semibold text-ink">{x.term}</span><span className="text-ink-mute">{x.n} CVs</span>
+                      <input type="hidden" name="term" value={x.term} />
+                      <button className="rounded-full px-2 py-0.5 text-red-600 hover:bg-red-50" title={ar ? 'امنع الكلمة دي' : 'Block this word'}>✕</button>
+                    </form>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="card mt-6 overflow-x-auto">

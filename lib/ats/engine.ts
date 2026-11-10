@@ -34,7 +34,7 @@ export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Ma
     let got = 0;
     const matched: string[] = [], missing: string[] = [], missingIds: string[] = [];
     for (const [id, v] of entries) {
-      const lbl = SKILL_BY_ID.get(id)?.label || id;
+      const lbl = SKILL_BY_ID.get(id)?.label || id.replace(/^l:/, '');
       if (found.has(id)) { got += v; matched.push(lbl); }
       else if (v >= 0.3 && SKILL_BY_ID.get(id)?.cat !== 'cert' && !OTHER_MARKET[market].includes(id)) { missing.push(lbl); missingIds.push(id); }
     }
