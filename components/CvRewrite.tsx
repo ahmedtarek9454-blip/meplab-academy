@@ -17,7 +17,7 @@ const T = {
     btn: '✨ عدّل الـ CV دلوقتي',
     working: 'بنعيد بناء الـ CV...',
     done: 'الـ CV اتعدّل',
-    before: 'قبل', after: 'بعد', ats: 'نتيجة ATS',
+    before: 'قبل', after: 'بعد', ats: 'نتيجة ATS', pts: 'نقطة', cmp_t: 'شوف الفرق بعينك', cmp_sum: 'الملخص المهني', cmp_bul: 'نقط الخبرة', none: '(مكانش فيه ملخص)',
     changes: 'اللي اتعمل',
     ch: { headings: 'عناوين أقسام قياسية بالترتيب اللي الـ ATS بيتوقعه', summary_added: 'إضافة Professional Summary مبني على خبراتك', summary_rewritten: 'إعادة كتابة الـ Summary', bullets: 'تقوية {n} نقطة خبرة بأفعال واضحة بدل "Responsible for"', skills_grouped: 'تجميع المهارات في Core Skills بالأسماء القياسية', personal_removed: 'إزالة بيانات شخصية مش مطلوبة ({n} سطر)', dates: 'توحيد صيغة التواريخ (Mon YYYY – Mon YYYY)' } as Record<string, string>,
     removed: 'السطور اللي اتشالت',
@@ -40,7 +40,7 @@ const T = {
     btn: '✨ Rewrite my CV now',
     working: 'Rebuilding your CV...',
     done: 'Your CV has been rewritten',
-    before: 'Before', after: 'After', ats: 'ATS score',
+    before: 'Before', after: 'After', ats: 'ATS score', pts: 'pts', cmp_t: 'See the difference', cmp_sum: 'Professional summary', cmp_bul: 'Experience bullets', none: '(no summary)',
     changes: 'What was done',
     ch: { headings: 'Standard section headings in the order ATS expects', summary_added: 'Added a Professional Summary built from your experience', summary_rewritten: 'Rewrote the summary', bullets: 'Strengthened {n} bullets with clear action verbs instead of "Responsible for"', skills_grouped: 'Grouped skills into Core Skills with canonical names', personal_removed: 'Removed unnecessary personal data ({n} lines)', dates: 'Unified date format (Mon YYYY – Mon YYYY)' } as Record<string, string>,
     removed: 'Lines removed',
@@ -56,6 +56,17 @@ const T = {
     nojobs: 'No clearly dated jobs were found in your CV, so the rewritten version will be limited. Write each job with its dates (e.g. Jan 2021 – Present) and try again.'
   }
 };
+
+function CountUp({ from, to }: { from: number; to: number }) {
+  const [v, setV] = useState(from);
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setV(to); return; }
+    let raf = 0; const t0 = performance.now(), dur = 1100;
+    const step = (now: number) => { const k = Math.min(1, (now - t0) / dur); setV(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
+  }, [from, to]);
+  return <>{v}</>;
+}
 
 export default function CvRewrite({ locale, text, res, market, model, whatsapp }: { locale: Loc; text: string; res: CvResult; market: Market; model: AtsModel; whatsapp?: string }) {
   const t = T[locale];
@@ -121,9 +132,32 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
         {out && (
           <div id="cv-rewrite-result" className="scroll-mt-24 space-y-6">
             <div className="grid gap-4 sm:grid-cols-[1fr,auto,1fr] sm:items-center">
-              <div className="rounded-sheet bg-paper p-5 text-center ring-1 ring-line"><div className="text-xs font-bold text-ink-mute">{t.before} · {t.ats}</div><div className="text-4xl font-bold text-ink-mute">{res.score}</div></div>
-              <div className="text-center text-3xl text-emerald-600">{locale === 'ar' ? '←' : '→'}</div>
-              <div className="rounded-sheet bg-emerald-50 p-5 text-center ring-2 ring-emerald-400"><div className="text-xs font-bold text-emerald-700">{t.after} · {t.ats}</div><div className="text-4xl font-bold text-emerald-700">{out.after}</div></div>
+              <div className="rounded-sheet bg-paper p-5 text-center ring-1 ring-line"><div className="text-xs font-bold text-ink-mute">{t.before} · {t.ats}</div><div className="mt-1 text-5xl font-bold text-ink-mute">{res.score}</div></div>
+              <div className="text-center">
+                <div className="text-3xl text-emerald-600" aria-hidden>{locale === 'ar' ? '←' : '→'}</div>
+                {out.after > res.score && <div className="badge mt-1 bg-emerald-100 text-emerald-800" dir="ltr">+{out.after - res.score} {t.pts}</div>}
+              </div>
+              <div className="rounded-sheet bg-emerald-50 p-5 text-center ring-2 ring-emerald-400"><div className="text-xs font-bold text-emerald-700">{t.after} · {t.ats}</div><div className="mt-1 text-5xl font-bold text-emerald-700" aria-live="polite"><CountUp from={res.score} to={out.after} /></div></div>
+            </div>
+
+            <div>
+              <h4 className="mb-3 font-bold text-ink">{t.cmp_t}</h4>
+              <div className="space-y-3">
+                <div className="text-xs font-bold text-ink-mute">{t.cmp_sum}</div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="rounded-sheet border border-red-200 bg-red-50/60 p-4 text-sm leading-6 text-ink-soft"><span className="mb-1 block text-xs font-bold text-red-600">{t.before}</span><span dir="auto" className="block">{out.model.summary.join(' ') || t.none}</span></div>
+                  <div className="rounded-sheet border border-emerald-200 bg-emerald-50/70 p-4 text-sm leading-6 text-ink"><span className="mb-1 block text-xs font-bold text-emerald-700">{t.after}</span><span dir="ltr" className="block text-start">{out.summary}</span></div>
+                </div>
+                {out.report.pairs.length > 0 && <>
+                  <div className="pt-2 text-xs font-bold text-ink-mute">{t.cmp_bul}</div>
+                  {out.report.pairs.map((p, i) => (
+                    <div key={i} className="grid gap-3 md:grid-cols-2">
+                      <div className="rounded-sheet border border-red-200 bg-red-50/60 p-3 text-sm leading-6 text-ink-soft line-through decoration-red-300/70" dir="auto">{p.before}</div>
+                      <div className="rounded-sheet border border-emerald-200 bg-emerald-50/70 p-3 text-sm leading-6 text-ink" dir="ltr">{p.after}</div>
+                    </div>
+                  ))}
+                </>}
+              </div>
             </div>
             {out.report.entries === 0 && <p className="rounded-sheet bg-amber-50 p-4 text-sm font-semibold text-amber-900">⚠️ {t.nojobs}</p>}
 

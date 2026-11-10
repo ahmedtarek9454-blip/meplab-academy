@@ -1,7 +1,8 @@
-import '@fontsource/ibm-plex-sans-arabic/400.css';
-import '@fontsource/ibm-plex-sans-arabic/500.css';
-import '@fontsource/ibm-plex-sans-arabic/600.css';
-import '@fontsource/ibm-plex-sans-arabic/700.css';
+import '@fontsource/tajawal/400.css';
+import '@fontsource/tajawal/500.css';
+import '@fontsource/tajawal/700.css';
+import '@fontsource/noto-kufi-arabic/700.css';
+import '@fontsource/noto-kufi-arabic/900.css';
 import './globals.css';
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
@@ -34,7 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <body className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-24">{children}</main>
         <Footer />
         <DraftSync />
       </body>

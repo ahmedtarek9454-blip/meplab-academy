@@ -72,7 +72,7 @@ export function sanitizeSignal(b: any): CvSignal | null {
 }
 
 /* ---------------- training side ---------------- */
-export type SignalRow = { role_id: string; confirmed_role: string | null; pct: number; market?: string; skills: string[] | null; terms: string[] | null };
+export type SignalRow = { role_id: string; confirmed_role: string | null; pct: number; market?: string; score?: number | null; discipline?: string | null; skills: string[] | null; terms: string[] | null };
 
 /** learned vocabulary becomes skills the engine matches, scoped to the roles that use it */
 export function learnedSkill(term: string): Skill {

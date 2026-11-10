@@ -8,7 +8,7 @@ export default async function Download() {
   return (
     <section className="container-x grid gap-10 py-12 md:py-16 lg:grid-cols-[1fr,1.1fr] lg:items-start">
       <div>
-        <h1 className="text-[1.9rem] font-bold leading-snug md:text-h1">{t.download_title}</h1>
+        <h1 className="display text-[2.4rem] leading-tight md:text-[3.75rem]">{t.download_title}</h1>
         <p className="mt-4 max-w-xl text-[17px] leading-8 text-ink-soft">{t.download_sub}</p>
         <a href={url} target="_blank" rel="noopener" className="btn-red mt-8 px-7 py-3 text-base">
           <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden><path d="M8 2v8m-3.5-3.5L8 10l3.5-3.5M3 13h10" fill="none" stroke="currentColor" strokeWidth="1.8" /></svg>
@@ -23,7 +23,7 @@ export default async function Download() {
       <ol className="sheet divide-y divide-line">
         {steps.map((s, i) => (
           <li key={i} className="flex items-start gap-4 px-5 py-5">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink text-sm font-bold text-ink">{i + 1}</span>
+            <span className="display w-10 shrink-0 text-4xl leading-none text-brand-red">{i + 1}</span>
             <span className="pt-1 leading-7 text-ink">{s}</span>
           </li>
         ))}

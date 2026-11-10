@@ -25,8 +25,8 @@ export default function Logo({ light = false }: { light?: boolean }) {
       ) : (
         <Mark center={light ? '#fff' : '#0B1B3A'} />
       )}
-      <span className={`text-lg font-bold tracking-wide ${light ? 'text-white' : 'text-ink'}`} dir="ltr">
-        MEP <span className="text-brand-red">LAB</span>
+      <span className={`font-display text-lg font-black tracking-wide ${light ? "text-white" : "text-ink"}`} dir="ltr">
+        MEP <span className={light ? "text-[#FF5A4F]" : "text-brand-red"}>LAB</span>
       </span>
     </span>
   );

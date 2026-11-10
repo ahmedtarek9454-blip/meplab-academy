@@ -11,7 +11,7 @@ import { findSkills } from '@/lib/ats/match';
 import { SKILL_BY_ID, type Cat } from '@/lib/ats/taxonomy';
 import { ROLES, LEVELS, type Market, type Level } from './data';
 
-export type Entry = { title: string; company: string; location: string; dates: string; start: number; end: number; bullets: string[]; notes: string[] };
+export type Entry = { title: string; company: string; location: string; dates: string; start: number; end: number; bullets: string[]; orig?: string[]; notes: string[] };
 export type CvModel = {
   name: string; headline: string; email: string; phone: string; linkedin: string; location: string;
   summary: string[]; experience: Entry[]; education: string[]; certifications: string[]; skills: Record<string, string[]>; languages: string[];
@@ -168,7 +168,7 @@ export function parseCv(text: string): CvModel {
       title: h.title, company: h.company, location: h.location,
       dates: `${fmtDate(r.start, false)} – ${r.end >= new Date().getFullYear() + (new Date().getMonth() + 1) / 12 - 0.05 ? 'Present' : fmtDate(r.end, false)}`,
       start: r.start, end: r.end,
-      bullets: bullets.map(polishBullet).filter(Boolean).slice(0, 8), notes
+      bullets: bullets.map(polishBullet).filter(Boolean).slice(0, 8), orig: bullets.map(clean).filter(Boolean).slice(0, 8), notes
     });
   });
   experience.sort((a, b) => b.start - a.start);
@@ -242,7 +242,7 @@ export function toText(m: CvModel, summary: string) {
   return L.join('\n');
 }
 
-export type RebuildReport = { changes: string[]; removed: string[]; weakBullets: number; entries: number };
+export type RebuildReport = { changes: string[]; removed: string[]; weakBullets: number; entries: number; pairs: { before: string; after: string }[] };
 
 export function rebuildCv(text: string, market: Market, roleId: string, years: number, level: Level) {
   const m = parseCv(text);
@@ -255,6 +255,15 @@ export function rebuildCv(text: string, market: Market, roleId: string, years: n
   if (Object.keys(m.skills).length) changes.push('skills_grouped');
   if (m.removed.length) changes.push('personal_removed');
   changes.push('dates');
-  const report: RebuildReport = { changes, removed: m.removed, weakBullets: weak, entries: m.experience.length };
+  // concrete before → after examples (bullets whose opening actually changed)
+  const pairs: { before: string; after: string }[] = [];
+  const norm = (x: string) => x.replace(/[.\s]+$/, '').toLowerCase();
+  for (const e of m.experience) {
+    e.orig?.forEach((o: string, i: number) => {
+      const a = e.bullets[i];
+      if (a && pairs.length < 3 && norm(o) !== norm(a) && norm(o).split(' ')[0] !== norm(a).split(' ')[0]) pairs.push({ before: o, after: a });
+    });
+  }
+  const report: RebuildReport = { changes, removed: m.removed, weakBullets: weak, entries: m.experience.length, pairs };
   return { model: m, summary, text: toText(m, summary), report };
 }

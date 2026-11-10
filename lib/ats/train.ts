@@ -12,7 +12,7 @@
 import { ROLES, MARKETS, type Market } from '@/lib/cv/data';
 import { SKILLS } from './taxonomy';
 import { findSkills, keywords } from './match';
-import { priorWeights, type AtsModel, type SalaryStat } from './model';
+import { priorWeights, type AtsModel, type SalaryStat, type ScoreHist } from './model';
 import { labelOf, learnTerms, type SignalRow } from './learn';
 
 const SKILL_IDS = new Set(SKILLS.map((s) => s.id));
@@ -74,6 +74,17 @@ export function trainModel(jobs: TrainJob[], cvs: SignalRow[] = [], blocked: Set
   model.learned = learnTerms(cvs, blocked);
   const conf = new Map<string, number>();
   for (const s of cvs) if (s.confirmed_role && s.confirmed_role !== s.role_id) conf.set(`${s.role_id}>${s.confirmed_role}`, (conf.get(`${s.role_id}>${s.confirmed_role}`) || 0) + 1);
+  // score distribution of checked CVs (each check once) for the market comparison
+  const hist = (): ScoreHist => ({ n: 0, h: Array(21).fill(0) });
+  const add = (H: ScoreHist, sc: number) => { H.n++; H.h[Math.max(0, Math.min(20, Math.floor(sc / 5)))]++; };
+  const dist: NonNullable<AtsModel['score_dist']> = { all: hist(), role: {}, disc: {} };
+  for (const s of cvs) {
+    if (typeof s.score !== 'number') continue;
+    const role = s.confirmed_role || s.role_id;
+    add(dist.all!, s.score); add((dist.role![role] ||= hist()), s.score);
+    if (s.discipline) add((dist.disc![s.discipline] ||= hist()), s.score);
+  }
+  model.score_dist = dist;
   model.confusions = [...conf.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => ({ from: k.split('>')[0], to: k.split('>')[1], n }));
 
   for (const role of ROLES) {

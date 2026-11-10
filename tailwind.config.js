@@ -4,19 +4,20 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"IBM Plex Sans Arabic"', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif']
+        sans: ['Tajawal', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        display: ['"Noto Kufi Arabic"', 'Tajawal', 'system-ui', 'sans-serif']
       },
       colors: {
         // brand
-        brand: { red: '#E53935', blue: '#1F6FB2', navy: '#0B1B3A' },
+        brand: { red: '#E53935', blue: '#1F6FB2', navy: '#0B1B3A', amber: '#F5A524' },
         // drafting sheet
-        paper: '#F3F5F8',
-        line: '#D6DDE7',
+        paper: '#F0F1F3',
+        line: '#D9DCE3',
         ink: { DEFAULT: '#0B1B3A', soft: '#44516A', mute: '#7A869C' },
         // MEP system colours (as used on coordinated drawings)
-        sys: { hvac: '#1F6FB2', fire: '#D7322F', plumb: '#18875A', bim: '#5B4BC4' }
+        sys: { hvac: '#1E9BD7', fire: '#F0442C', plumb: '#12A37A', bim: '#7C5CFF', elec: '#F5A524' }
       },
-      borderRadius: { sheet: '6px' },
+      borderRadius: { sheet: '8px' },
       fontSize: {
         // modular scale ~1.25
         'h1': ['2.75rem', { lineHeight: '1.25', fontWeight: '700' }],

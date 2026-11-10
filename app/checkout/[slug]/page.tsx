@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { getT, L } from '@/lib/i18n';
 import { requireUser } from '@/lib/auth';
 import CopyButton from '@/components/CopyButton';
@@ -13,6 +13,7 @@ export default async function Checkout({ params, searchParams }: { params: Promi
   const { t, locale } = await getT();
   const { data: c } = await supabase.from('courses').select('*').eq('slug', slug).eq('published', true).maybeSingle();
   if (!c) notFound();
+  if (c.status === 'soon') redirect(`/courses/${slug}`);
 
   const insta = process.env.NEXT_PUBLIC_INSTAPAY_HANDLE || '—';
   const voda = process.env.NEXT_PUBLIC_VODAFONE_CASH_NUMBER || '—';

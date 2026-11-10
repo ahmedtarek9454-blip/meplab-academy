@@ -28,7 +28,23 @@ export type AtsModel = {
   learned?: Record<string, { term: string; n: number; share: number }[]>;
   /** most frequent corrections people made: detected → confirmed */
   confusions?: { from: string; to: string; n: number }[];
+  /** ATS score histograms of checked CVs (21 buckets of 5 points) — for "better than X% of engineers" */
+  score_dist?: { all?: ScoreHist; role?: Record<string, ScoreHist>; disc?: Record<string, ScoreHist> };
 };
+export type ScoreHist = { n: number; h: number[] };
+
+/** share of checked CVs (same role → discipline → everyone, whichever has enough data) that scored below this one */
+export function percentile(model: AtsModel, score: number, roleId: string, disc: string | null, minN = 30): { pct: number; n: number; scope: 'role' | 'disc' | 'all' } | null {
+  const d = model.score_dist; if (!d) return null;
+  const pick: [ScoreHist | undefined, 'role' | 'disc' | 'all'][] = [[d.role?.[roleId], 'role'], [disc ? d.disc?.[disc] : undefined, 'disc'], [d.all, 'all']];
+  for (const [hist, scope] of pick) {
+    if (!hist || hist.n < minN) continue;
+    const b = Math.max(0, Math.min(20, Math.floor(score / 5)));
+    const below = hist.h.slice(0, b).reduce((x, y) => x + y, 0) + hist.h[b] * 0.5;
+    return { pct: Math.max(1, Math.min(99, Math.round((100 * below) / hist.n))), n: hist.n, scope };
+  }
+  return null;
+}
 
 export function priorWeights(roleId: string): Record<string, number> {
   const w: Record<string, number> = {};

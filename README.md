@@ -205,6 +205,20 @@
 - **التحكم:** في صفحة الموديل هتلاقي عدد الـ CVs، أكتر التصحيحات، والكلمات اللي اتعلمها — وجنب كل كلمة ✕ تمنعها.
 - لازم تشغّل جزء **CV learning** في `schema.sql` (جدولين: `cv_signals` و `ats_term_blocks`) ويكون `SUPABASE_SERVICE_ROLE_KEY` متظبط.
 
+## 17) الاستضافة على Netlify (مسموح بالاستخدام التجاري في الخطة المجانية)
+
+1. netlify.com ← Sign up with GitHub ← **Add new site ← Import from Git** ← اختار `meplab-academy`. الإعدادات بتتقري لوحدها من `netlify.toml`.
+2. **Environment variables:** نفس اللي في `.env.example` (أهمهم `NEXT_PUBLIC_SUPABASE_URL` و `NEXT_PUBLIC_SUPABASE_ANON_KEY` و `SUPABASE_SERVICE_ROLE_KEY` و `CRON_SECRET` و `NEXT_PUBLIC_SITE_URL`).
+3. التدريب اليومي لأداة الـ CV شغال من `netlify/functions/ats-train.mjs` (كل يوم 7 الصبح بتوقيت القاهرة).
+4. في Supabase ← Authentication ← URL Configuration: حط لينك الموقع في **Site URL** و `https://<الموقع>/**` في **Redirect URLs**.
+
+## 18) الكورسات المتاحة واللي "قريبًا"
+
+- من **الإدارة ← الكورسات** اختار حالة كل كورس: **متاح** أو **قريبًا**. الكورس اللي "قريبًا" بيظهر بلونه الغامق ومكان الاشتراك فيه "بلّغني لما ينزل".
+- جنب كل كورس هتلاقي **عدد المستنيين**. لما تحوّله "متاح" هيظهر زرار **"ابعت لهم إن الكورس نزل"** (محتاج `RESEND_API_KEY`).
+- **الفيديو التعريفي:** حط لينك يوتيوب أو Vimeo أو Google Drive في خانة الفيديو التعريفي.
+- **واتساب وماسنجر** في صفحة كل كورس: `NEXT_PUBLIC_WHATSAPP` و `NEXT_PUBLIC_MESSENGER_URL` (الافتراضي m.me/MEPLAB.EGY).
+
 ---
 
 ## دورة الطالب

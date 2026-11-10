@@ -1,7 +1,8 @@
+import { artKey, COURSE_COLOR, COURSE_DEEP } from '@/lib/ui/courseArt';
 import { Mark } from './Logo';
 
 type Loc = 'ar' | 'en';
-export type CourseLite = { slug: string; title_ar: string; title_en: string; desc_ar?: string | null; desc_en?: string | null; price_egp: number; access_days?: number | null };
+export type CourseLite = { slug: string; title_ar: string; title_en: string; desc_ar?: string | null; desc_en?: string | null; price_egp: number; access_days?: number | null; status?: string | null };
 
 const T = {
   ar: {
@@ -70,18 +71,20 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <div className="mb-3 flex items-end justify-between">
-            <h3 className="text-xl font-extrabold text-ink">🎓 {t.courses}</h3>
+            <h3 className="display text-xl text-ink">{t.courses}</h3>
             <a href={hrefs.courses} className="text-sm font-bold text-brand-blue">{t.all} {locale === 'ar' ? '←' : '→'}</a>
           </div>
           {courses.length ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {courses.slice(0, 4).map((c) => (
-                <a key={c.slug} href={hrefs.course(c.slug)} className="card group flex flex-col p-5 transition">
-                  <div className="font-bold text-ink group-hover:text-brand-blue">{L(c, 'title')}</div>
-                  <p className="mt-1 line-clamp-2 flex-1 text-sm leading-6 text-ink-soft">{L(c, 'desc')}</p>
+                <a key={c.slug} href={hrefs.course(c.slug)} className="group flex flex-col rounded-[10px] p-5 text-white transition" style={{ background: c.status === 'soon' ? COURSE_DEEP[artKey(c)] : COURSE_COLOR[artKey(c)] }}>
+                  <div className="font-display text-lg font-black group-hover:underline">{L(c, 'title')}</div>
+                  <p className="mt-1 line-clamp-2 flex-1 text-sm leading-6 opacity-90">{L(c, 'desc')}</p>
                   <div className="mt-3 flex items-center justify-between text-sm">
-                    <span className="font-bold text-brand-red">{c.price_egp} <span className="text-xs font-bold">{t.egp}</span></span>
-                    <span className="text-xs text-ink-mute">{c.access_days ? `${c.access_days} ${t.days}` : t.lifetime} · <span className="font-bold text-brand-blue">{t.view}</span></span>
+                    {c.status === 'soon'
+                      ? <span className="rounded bg-black/20 px-2 py-0.5 font-bold">{locale === 'ar' ? 'قريبًا' : 'Coming soon'}</span>
+                      : <span className="font-display text-xl font-black">{c.price_egp} <span className="font-sans text-xs font-bold opacity-80">{t.egp}</span></span>}
+                    <span className="font-bold">{t.view}</span>
                   </div>
                 </a>
               ))}

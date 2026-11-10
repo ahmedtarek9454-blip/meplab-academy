@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { requireAdmin } from '@/lib/auth';
 import { generateActivationCode } from '@/lib/license';
-import { notifyStudentApproved, notifyStudentRejected } from '@/lib/email';
+import { notifyStudentApproved, notifyStudentRejected, notifyWaitlistLaunch } from '@/lib/email';
 
 export async function approveOrder(formData: FormData) {
   const { supabase } = await requireAdmin();
@@ -58,6 +58,7 @@ export async function saveCourse(formData: FormData) {
     published: formData.get('published') === 'on',
     sort_order: parseInt(g('sort_order') || '0', 10) || 0,
     format: g('format') === 'live' ? 'live' : 'recorded',
+    status: g('status') === 'soon' ? 'soon' : 'available',
     level: ['beginner', 'intermediate', 'advanced'].includes(g('level')) ? g('level') : 'beginner',
     hours: g('hours') ? parseFloat(g('hours')) || null : null,
     software: g('software') || null,
@@ -93,4 +94,21 @@ export async function rejectDevice(formData: FormData) {
   const { supabase } = await requireAdmin();
   await supabase.from('device_requests').update({ status: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', String(formData.get('id'))).eq('status', 'pending');
   revalidatePath('/admin');
+}
+
+/* ---------- waitlist: email everyone waiting for a course that is now available ---------- */
+export async function notifyWaitlist(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get('course_id') || '');
+  const { data: c } = await supabase.from('courses').select('id, slug, title_ar, status').eq('id', id).maybeSingle();
+  if (!c || c.status !== 'available') redirect('/admin/courses?error=' + encodeURIComponent('خلّي الكورس "متاح" الأول وبعدين ابعت.'));
+  const { data: list } = await supabase.from('course_waitlist').select('id, email').eq('course_id', id).is('notified_at', null).limit(500);
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/$/, '');
+  let sent = 0;
+  for (const w of list ?? []) {
+    const ok = await notifyWaitlistLaunch({ to: w.email, course: c!.title_ar, url: `${site}/courses/${c!.slug}` }).catch(() => false);
+    if (ok !== false) { await supabase.from('course_waitlist').update({ notified_at: new Date().toISOString() }).eq('id', w.id); sent++; }
+  }
+  revalidatePath('/admin/courses');
+  redirect(`/admin/courses?notified=${sent}`);
 }

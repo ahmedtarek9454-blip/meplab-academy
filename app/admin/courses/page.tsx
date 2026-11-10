@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getT, L } from '@/lib/i18n';
 import { requireAdmin } from '@/lib/auth';
 import SubmitButton from '@/components/SubmitButton';
-import { saveCourse } from '../actions';
+import { saveCourse, notifyWaitlist } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +12,9 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
   const { t, locale } = await getT();
   const { data } = await supabase.from('courses').select('*').order('sort_order');
   const courses = data ?? [];
+  const { data: wl } = await supabase.from('course_waitlist').select('course_id, notified_at');
+  const waiting = (id: string) => (wl ?? []).filter((w: any) => w.course_id === id && !w.notified_at).length;
+  const ar = locale === 'ar';
   const editing = sp.edit ? courses.find((c: any) => c.id === sp.edit) : null;
   const showForm = !!editing || sp.new === '1' || !!sp.error;
   const c: any = editing || {};
@@ -63,6 +66,8 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
             <A name="outcomes_en" label={`${t.outcomes_title} (EN)`} rows={4} ltr />
             <A name="audience_ar" label={`${t.audience_title} (AR)`} rows={3} />
             <A name="audience_en" label={`${t.audience_title} (EN)`} rows={3} ltr />
+            <div><label className="label">{locale === 'ar' ? 'حالة الكورس' : 'Course status'}</label>
+              <select name="status" defaultValue={c.status ?? 'available'} className="input"><option value="available">{locale === 'ar' ? 'متاح للاشتراك' : 'Available'}</option><option value="soon">{locale === 'ar' ? 'قريبًا (بلّغني)' : 'Coming soon (waitlist)'}</option></select></div>
             <div><label className="label">Format</label>
               <select name="format" defaultValue={c.format ?? 'recorded'} className="input"><option value="recorded">{t.recorded_badge}</option><option value="live">Live</option></select></div>
             <div><label className="label">{t.level}</label>
@@ -80,6 +85,7 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
         </form>
       )}
 
+      {sp.notified && <p className="mt-4 rounded-sheet bg-green-50 p-3 text-sm text-green-800">{ar ? `اتبعت لـ ${sp.notified} شخص.` : `Sent to ${sp.notified} people.`}</p>}
       <div className="card mt-6 divide-y divide-line">
         {courses.map((x: any) => (
           <div key={x.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
@@ -89,6 +95,11 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
             </div>
             <div className="flex items-center gap-2">
               <span className={`badge ${x.published ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-ink-soft'}`}>{x.published ? t.published : t.draft}</span>
+              <span className={`badge ${x.status === 'soon' ? 'bg-amber-100 text-amber-800' : 'bg-blue-50 text-brand-blue'}`}>{x.status === 'soon' ? (ar ? 'قريبًا' : 'Soon') : (ar ? 'متاح' : 'Available')}</span>
+              {waiting(x.id) > 0 && <span className="badge bg-paper text-ink-soft ring-1 ring-line">{waiting(x.id)} {ar ? 'مستني' : 'waiting'}</span>}
+              {waiting(x.id) > 0 && x.status === 'available' && (
+                <form action={notifyWaitlist}><input type="hidden" name="course_id" value={x.id} /><SubmitButton className="btn-red btn-sm">{ar ? 'ابعت لهم إن الكورس نزل' : 'Email the waitlist'}</SubmitButton></form>
+              )}
               <Link href={`/admin/tasks?course=${x.id}`} className="btn-ghost btn-sm">📝 {t.tasks_title}</Link>
               <Link href={`/admin/courses?edit=${x.id}`} className="btn-ghost btn-sm">{t.edit}</Link>
             </div>

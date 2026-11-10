@@ -22,8 +22,9 @@ export async function submitOrder(formData: FormData) {
   if (!['instapay', 'vodafone_cash'].includes(method) || machine.length < 6 || !senderRef) bad();
   if (!file || file.size === 0 || file.size > MAX || !OK_TYPES.includes(file.type)) bad();
 
-  const { data: course } = await supabase.from('courses').select('id, price_egp, title_ar').eq('slug', slug).eq('published', true).maybeSingle();
+  const { data: course } = await supabase.from('courses').select('id, price_egp, title_ar, status').eq('slug', slug).eq('published', true).maybeSingle();
   if (!course) redirect('/courses');
+  if (course.status === 'soon') redirect(`/courses/${slug}`);
 
   // prevent duplicate open orders
   const { data: dup } = await supabase.from('orders').select('id').eq('user_id', user.id).eq('course_id', course.id)

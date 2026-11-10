@@ -13,7 +13,7 @@ export default async function Footer() {
     ['/download', t.nav_download], ['/tools', t.nav_tools], ['/#about', t.about_tag], ['/profile', t.nav_profile]
   ];
   return (
-    <footer className="mt-24 bg-ink text-slate-300">
+    <footer className="border-t-4 border-brand-amber bg-ink text-slate-300">
       <div className="container-x grid gap-10 py-14 md:grid-cols-[1.4fr,1fr,1fr]">
         <div>
           <Logo light />

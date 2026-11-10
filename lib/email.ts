@@ -66,3 +66,11 @@ export function notifyStudentGraded(o: { to: string; name?: string; task: string
 ${o.feedback ? `<p style="background:#f8fafc;border-radius:10px;padding:12px">💬 ${esc(o.feedback)}</p>` : ''}
 <p><a href="${esc(site())}/profile" style="display:inline-block;background:#E53935;color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700">افتح بروفايلي</a></p>`));
 }
+
+export function notifyWaitlistLaunch(o: { to: string; course: string; url: string }) {
+  return sendEmail(o.to, `نزل كورس ${o.course} على MEP LAB`, layout('الكورس اللي كنت مستنيه نزل 🎉', `
+<p>كورس <b>${esc(o.course)}</b> بقى متاح دلوقتي على MEP LAB.</p>
+<p>اتفرّج على الفيديو التعريفي المجاني وشوف المحتوى كامل:</p>
+<p><a href="${esc(o.url)}" style="display:inline-block;background:#E53935;color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700">افتح صفحة الكورس</a></p>
+<p style="color:#64748b;font-size:13px">وصلك الإيميل ده لأنك طلبت نبلّغك لما الكورس ينزل.</p>`));
+}

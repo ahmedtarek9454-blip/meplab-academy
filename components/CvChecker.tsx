@@ -8,7 +8,8 @@ import { currentUser, type GateUser } from './EmailGate';
 import AboutMeplab, { type CourseLite } from './AboutMeplab';
 import CvSave from './CvSave';
 import { ocrImageFile, ocrPdfPages } from '@/lib/cv/ocr';
-import { defaultModel, type AtsModel } from '@/lib/ats/model';
+import { defaultModel, percentile, type AtsModel } from '@/lib/ats/model';
+import ShareCard from './ShareCard';
 import type { Cat } from '@/lib/ats/taxonomy';
 import { analyzeCv, type CvResult, type CheckStatus } from '@/lib/cv/analyze';
 import { MARKETS, LEVELS, roleGroups, type Market } from '@/lib/cv/data';
@@ -23,6 +24,7 @@ const T = {
     sub: 'ارفع الـ CV بتاعك وفي ثواني تعرف: نسبة توافقه مع أنظمة الـ ATS، أقرب وظيفة ليه في تخصصك الهندسي، والمرتب التقريبي في السوق.',
     free: 'مجاني 100%',
     privacy: '🔒 الـ CV بيتحلل جوه متصفحك ومش بيترفع على أي سيرفر. علشان الأداة تتعلم بنحفظ بس المهارات اللي اتعرفت والنتيجة، من غير اسم أو إيميل أو تليفون.',
+    better: (p: number, n: number, sc: string) => `أحسن من ${p}% من ${sc} (${n.toLocaleString('en-US')} CV)`, sc_role: 'الـ CVs اللي اتفحصت لنفس الوظيفة', sc_disc: 'الـ CVs اللي اتفحصت في نفس التخصص', sc_all: 'كل الـ CVs اللي اتفحصت على MEP LAB',
     fb_q: 'الوظيفة دي مظبوطة؟', fb_yes: 'أيوه', fb_no: 'لأ', fb_pick: 'اختار وظيفتك الصح', fb_send: 'ابعت', fb_thanks: 'شكرًا! الأداة هتتعلم من ردك وتبقى أدق للي بعدك.',
     drop: 'اسحب الـ CV هنا أو اضغط للاختيار',
     types: 'PDF أو Word أو صورة (JPG/PNG) أو CV متصوّر',
@@ -83,6 +85,7 @@ const T = {
     sub: 'Upload your CV and in seconds see its ATS score, the closest job title in your engineering discipline, and an estimated market salary.',
     free: '100% free',
     privacy: '🔒 Your CV is analysed inside your browser and never uploaded. To keep improving, we store only the skills found and the score — no name, e-mail or phone.',
+    better: (p: number, n: number, sc: string) => `Better than ${p}% of ${sc} (${n.toLocaleString('en-US')} CVs)`, sc_role: 'CVs checked for the same role', sc_disc: 'CVs checked in the same discipline', sc_all: 'all CVs checked on MEP LAB',
     fb_q: 'Is this the right job title?', fb_yes: 'Yes', fb_no: 'No', fb_pick: 'Pick your actual role', fb_send: 'Send', fb_thanks: 'Thanks! The engine learns from your answer and gets more accurate for the next person.',
     drop: 'Drop your CV here or click to choose',
     types: 'PDF, Word, image (JPG/PNG) or scanned CV',
@@ -386,7 +389,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
           onDragLeave={() => setDrag(false)}
           onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files?.[0]; if (f) setFile(f); }}
-          className={`flex cursor-pointer flex-col items-center justify-center rounded-sheet border-2 border-dashed p-10 text-center transition ${drag ? 'border-brand-blue bg-blue-50' : needFile ? 'animate-pulse border-red-400 bg-red-50' : file ? 'border-green-400 bg-green-50' : 'border-line hover:border-brand-blue hover:bg-paper'}`}
+          className={`flex cursor-pointer flex-col items-center justify-center rounded-sheet border-2 border-dashed p-10 text-center transition ${drag ? 'border-brand-red bg-red-50' : needFile ? 'animate-pulse border-red-400 bg-red-50' : file ? 'border-green-400 bg-green-50' : 'border-line hover:border-brand-blue hover:bg-paper'}`}
         >
           <input ref={inp} type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
           <div className="flex h-14 w-14 items-center justify-center rounded-sheet bg-ink text-2xl text-white">{file ? '✓' : '⬆'}</div>
@@ -404,7 +407,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           <div className="grid grid-cols-3 gap-2">
             {(Object.keys(MARKETS) as Market[]).map((m) => (
               <button key={m} type="button" onClick={() => setMarket(m)}
-                className={`rounded-sheet border-2 px-3 py-2.5 text-sm font-bold transition ${market === m ? 'border-brand-blue bg-blue-50 text-brand-blue' : 'border-line text-ink-soft hover:border-line'}`}>
+                className={`rounded-sheet border-2 px-3 py-2.5 text-sm font-bold transition ${market === m ? 'border-ink bg-ink text-white' : 'border-line text-ink-soft hover:border-line'}`}>
                 {MARKETS[m][locale === 'ar' ? 'name_ar' : 'name_en']}
               </button>
             ))}
@@ -421,6 +424,8 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
 
   /* ---------- result ---------- */
   const top = res.roles[0];
+  const pr = percentile(model, res.score, top.role.id, res.discipline?.id ?? null);
+  const prScope = pr ? (pr.scope === 'role' ? t.sc_role : pr.scope === 'disc' ? t.sc_disc : t.sc_all) : '';
   const others = res.roles.slice(1, 4).filter((r) => r.pct > 10);
   const col = res.score >= 75 ? '#16a34a' : res.score >= 50 ? '#f59e0b' : '#E53935';
   const verdict = res.score >= 75 ? t.score_good : res.score >= 50 ? t.score_ok : t.score_bad;
@@ -457,6 +462,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
             <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-brand-blue" style={{ width: `${top.pct}%` }} /></div>
             <span className="text-sm font-bold text-brand-blue">{top.pct}%</span>
           </div>
+          {pr && <p className="mt-3 text-sm font-semibold text-sys-plumb">{t.better(pr.pct, pr.n, prScope)}</p>}
           {others.length > 0 && (
             <>
               <div className="mt-5 text-xs font-bold text-ink-mute">{t.other_roles}</div>
@@ -541,6 +547,9 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           </div>
         );
       })()}
+
+      <ShareCard locale={locale} score={res.score} role={locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
+        better={pr ? { pct: pr.pct, scopeLabel: prScope } : null} siteUrl={process.env.NEXT_PUBLIC_SITE_URL} />
 
       <div className="grid gap-6 lg:grid-cols-5">
         {/* checks */}

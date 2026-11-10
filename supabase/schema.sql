@@ -490,3 +490,47 @@ create table if not exists public.ats_term_blocks (
 alter table public.ats_term_blocks enable row level security;
 drop policy if exists "term_blocks_admin" on public.ats_term_blocks;
 create policy "term_blocks_admin" on public.ats_term_blocks for all using (public.is_admin()) with check (public.is_admin());
+
+-- =====================================================================
+-- Launch line-up: 2 courses available now, 3 "coming soon" with a waitlist
+-- =====================================================================
+alter table public.courses add column if not exists status text not null default 'available';
+do $$ begin
+  alter table public.courses add constraint courses_status_chk check (status in ('available','soon'));
+exception when duplicate_object then null; end $$;
+
+update public.courses set title_ar = 'دبلومة Revit Mechanical', title_en = 'Revit Mechanical Diploma' where slug = 'revit-mechanical' and title_ar like 'Revit Mechanical%';
+update public.courses set status = 'soon' where slug in ('fire-fighting-design', 'plumbing-design') and status = 'available';
+
+insert into public.courses (slug, title_ar, title_en, desc_ar, desc_en, curriculum_ar, curriculum_en, outcomes_ar, outcomes_en, audience_ar, audience_en, level, hours, software, price_egp, access_days, published, sort_order, format, status)
+values (
+  'electrical-design',
+  'تصميم الكهرباء للمباني',
+  'Building Electrical Design',
+  E'كورس مسجّل لتصميم كهرباء المباني من الإنارة وتوزيع القوى لحد لوحات التوزيع وحسابات الكابلات والتأريض، على مشاريع سكنية وتجارية ومستشفيات.',
+  E'A recorded course on building electrical design: lighting, power distribution, distribution boards, cable sizing and earthing, on residential, commercial and hospital projects.',
+  E'مقدمة في أنظمة الكهرباء في المباني والمصطلحات\nتصميم الإنارة وحساباتها على DIALux\nتوزيع القوى والمخارج (Small Power)\nجداول الأحمال ولوحات التوزيع (DB / SMDB / MDB)\nحسابات الكابلات وهبوط الجهد والقصر\nالمولدات و UPS والمحولات\nالتأريض والحماية من الصواعق\nالـ Single Line Diagram\nالتنسيق مع أنظمة التيار الخفيف وإنذار الحريق\nمشروع تطبيقي كامل',
+  E'Building electrical systems and terminology\nLighting design and calculations in DIALux\nPower distribution and small power\nLoad schedules and distribution boards (DB / SMDB / MDB)\nCable sizing, voltage drop and short circuit\nGenerators, UPS and transformers\nEarthing and lightning protection\nSingle line diagrams\nCoordination with ELV and fire alarm\nFull practical project',
+  E'تصمّم الإنارة والقوى لأي مبنى\nتعمل جداول الأحمال وتختار اللوحات والكابلات\nتطلّع Single Line Diagram مظبوط',
+  E'Design lighting and power for any building\nPrepare load schedules and select boards and cables\nProduce a correct single line diagram',
+  E'مهندسين كهرباء حديثي التخرج\nمهندسي موقع عايزين يفهموا التصميم',
+  E'Fresh electrical graduates\nSite engineers who want to understand design',
+  'beginner', null, 'DIALux, ETAP, AutoCAD', 0, null, true, 5, 'recorded', 'soon'
+) on conflict (slug) do nothing;
+
+-- people who asked to be told when a "coming soon" course launches
+create table if not exists public.course_waitlist (
+  id uuid primary key default gen_random_uuid(),
+  course_id uuid not null references public.courses(id) on delete cascade,
+  email text not null,
+  user_id uuid references public.profiles(id) on delete set null,
+  notified_at timestamptz,
+  created_at timestamptz not null default now(),
+  unique (course_id, email)
+);
+alter table public.course_waitlist enable row level security;
+drop policy if exists "waitlist_admin_read" on public.course_waitlist;
+create policy "waitlist_admin_read" on public.course_waitlist for select using (public.is_admin());
+drop policy if exists "waitlist_admin_update" on public.course_waitlist;
+create policy "waitlist_admin_update" on public.course_waitlist for update using (public.is_admin());
+-- inserts go through /api/waitlist (server, rate-limited)

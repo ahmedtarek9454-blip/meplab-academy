@@ -2,13 +2,13 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getT, L } from '@/lib/i18n';
 import { getSession } from '@/lib/auth';
-import { systemOf } from '@/lib/ui/systems';
+import { artKey, COURSE_COLOR, COURSE_GLOW } from '@/lib/ui/courseArt';
+import CourseArt from '@/components/CourseArt';
+import { COURSE_DEEP } from '@/components/CourseCard';
+import { videoEmbed } from '@/lib/ui/video';
+import NotifyMe from '@/components/NotifyMe';
+import ContactButtons from '@/components/ContactButtons';
 
-function youtubeEmbed(url?: string | null) {
-  if (!url) return null;
-  const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
-  return m ? `https://www.youtube.com/embed/${m[1]}` : null;
-}
 const lines = (s: string) => (s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
 export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -33,10 +33,13 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   const lessons = lines(L(c, 'curriculum', locale));
   const outcomes = lines(L(c, 'outcomes', locale));
   const audience = lines(L(c, 'audience', locale));
-  const embed = youtubeEmbed(c.preview_url);
+  const embed = videoEmbed(c.preview_url);
+  const soon = c.status === 'soon';
+  const ar = locale === 'ar';
   const levelLabel = c.level === 'advanced' ? t.level_advanced : c.level === 'intermediate' ? t.level_intermediate : t.level_beginner;
   const isLive = c.format === 'live';
-  const sys = systemOf(c);
+  const k = artKey(c);
+  const sys = { color: COURSE_COLOR[k], deep: COURSE_DEEP[k] };
 
   const facts = [
     { k: t.level, v: levelLabel },
@@ -47,26 +50,32 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
   return (
     <div style={{ ['--sys' as any]: sys.color }}>
-      {/* header band: course drawn in its system colour */}
-      <section className="bg-grid-ink border-b border-line">
-        <div className="container-x py-10 md:py-14">
-          <nav className="text-sm text-ink-mute"><Link href="/courses" className="hover:text-ink">{t.nav_courses}</Link> <span className="mx-1">/</span> <span style={{ color: sys.color }}>{locale === 'ar' ? sys.ar : sys.en}</span></nav>
-          <h1 className="mt-3 max-w-3xl text-[1.9rem] font-bold leading-snug text-ink md:text-h1">{L(c, 'title', locale)}</h1>
-          <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className="badge text-white" style={{ background: sys.color }}>
-              <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" aria-hidden><path d="M3 2l7 4-7 4z" fill="currentColor" /></svg>
-              {isLive ? 'Live' : t.recorded_badge}
-            </span>
-            {!isLive && <span className="text-sm text-ink-soft">{t.recorded_note}</span>}
+      {/* header block in the course's discipline colour */}
+      <section className="text-white" style={{ background: soon ? sys.deep : sys.color }}>
+        <div className="container-x grid items-center gap-8 py-10 md:py-14 lg:grid-cols-[1.15fr,.85fr]">
+          <div>
+            <nav className="text-sm font-medium text-white/80"><Link href="/courses" className="hover:text-white hover:underline">{t.nav_courses}</Link> <span className="mx-1">/</span> {L(c, 'title', locale)}</nav>
+            <span className="mt-5 inline-block rounded bg-black/20 px-2.5 py-1 text-sm font-bold">{soon ? (ar ? 'قريبًا' : 'Coming soon') : isLive ? 'Live' : (ar ? 'متاح الآن · كورس مسجّل' : 'Available now · recorded')}</span>
+            <h1 className="display mt-3 text-[2.4rem] leading-[1.15] md:text-[3.6rem]">{L(c, 'title', locale)}</h1>
+            <p className="mt-4 max-w-2xl text-lg leading-8 text-white/90">{L(c, 'desc', locale)}</p>
+            {!isLive && <p className="mt-3 max-w-2xl text-sm leading-7 text-white/75">{t.recorded_note}</p>}
+            <div className="mt-6 flex flex-wrap gap-3">
+              {embed && <a href="#intro" className="btn-white">{ar ? 'اتفرّج على الفيديو التعريفي' : 'Watch the free intro'}</a>}
+              <a href="#enroll" className="btn-outline-white">{soon ? (ar ? 'بلّغني لما ينزل' : 'Notify me') : (ar ? 'اشترك' : 'Enrol')}</a>
+            </div>
           </div>
+          <CourseArt course={c} palette={{ bg: sys.deep, line: '#ffffff', soft: 'rgba(255,255,255,.14)', accent: COURSE_GLOW[k] }} className="aspect-[16/10] overflow-hidden rounded-[10px]" />
         </div>
       </section>
 
       <section className="container-x grid gap-10 py-10 lg:grid-cols-[1fr,22rem]">
         <div className="min-w-0">
           {embed ? (
-            <div className="aspect-video overflow-hidden rounded-sheet border border-line bg-ink">
-              <iframe src={embed} className="h-full w-full" allowFullScreen title="preview" />
+            <div id="intro" className="scroll-mt-24">
+            <h2 className="display mb-3 text-2xl">{ar ? 'الفيديو التعريفي — ببلاش' : 'Free intro video'}</h2>
+            <div className="aspect-video overflow-hidden rounded-[10px] bg-ink">
+              <iframe src={embed} className="h-full w-full" allowFullScreen loading="lazy" title={ar ? 'الفيديو التعريفي' : 'Intro video'} allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" />
+            </div>
             </div>
           ) : c.cover_url ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -83,12 +92,10 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
             ))}
           </dl>
 
-          <h2 className="mt-10 text-h3 font-semibold">{t.about_course}</h2>
-          <p className="mt-2 max-w-[70ch] whitespace-pre-line leading-8 text-ink-soft">{L(c, 'desc', locale)}</p>
 
           {outcomes.length > 0 && (
             <>
-              <h2 className="mt-10 text-h3 font-semibold">{t.outcomes_title}</h2>
+              <h2 className="display mt-10 text-2xl">{t.outcomes_title}</h2>
               <ul className="mt-3 grid gap-x-8 gap-y-3 sm:grid-cols-2">
                 {outcomes.map((o) => (
                   <li key={o} className="flex gap-3 leading-7 text-ink">
@@ -101,7 +108,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
           {lessons.length > 0 && (
             <>
-              <h2 className="mt-10 text-h3 font-semibold">{t.curriculum} <span className="text-base font-normal text-ink-mute">({lessons.length})</span></h2>
+              <h2 className="display mt-10 text-2xl">{t.curriculum} <span className="text-base font-normal text-ink-mute">({lessons.length})</span></h2>
               <ol className="card mt-3 divide-y divide-line">
                 {lessons.map((l, i) => (
                   <li key={i} className="flex items-baseline gap-4 px-4 py-3">
@@ -123,7 +130,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
           {audience.length > 0 && (
             <>
-              <h2 className="mt-10 text-h3 font-semibold">{t.audience_title}</h2>
+              <h2 className="display mt-10 text-2xl">{t.audience_title}</h2>
               <ul className="mt-3 space-y-2">
                 {audience.map((a) => <li key={a} className="flex gap-3 leading-7 text-ink"><span className="mt-3 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: sys.color }} />{a}</li>)}
               </ul>
@@ -131,17 +138,22 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           )}
         </div>
 
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        <aside id="enroll" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
           <div className="sheet overflow-hidden">
             <div className="h-1.5" style={{ background: sys.color }} />
             <div className="p-6">
-              <div className="text-[2.25rem] font-bold leading-none text-ink">{c.price_egp} <span className="text-base font-medium text-ink-soft">{t.egp}</span></div>
+              {soon ? <div className="text-2xl font-bold text-ink">{ar ? 'قريبًا' : 'Coming soon'}</div> : <div className="text-[2.25rem] font-bold leading-none text-ink">{c.price_egp} <span className="text-base font-medium text-ink-soft">{t.egp}</span></div>}
               <dl className="mt-5 space-y-2 text-sm">
                 <div className="flex justify-between gap-4"><dt className="text-ink-mute">{t.access}</dt><dd className="font-semibold text-ink">{c.access_days ? `${c.access_days} ${t.days}` : t.lifetime}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-ink-mute">{t.level}</dt><dd className="font-semibold text-ink">{levelLabel}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-ink-mute">{locale === 'ar' ? 'النوع' : 'Format'}</dt><dd className="font-semibold text-ink">{isLive ? 'Live' : t.recorded_badge}</dd></div>
               </dl>
-              {existing?.status === 'approved' ? (
+              {soon ? (
+                <div className="mt-6">
+                  <p className="mb-3 text-sm leading-6 text-ink-soft">{ar ? 'الكورس ده لسه بيتجهّز. سيب إيميلك ونبعتلك أول ما ينزل.' : 'This course is being prepared. Leave your email and we will tell you the day it launches.'}</p>
+                  <NotifyMe slug={c.slug} locale={locale} email={user?.email || ''} />
+                </div>
+              ) : existing?.status === 'approved' ? (
                 <>
                   <Link href="/dashboard" className="btn-blue mt-6 w-full">{t.already_owned}</Link>
                   <Link href={`/courses/${c.slug}/tasks`} className="btn-ghost mt-2 w-full">{t.go_tasks}</Link>
@@ -151,6 +163,10 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               ) : (
                 <Link href={user ? `/checkout/${c.slug}` : `/signup?next=/checkout/${c.slug}`} className="btn-red mt-6 w-full py-3">{t.enroll}</Link>
               )}
+            </div>
+            <div className="border-t border-line px-6 py-4">
+              <p className="mb-2 text-sm font-semibold text-ink">{ar ? 'عندك سؤال قبل ما تشترك؟' : 'Questions before you enrol?'}</p>
+              <ContactButtons courseTitle={L(c, 'title', locale)} locale={locale} btnClass="btn-ghost btn-sm" />
             </div>
             <ul className="space-y-2 border-t border-line p-6 text-sm leading-6 text-ink-soft">
               {[t.feat1_d, t.feat2_d, t.feat3_d].map((x) => <li key={x} className="flex gap-2"><span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ink-mute" />{x}</li>)}

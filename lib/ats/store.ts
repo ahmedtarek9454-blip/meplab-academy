@@ -16,7 +16,7 @@ export async function trainAndSave() {
   const cvs: any[] = [];
   const since2 = new Date(Date.now() - 365 * 86400000).toISOString();
   for (let from = 0; ; from += 1000) {
-    const { data, error } = await db.from('cv_signals').select('role_id, confirmed_role, pct, market, skills, terms').gte('created_at', since2).range(from, from + 999);
+    const { data, error } = await db.from('cv_signals').select('role_id, confirmed_role, pct, market, skills, terms, score, discipline').gte('created_at', since2).range(from, from + 999);
     if (error) break; // table not created yet → learn from job posts only
     cvs.push(...(data ?? []));
     if (!data || data.length < 1000 || cvs.length >= 50000) break;

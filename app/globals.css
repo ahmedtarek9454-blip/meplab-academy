@@ -4,54 +4,45 @@
 
 @layer base {
   html { -webkit-text-size-adjust: 100%; }
-  body { @apply bg-paper font-sans text-ink antialiased; font-feature-settings: 'tnum' 1; }
-  :focus-visible { outline: 2px solid #1F6FB2; outline-offset: 2px; }
-  ::selection { background: #0B1B3A; color: #fff; }
+  body { @apply bg-paper font-sans text-[16px] text-ink antialiased; }
+  :focus-visible { outline: 3px solid #F5A524; outline-offset: 2px; }
+  ::selection { background: #E53935; color: #fff; }
 }
 
 @layer components {
-  .container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+  .container-x { @apply mx-auto w-full max-w-[1240px] px-5 sm:px-6; }
 
-  /* buttons — one red action per view, navy for secondary */
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-sheet px-5 py-2.5 text-[15px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60; }
+  /* buttons: solid blocks with small radius */
+  .btn { @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md px-5 py-3 text-[15px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60; }
   .btn-red { @apply btn bg-brand-red text-white hover:bg-[#C62828]; }
   .btn-blue { @apply btn bg-ink text-white hover:bg-[#16295A]; }
-  .btn-ghost { @apply btn border border-line bg-white text-ink hover:border-ink; }
-  .btn-sm { @apply px-3 py-1.5 text-sm; }
+  .btn-ghost { @apply btn border-2 border-ink/15 bg-white text-ink hover:border-ink; }
+  .btn-white { @apply btn bg-white text-ink hover:bg-white/90; }
+  .btn-outline-white { @apply btn border-2 border-white/80 text-white hover:bg-white/10; }
+  .btn-sm { @apply px-3.5 py-2 text-sm; }
 
-  /* surfaces: flat sheet with a hairline, no drop shadows */
-  .card { @apply rounded-sheet border border-line bg-white; }
-  .input { @apply w-full rounded-sheet border border-line bg-white px-3.5 py-2.5 text-ink outline-none transition-colors placeholder:text-ink-mute focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15; }
-  .label { @apply mb-1.5 block text-sm font-semibold text-ink-soft; }
-  .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+  .card { @apply rounded-[10px] border border-line bg-white; }
+  .input { @apply w-full rounded-md border-2 border-line bg-white px-3.5 py-2.5 text-ink outline-none transition-colors placeholder:text-ink-mute focus:border-ink; }
+  .label { @apply mb-1.5 block text-sm font-bold text-ink-soft; }
+  .badge { @apply inline-flex items-center gap-1 rounded px-2.5 py-1 text-xs font-bold; }
 
-  /* headings */
-  .eyebrow { @apply mb-2 text-sm font-semibold text-brand-red; }
-  .h-section { @apply text-2xl font-bold leading-snug text-ink md:text-h2; }
+  /* display type */
+  .display { @apply font-display font-black tracking-[-0.01em]; }
+  .eyebrow { @apply mb-2 text-sm font-bold text-brand-red; }
+  .h-section { @apply font-display text-[2rem] font-black leading-[1.2] text-ink md:text-[3.25rem]; }
 
-  /* drafting grid (light / dark) */
   .bg-grid { background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 24px 24px; }
   .bg-grid-ink { background-image: linear-gradient(rgba(11,27,58,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(11,27,58,.05) 1px, transparent 1px); background-size: 24px 24px; }
 
-  /* drawing sheet frame: corner registration ticks */
-  .sheet { @apply relative rounded-sheet border border-line bg-white; }
-  .sheet::before, .sheet::after { content: ''; position: absolute; width: 10px; height: 10px; border-color: #0B1B3A; pointer-events: none; }
-  .sheet::before { top: -1px; inset-inline-start: -1px; border-top-width: 2px; border-inline-start-width: 2px; border-start-start-radius: 6px; }
-  .sheet::after { bottom: -1px; inset-inline-end: -1px; border-bottom-width: 2px; border-inline-end-width: 2px; border-end-end-radius: 6px; }
+  .sheet { @apply relative rounded-[10px] border border-line bg-white; }
 
-  /* title-block cells */
   .tb { @apply grid border-t border-line; }
   .tb > * { @apply border-line px-3 py-2.5; }
   .tb-k { @apply block text-[11px] font-medium text-ink-mute; }
-  .tb-v { @apply block text-sm font-semibold text-ink; }
+  .tb-v { @apply block text-sm font-bold text-ink; }
 }
 
-/* hero schematic: lines draw once, then tags appear */
-.mep-line { stroke-dasharray: 1200; stroke-dashoffset: 1200; animation: draw 1.6s cubic-bezier(.6,0,.3,1) forwards; }
-.mep-tag { opacity: 0; animation: tagin .4s ease-out forwards; }
-@keyframes draw { to { stroke-dashoffset: 0; } }
-@keyframes tagin { to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) {
-  .mep-line { animation: none; stroke-dashoffset: 0; }
-  .mep-tag { animation: none; opacity: 1; }
-}
+/* ticker band under the hero — one slow loop, paused for reduced motion */
+.ticker-track { display: inline-flex; animation: ticker 40s linear infinite; }
+@keyframes ticker { to { transform: translateX(50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
