@@ -1,7 +1,7 @@
 /** DOCX (editable) + print-ready HTML for "Save as PDF" — both generated in the browser. */
 import type { CvModel } from './rebuild';
 
-const CAT_LABEL: Record<string, string> = { design: 'HVAC Design', systems: 'HVAC Systems', fire: 'Fire Protection', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & Standards', execution: 'Execution & BIM', office: 'Technical Office', commercial: 'Commercial', management: 'Management', other: 'Other Tools' };
+const CAT_LABEL: Record<string, string> = { civil: 'Civil Works', structural: 'Structural Design', survey: 'Surveying & GIS', arch: 'Architecture & Interior', electrical: 'Electrical', mech: 'Mechanical & Manufacturing', process: 'Process Engineering', petroleum: 'Petroleum', automation: 'Automation & Control', it: 'Software & IT', telecom: 'Telecom & Electronics', biomed: 'Biomedical', cert: 'Certifications', design: 'HVAC Design', systems: 'HVAC Systems', fire: 'Fire Protection', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & Standards', execution: 'Execution & BIM', office: 'Technical Office', commercial: 'Commercial', management: 'Management', other: 'Other Tools' };
 
 export async function buildDocx(m: CvModel, summary: string): Promise<Blob> {
   const D: any = await import('docx');

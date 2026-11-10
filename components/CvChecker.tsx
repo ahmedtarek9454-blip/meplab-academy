@@ -18,7 +18,7 @@ type Loc = 'ar' | 'en';
 const T = {
   ar: {
     title: 'فحص الـ CV بنظام ATS',
-    sub: 'ارفع الـ CV بتاعك وفي ثواني تعرف: نسبة توافقه مع أنظمة الـ ATS، أقرب وظيفة MEP ليه، والمرتب التقريبي في السوق.',
+    sub: 'ارفع الـ CV بتاعك وفي ثواني تعرف: نسبة توافقه مع أنظمة الـ ATS، أقرب وظيفة ليه في تخصصك الهندسي، والمرتب التقريبي في السوق.',
     free: 'مجاني 100%',
     privacy: '🔒 الـ CV بيتحلل جوه متصفحك بس، ومش بيترفع على أي سيرفر.',
     drop: 'اسحب الـ CV هنا أو اضغط للاختيار',
@@ -41,6 +41,10 @@ const T = {
     score_ok: 'كويس — محتاج شوية تعديلات',
     score_bad: 'ضعيف — غالبًا الـ ATS هيرفضه',
     best_role: 'أقرب وظيفة ليك',
+    discipline: 'تخصصك',
+    fixes_t: 'أهم التعديلات اللي هترفع درجتك',
+    fixes_pts: '+{n} نقطة',
+    fixes_none: 'الـ CV بتاعك مستوفي كل الفحوصات الأساسية. ركّز على الكلمات الناقصة تحت.',
     other_roles: 'وظايف قريبة كمان',
     match: 'توافق',
     exp: 'الخبرة المحسوبة',
@@ -51,14 +55,14 @@ const T = {
     salary_note: 'تقدير تقريبي من مواقع رواتب عامة، والرقم الفعلي بيختلف حسب الشركة والمشروع والبدلات.',
     checks: 'تفاصيل الفحص',
     found_kw: 'المهارات اللي المحرك لقاها في الـ CV',
-    cats: { design: 'تصميم', systems: 'أنظمة', fire: 'حريق', plumbing: 'صحي', software: 'برامج', codes: 'أكواد ومعايير', execution: 'تنفيذ و BIM', office: 'مكتب فني', commercial: 'تجاري', management: 'إدارة', cert: 'شهادات' } as Record<string, string>,
+    cats: { design: 'تصميم تكييف', systems: 'أنظمة تكييف', fire: 'حريق', plumbing: 'صحي', software: 'برامج', codes: 'أكواد ومعايير', execution: 'تنفيذ و BIM', office: 'مكتب فني', commercial: 'تجاري', management: 'إدارة وجودة وسلامة', cert: 'شهادات', civil: 'مدني', structural: 'إنشائي', survey: 'مساحة', arch: 'عمارة وديكور', electrical: 'كهرباء', mech: 'ميكانيكا وتصنيع', process: 'عمليات كيميائية', petroleum: 'بترول', automation: 'تحكم وأوتوميشن', it: 'برمجيات و IT', telecom: 'اتصالات وإلكترونيات', biomed: 'أجهزة طبية' } as Record<string, string>,
     engine: 'محرك MEP LAB ATS',
     model_prior: 'نسخة أولية من شبكة المعرفة',
     model_trained: 'متدرّب على {n} إعلان وظيفة حقيقي',
     salary_model: 'محسوب من {n} إعلان وظيفة حقيقي فيه مرتب، ومعدّل على مستوى خبرتك.',
     alert_sce: 'للسوق السعودي: اعتماد الهيئة السعودية للمهندسين (SCE) مطلوب في أغلب الوظايف، ومش ظاهر في الـ CV. لو معاك اكتبه بوضوح.',
     alert_syndicate: 'للسوق المصري: عضوية نقابة المهندسين مش ظاهرة في الـ CV. لو عضو، اكتبها.',
-    alert_no_skills: 'المحرك ما لقاش مهارات MEP واضحة. اكتب البرامج والأنظمة والأكواد اللي اشتغلت بيها بأسمائها.',
+    alert_no_skills: 'المحرك ما لقاش مهارات هندسية واضحة. اكتب البرامج والأنظمة والأكواد اللي اشتغلت بيها بأسمائها.',
     missing_kw: 'كلمات ناقصة لو عندك الخبرة دي ضيفها',
     again: 'افحص CV تاني',
     cta_t: 'عايز ترفع مستواك في المجال ده؟',
@@ -73,7 +77,7 @@ const T = {
   },
   en: {
     title: 'ATS CV Checker',
-    sub: 'Upload your CV and in seconds see its ATS score, the closest MEP job title, and an estimated market salary.',
+    sub: 'Upload your CV and in seconds see its ATS score, the closest job title in your engineering discipline, and an estimated market salary.',
     free: '100% free',
     privacy: '🔒 Your CV is analysed inside your browser only — it is never uploaded to a server.',
     drop: 'Drop your CV here or click to choose',
@@ -96,6 +100,10 @@ const T = {
     score_ok: 'Good — needs a few fixes',
     score_bad: 'Weak — an ATS will likely reject it',
     best_role: 'Closest job title',
+    discipline: 'Discipline',
+    fixes_t: 'Top fixes that will raise your score',
+    fixes_pts: '+{n} pts',
+    fixes_none: 'Your CV passes every core check. Focus on the missing keywords below.',
     other_roles: 'Other close matches',
     match: 'match',
     exp: 'Detected experience',
@@ -106,14 +114,14 @@ const T = {
     salary_note: 'Rough estimate from public salary sources — actual pay varies by company, project and allowances.',
     checks: 'Check details',
     found_kw: 'Skills the engine found in your CV',
-    cats: { design: 'Design', systems: 'Systems', fire: 'Fire', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & standards', execution: 'Execution & BIM', office: 'Technical office', commercial: 'Commercial', management: 'Management', cert: 'Certifications' } as Record<string, string>,
+    cats: { design: 'HVAC design', systems: 'HVAC systems', fire: 'Fire', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & standards', execution: 'Execution & BIM', office: 'Technical office', commercial: 'Commercial', management: 'Management, quality & safety', cert: 'Certifications', civil: 'Civil', structural: 'Structural', survey: 'Surveying', arch: 'Architecture & interior', electrical: 'Electrical', mech: 'Mechanical & manufacturing', process: 'Process', petroleum: 'Petroleum', automation: 'Automation & control', it: 'Software & IT', telecom: 'Telecom & electronics', biomed: 'Biomedical' } as Record<string, string>,
     engine: 'MEP LAB ATS engine',
     model_prior: 'initial knowledge-graph version',
     model_trained: 'trained on {n} real job posts',
     salary_model: 'Learned from {n} real job posts that show pay, adjusted to your level.',
     alert_sce: 'KSA: Saudi Council of Engineers (SCE) accreditation is required by most employers and is not visible in your CV. Add it clearly if you hold it.',
     alert_syndicate: 'Egypt: Engineers Syndicate membership is not visible in your CV. Add it if you are a member.',
-    alert_no_skills: 'The engine found no clear MEP skills. Name the software, systems and codes you worked with.',
+    alert_no_skills: 'The engine found no clear engineering skills. Name the software, systems and codes you worked with.',
     missing_kw: 'Missing keywords — add them if you have the experience',
     again: 'Check another CV',
     cta_t: 'Want to level up in this field?',
@@ -138,10 +146,11 @@ const CHECKS: Record<string, { ar: [string, string]; en: [string, string] }> = {
   summary: { ar: ['ملخص مهني (Summary)', 'ابدأ بـ 3–4 سطور تلخّص تخصصك وسنين خبرتك وأهم مهاراتك.'], en: ['Professional summary', 'Open with 3–4 lines on your specialty, years and top skills.'] },
   experience: { ar: ['قسم الخبرات', 'استخدم عنوان واضح زي "Work Experience".'], en: ['Experience section', 'Use a clear heading like "Work Experience".'] },
   education: { ar: ['قسم التعليم', 'ضيف قسم "Education" بالجامعة وسنة التخرج.'], en: ['Education section', 'Add an "Education" section with university and year.'] },
-  skills: { ar: ['قسم المهارات', 'ضيف قسم "Skills" فيه البرامج والأكواد (Revit, HAP, NFPA...).'], en: ['Skills section', 'Add a "Skills" section listing software and codes.'] },
+  skills: { ar: ['قسم المهارات', 'ضيف قسم "Skills" فيه البرامج والأدوات والأكواد اللي بتشتغل بيها.'], en: ['Skills section', 'Add a "Skills" section listing your software, tools and codes.'] },
   dates: { ar: ['تواريخ الشغل واضحة', 'اكتب كل وظيفة بتاريخها: Jan 2021 – Present.'], en: ['Clear job dates', 'Date every role: Jan 2021 – Present.'] },
   length: { ar: ['طول مناسب', 'الأنسب 1–2 صفحة (حوالي 400–1000 كلمة).'], en: ['Good length', 'Aim for 1–2 pages (~400–1000 words).'] },
-  metrics: { ar: ['إنجازات بأرقام', 'حط أرقام: عدد المشاريع، المساحات، الأطنان TR، نسب التوفير.'], en: ['Quantified achievements', 'Add numbers: projects, areas, TR, % savings.'] },
+  metrics: { ar: ['إنجازات بأرقام', 'حط أرقام: عدد المشاريع، الأحجام والمساحات، قيمة المشروع، نسب التوفير أو التحسين، عدد الفريق.'], en: ['Quantified achievements', 'Add numbers: projects, sizes, project value, % savings or improvement, team size.'] },
+  verbs: { ar: ['نقاط الخبرة بتبدأ بفعل', 'ابدأ كل نقطة بفعل قوي (Designed, Led, Reduced...) بدل "Responsible for" أو "Duties"، وبعده النتيجة.'], en: ['Bullets start with action verbs', 'Open each bullet with a strong verb (Designed, Led, Reduced...) instead of "Responsible for" or "Duties", then the result.'] },
   keywords: { ar: ['كلمات مفتاحية للوظيفة', 'ضيف الكلمات الناقصة اللي تحت لو عندك الخبرة فيها.'], en: ['Role keywords', 'Add the missing keywords below if they apply to you.'] },
   language: { ar: ['مكتوب بالإنجليزي', 'أغلب أنظمة الـ ATS في الخليج بتتعامل أحسن مع CV إنجليزي.'], en: ['Written in English', 'Most ATS in the region work best with English CVs.'] },
   personal: { ar: ['من غير بيانات شخصية زيادة', 'شيل الديانة والحالة الاجتماعية و"References available".'], en: ['No unnecessary personal data', 'Remove religion, marital status and "References available".'] }
@@ -415,7 +424,10 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
 
         {/* role */}
         <div className="card p-6">
-          <div className="text-sm font-bold text-ink-mute">{t.best_role}</div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-sm font-bold text-ink-mute">{t.best_role}</div>
+            {res.discipline && <span className="badge bg-paper text-ink-soft ring-1 ring-line">{t.discipline}: {locale === 'ar' ? res.discipline.ar : res.discipline.en}</span>}
+          </div>
           <div className="mt-2 text-xl font-extrabold leading-snug text-ink">{locale === 'ar' ? top.role.ar : top.role.en}</div>
           <div className="mt-3 flex items-center gap-3">
             <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-brand-blue" style={{ width: `${top.pct}%` }} /></div>
@@ -454,6 +466,36 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           </div>
         </div>
       </div>
+
+      {/* top fixes: biggest score gains first */}
+      {(() => {
+        const totalW = res.checks.reduce((x, c) => x + c.weight, 0);
+        const fixes = res.checks.filter((c) => c.status !== 'pass' && CHECKS[c.id])
+          .map((c) => ({ c, gain: Math.max(1, Math.round((100 * c.weight * (c.status === 'fail' ? 1 : 0.5)) / totalW)) }))
+          .sort((a, b) => b.gain - a.gain).slice(0, 3);
+        return (
+          <div className="card p-6">
+            <h3 className="text-lg font-bold text-ink">{t.fixes_t}</h3>
+            {fixes.length ? (
+              <ol className="mt-4 divide-y divide-line">
+                {fixes.map(({ c, gain }, i) => {
+                  const [title, tip] = CHECKS[c.id][locale];
+                  return (
+                    <li key={c.id} className="flex items-start gap-4 py-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-ink text-sm font-bold text-ink">{i + 1}</span>
+                      <div className="flex-1">
+                        <div className="font-semibold text-ink">{title}</div>
+                        <div className="mt-0.5 text-sm leading-6 text-ink-soft">{tip}</div>
+                      </div>
+                      <span className="badge shrink-0 bg-sys-plumb/10 text-sys-plumb" dir="ltr">{t.fixes_pts.replace('{n}', String(gain))}</span>
+                    </li>
+                  );
+                })}
+              </ol>
+            ) : <p className="mt-2 text-ink-soft">{t.fixes_none}</p>}
+          </div>
+        );
+      })()}
 
       <div className="grid gap-6 lg:grid-cols-5">
         {/* checks */}
@@ -496,10 +538,12 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
               ))}
             </div>
           </div>
-          <div className="card bg-brand-red p-6 text-white ring-0">
-            <div className="font-bold">{t.cta_t}</div>
-            <a href={coursesHref} className="btn mt-3 bg-white text-brand-red hover:bg-red-50">{t.cta_b}</a>
-          </div>
+          {(!res.discipline || ['mep', 'mech', 'civil', 'elec'].includes(res.discipline.id)) && (
+            <div className="card bg-brand-red p-6 text-white ring-0">
+              <div className="font-bold">{t.cta_t}</div>
+              <a href={coursesHref} className="btn mt-3 bg-white text-brand-red hover:bg-red-50">{t.cta_b}</a>
+            </div>
+          )}
         </div>
       </div>
 

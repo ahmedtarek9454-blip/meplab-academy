@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 
 export const metadata = {
   title: 'فحص الـ CV بنظام ATS مجانًا — MEP LAB',
-  description: 'افحص الـ CV بتاعك مجانًا: نتيجة ATS، أقرب وظيفة MEP، والمرتب التقريبي.'
+  description: 'افحص الـ CV بتاعك مجانًا لأي تخصص هندسي: نتيجة ATS، أقرب وظيفة ليك، والمرتب التقريبي.'
 };
 
 export default async function CvCheckPage() {
@@ -21,8 +21,8 @@ export default async function CvCheckPage() {
           <h1 className="mt-4 text-3xl font-bold md:text-4xl">{ar ? 'فحص الـ CV بنظام ATS' : 'ATS CV Checker'}</h1>
           <p className="mx-auto mt-3 max-w-2xl text-lg leading-8 text-slate-300">
             {ar
-              ? 'ارفع الـ CV وفي ثواني تعرف نسبة توافقه مع أنظمة الـ ATS، وأقرب وظيفة MEP ليه، والمرتب التقريبي في مصر والسعودية والإمارات.'
-              : 'Upload your CV and in seconds see its ATS score, the closest MEP job title and an estimated salary in Egypt, KSA and UAE.'}
+              ? 'ارفع الـ CV وفي ثواني تعرف نسبة توافقه مع أنظمة الـ ATS، وأقرب وظيفة ليه في تخصصك الهندسي، والمرتب التقريبي في مصر والسعودية والإمارات.'
+              : 'Upload your CV and in seconds see its ATS score, the closest job title in your engineering discipline and an estimated salary in Egypt, KSA and UAE.'}
           </p>
         </div>
       </section>

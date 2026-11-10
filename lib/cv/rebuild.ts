@@ -101,7 +101,7 @@ export function parseCv(text: string): CvModel {
   const work = exp.ranges.filter((r) => r.kind === 'work' && r.lineIdx !== undefined).sort((a, b) => a.lineIdx! - b.lineIdx!);
 
   const email = (t.match(/[\w.+-]+@[\w-]+\.[\w.]{2,}/) || [''])[0];
-  const phone = (t.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).find((x) => x.replace(/\D/g, '').length >= 9 && !/(19|20)\d{2}\s*[-–]\s*(19|20)\d{2}/.test(x))?.replace(/\s+/g, ' ').trim() || '';
+  const phone = (t.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).find((x: string) => x.replace(/\D/g, '').length >= 9 && !/(19|20)\d{2}\s*[-–]\s*(19|20)\d{2}/.test(x))?.replace(/\s+/g, ' ').trim() || '';
   const linkedin = (t.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[\w\-%]+/i) || [''])[0];
 
   // name & headline from the top (skip contact-ish lines)
@@ -197,11 +197,11 @@ export function parseCv(text: string): CvModel {
 }
 
 /* ---------------- rebuilding ---------------- */
-const CAT_LABEL: Record<string, string> = { design: 'HVAC Design', systems: 'HVAC Systems', fire: 'Fire Protection', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & Standards', execution: 'Execution & BIM', office: 'Technical Office', commercial: 'Commercial', management: 'Management', other: 'Other Tools' };
+const CAT_LABEL: Record<string, string> = { civil: 'Civil Works', structural: 'Structural Design', survey: 'Surveying & GIS', arch: 'Architecture & Interior', electrical: 'Electrical', mech: 'Mechanical & Manufacturing', process: 'Process Engineering', petroleum: 'Petroleum', automation: 'Automation & Control', it: 'Software & IT', telecom: 'Telecom & Electronics', biomed: 'Biomedical', cert: 'Certifications', design: 'HVAC Design', systems: 'HVAC Systems', fire: 'Fire Protection', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & Standards', execution: 'Execution & BIM', office: 'Technical Office', commercial: 'Commercial', management: 'Management', other: 'Other Tools' };
 
 export function buildSummary(m: CvModel, years: number, roleId: string, level: Level, market: Market) {
   const role = ROLES.find((r) => r.id === roleId);
-  const title = m.headline || role?.en || 'MEP Engineer';
+  const title = m.headline || role?.en || 'Engineer';
   const yrs = years >= 1 ? `${Math.floor(years)}+ years` : 'early-career';
   const topSkills = Object.entries(m.skills).filter(([c]) => c !== 'other' && c !== 'software').flatMap(([, v]) => v).slice(0, 4);
   const tools = (m.skills.software || []).slice(0, 4);
@@ -213,8 +213,11 @@ export function buildSummary(m: CvModel, years: number, roleId: string, level: L
   const lc = (x: string) => x.replace(/^Cooling\/heating load calculation$/, 'cooling and heating load calculations').replace(/^Duct design & sizing$/, 'duct design and sizing').replace(/^Equipment selection$/, 'equipment selection').replace(/^Static pressure \/ fan calculations$/, 'static pressure and fan calculations').replace(/^Chilled-water systems$/, 'chilled-water systems').replace(/^Clash detection & coordination$/, 'clash detection and coordination').replace(/^Revit \/ Revit MEP$/, 'Revit MEP').replace(/^Carrier HAP \/ TRACE$/, 'Carrier HAP').replace(/^([A-Z][a-z])/, (m) => m.toLowerCase()).replace(/^(hvac|mep|bim|ahu|fcu|vrf|boq|nfpa|ashrae|smacna|ipc|upc|cmms|bms|cfd|iso|sbc|leed|pmp)/i, (m) => m.toUpperCase());
   const s1 = `${title} with ${yrs} of experience${sec.length ? ` on ${list(sec)} projects` : ''}${countries.length ? ` in ${list(countries)}` : ''}.`;
   const s2 = topSkills.length ? `Hands-on experience in ${list(topSkills.map(lc))}${tools.length ? `, working with ${list(tools.map(lc).map((x) => x.replace(/^([a-z])/, (c) => c.toUpperCase())))}` : ''}.` : tools.length ? `Proficient in ${list(tools)}.` : '';
-  const s3 = level === 'lead' || level === 'senior' ? 'Proven record of delivering compliant, coordinated MEP packages on schedule and leading junior engineers.' : 'Strong attention to codes, coordination and on-time delivery.';
-  return [s1, s2, s3].filter(Boolean).join(' ');
+  const s3 = level === 'lead' || level === 'senior' ? (role?.disc === 'mep' ? 'Proven record of delivering compliant, coordinated MEP packages on schedule and leading junior engineers.' : 'Proven record of delivering quality work on schedule and leading junior engineers.') : (role?.disc === 'it' ? 'Strong attention to clean code, testing and on-time delivery.' : 'Strong attention to standards, coordination and on-time delivery.');
+  // keep the candidate's own quantified achievement from the old summary (numbers are what recruiters scan for)
+  const own = m.summary.join(' ').split(/(?<=[.!])\s+/).find((x) => /\d[\d,.]*\s*(?:%|million|billion|bn|mn|engineers|projects?|buildings?|towers|users|sites|wells|km|mw|kv|tr\b|sar|egp|aed|usd)|(?:sar|egp|aed|usd|\$)\s*\d/i.test(x) && x.length < 220);
+  const s4 = own ? own.trim().replace(/([^.!])$/, '$1.') : '';
+  return [s1, s2, s4, s3].filter(Boolean).join(' ');
 }
 
 /** plain-text version (what an ATS will parse) */

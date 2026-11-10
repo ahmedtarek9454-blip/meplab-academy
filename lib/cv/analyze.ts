@@ -1,5 +1,6 @@
 import { SECTIONS, BANDS, LEVELS, MARKETS, type Market, type Level, type Role } from './data';
-import { findSkills, rankRoles } from '@/lib/ats/engine';
+import { findSkills, rankRoles, detectDisciplines } from '@/lib/ats/engine';
+import { DISCIPLINES } from './roles-extra';
 import { defaultModel, type AtsModel } from '@/lib/ats/model';
 import { SKILL_BY_ID } from '@/lib/ats/taxonomy';
 import type { Found } from '@/lib/ats/match';
@@ -21,6 +22,7 @@ export type CvResult = {
   skills: Found[];
   ranges: Range[];
   alerts: string[]; // market-specific alerts (e.g. SCE for KSA)
+  discipline: { id: string; ar: string; en: string } | null;
   model: { version: string; jobs_used: number; trained_at: string | null };
 };
 
@@ -57,6 +59,9 @@ export function sectionAt(sections: { key: string; pos: number }[], pos: number)
 }
 
 
+const STRONG_VERB = new RegExp(`^(?:lead|led|manag|design|develop|built|build|supervis|prepar|review|implement|reduc|increas|improv|deliver|coordinat|perform|conduct|creat|optimi[sz]|install|commission|plann?|execut|launch|analy[sz]|maintain|test|programm?|achiev|sav|model+|calculat|select|produc|drove|driv|establish|introduc|negotiat|won|win|train|mentor|automat|migrat|deploy|integrat|monitor|inspect|audit|estimat|pric|survey|draft|complet|handl|operat|troubleshoot|troubleshot|repair|ran|run|wrote|writ|author|own|cut|rais|boost|secur|set\s+up|approv|sen[dt]|attend|support|issu|evaluat|assess|check|verif|updat|track|report|organi[sz]|control|direct|head|oversaw|oversee|spearhead|generat|resolv|fix|refactor|ship|scal|engineer|configur|instal|implement|apply|appli|recommend|present|propos|submitt?|obtain|ensur|follow|carri|carry|liais|communicat|prioriti[sz]|schedul|forecast|budget|procur|purchas|sourc|tender|bid|quantif|measur|mapp?|digiti[sz])(?:e|es|ed|d|s|ing|ied|ies)?\\b|^(?:اشرفت|أشرفت|صممت|نفذت|نفّذت|أعددت|اعددت|قمت|أدرت|ادرت|طورت|متابعة|الإشراف|تصميم|إعداد|تنفيذ|إدارة|مراجعة)`, 'i');
+const WEAK_START = /^(responsible\s+for|responsibilities|duties|worked\s+on|working\s+on|helped|helping|involved\s+in|participated\s+in|tasks?\s+included|in\s+charge\s+of)/i;
+
 export function levelFor(y: number): Level {
   if (y >= LEVELS.lead.min) return 'lead';
   if (y >= LEVELS.senior.min) return 'senior';
@@ -75,8 +80,11 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const found = findSkills(text);
   const exp0 = extractExperience(text);
   const firstWork = exp0.ranges.filter((r) => r.kind === 'work').sort((a, b) => b.end - a.end || b.start - a.start)[0]?.line;
-  const roles = rankRoles(found, model, market, text, firstWork);
+  const ds = detectDisciplines(text, found);
+  const roles = rankRoles(found, model, market, text, firstWork, ds);
   const top = roles[0];
+  const discId = top.role.disc !== 'any' ? top.role.disc : ds.best >= 3 ? ds.top : null;
+  const discipline = discId && DISCIPLINES[discId] ? { id: discId, ar: DISCIPLINES[discId].ar, en: DISCIPLINES[discId].en } : null;
 
   /* ---- experience & salary ---- */
   const exp = exp0;
@@ -98,7 +106,7 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
 
   add('readable', 15, words >= 120 ? 'pass' : words >= 40 ? 'warn' : 'fail', `${words}`);
   add('email', 8, /[\w.+-]+@[\w-]+\.[\w.]{2,}/.test(text) ? 'pass' : 'fail');
-  add('phone', 6, /(\+?\d[\d\s\-().]{7,}\d)/.test(text) && (text.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).some((x) => x.replace(/\D/g, '').length >= 9 && !/(19|20)\d{2}\s*[-–]\s*(19|20)\d{2}/.test(x)) ? 'pass' : 'fail');
+  add('phone', 6, /(\+?\d[\d\s\-().]{7,}\d)/.test(text) && (text.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).some((x: string) => x.replace(/\D/g, '').length >= 9 && !/(19|20)\d{2}\s*[-–]\s*(19|20)\d{2}/.test(x)) ? 'pass' : 'fail');
   add('linkedin', 4, /linkedin\.com\/in\//i.test(text) || /linkedin/i.test(text) ? 'pass' : 'warn');
   add('summary', 5, has('summary') ? 'pass' : 'warn');
   add('experience', 10, has('experience') ? 'pass' : 'fail');
@@ -109,7 +117,7 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   add('length', 8,
     words >= 350 && words <= 1100 && (!pages || pages <= 3) ? 'pass' : words >= 200 && words <= 1600 ? 'warn' : 'fail',
     `${words}${pages ? ` / ${pages}p` : ''}`);
-  const metrics = (lower.match(/\d[\d,.]*\s*(?:%|percent|projects?|buildings?|tr\b|tons?|cfm|m2|m²|sqm|sq\.?\s*m|million|mn|k\b|units|floors|villas|towers|engineers|members)/g) || []).length;
+  const metrics = (lower.match(/\d[\d,.]*\s*(?:%|percent|projects?|buildings?|tr\b|tons?|cfm|m2|m²|m3|m³|sqm|sq\.?\s*m|million|mn|billion|bn|k\b|units|floors|villas|towers|engineers|members|workers|operators|users|customers|clients|sites|wells|km|kv|mw|kw|bopd|mmscfd|hospitals|schools|lines|machines|stores|apps?|hours|days|weeks|months|egp|sar|aed|usd|\$)|(?:egp|sar|aed|usd|\$)\s*\d/g) || []).length;
   add('metrics', 7, metrics >= 3 ? 'pass' : metrics >= 1 ? 'warn' : 'fail', `${metrics}`);
   add('keywords', 12, top.pct >= 60 ? 'pass' : top.pct >= 35 ? 'warn' : 'fail', `${top.matched.length}`);
   // skills backed by experience: an ATS/recruiter discounts a long skills list that never appears in the experience bullets
@@ -125,6 +133,12 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
     // experience depth: how many bullets with real content
     const bullets = (expText.match(/^\s*[•\-–*▪●]\s*\S.{25,}/gm) || []).length;
     add('depth', 8, bullets >= 6 || (expText.length > 1200 && !/^\s*[•\-–*]/m.test(expText)) ? 'pass' : bullets >= 3 || expText.length > 600 ? 'warn' : 'fail', `${bullets}`);
+    // impact language: bullets that open with an action verb, not "responsible for / duties"
+    const blts = (expText.match(/^\s*[•\-–*▪●]\s*\S.{15,}/gm) || []).map((b) => b.replace(/^\s*[•\-–*▪●]\s*/, '').toLowerCase());
+    const strong = blts.filter((b) => STRONG_VERB.test(b)).length;
+    const weak = blts.filter((b) => WEAK_START.test(b)).length;
+    const vr = blts.length ? strong / blts.length : 0;
+    add('verbs', 5, blts.length < 3 ? 'warn' : vr >= 0.6 && weak <= 1 ? 'pass' : vr >= 0.35 ? 'warn' : 'fail', `${strong}/${blts.length}`);
   }
   const arabic = (text.match(/[؀-ۿ]/g) || []).length / Math.max(1, text.replace(/\s/g, '').length);
   add('language', 3, arabic < 0.15 ? 'pass' : 'warn');
@@ -143,7 +157,7 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
     score, checks, roles, years, level, salary, words,
     skills: [...found.values()].sort((a, b) => b.hits - a.hits),
     ranges: exp.ranges,
-    alerts,
+    alerts, discipline,
     model: { version: model.version, jobs_used: model.jobs_used, trained_at: model.trained_at }
   };
 }

@@ -15,6 +15,7 @@ import { findSkills, containsLiteral, normText, type Found } from './match';
 import { parseJd, type ParsedJd } from './jd';
 import { weightsFor, type AtsModel } from './model';
 import { titleEvidence, type TitleEvidence } from './titles';
+import { detectDisciplines, disciplinePenalty, type DisciplineScores } from './discipline';
 
 /** country-specific codes are only suggested for their own market */
 const OTHER_MARKET: Record<Market, string[]> = { sa: ['uae_code', 'eg_code'], ae: ['sbc', 'eg_code'], eg: ['sbc', 'uae_code'] };
@@ -22,8 +23,9 @@ const OTHER_MARKET: Record<Market, string[]> = { sa: ['uae_code', 'eg_code'], ae
 export type RoleScore = { role: Role; pct: number; skillPct: number; titleBoost: number; matched: string[]; missing: string[]; missingIds: string[] };
 
 /** how much of a role's (weighted) skill profile the CV covers */
-export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Market, text = '', firstWorkLine?: string): RoleScore[] {
+export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Market, text = '', firstWorkLine?: string, ds?: DisciplineScores): RoleScore[] {
   const ev: TitleEvidence | null = text ? titleEvidence(text, firstWorkLine) : null;
+  const disc = ds || detectDisciplines(text, found);
   const scored = ROLES.map((role) => {
     const w = weightsFor(model, role.id, market);
     const entries = Object.entries(w).sort((a, b) => b[1] - a[1]);
@@ -46,7 +48,7 @@ export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Ma
       if (role.id === 'pm') titleBoost += Math.min(10, ev.leadership * 2);
       if (h === 0 && Object.values(ev.hits).some((v) => v >= 2)) titleBoost -= 8; // the CV clearly names another role in its headline/latest job
     }
-    const pct = Math.max(0, Math.min(98, Math.round(skillPct * 0.75 + titleBoost)));
+    const pct = Math.max(0, Math.min(98, Math.round(skillPct * 0.75 + titleBoost - disciplinePenalty(role.disc, disc))));
     return { role, pct, skillPct, titleBoost, matched, missing: missing.slice(0, 8), missingIds: missingIds.slice(0, 8) };
   });
   return scored.sort((a, b) => b.pct - a.pct);
@@ -133,4 +135,4 @@ export function matchJd(cvText: string, found: Map<string, Found>, years: number
   return { score, rawScore, verdict, title: jd.title, knockouts, must, nice, literal, parts: { must: mustC, nice: niceC, literal: litC, title: titleC } };
 }
 
-export { findSkills };
+export { findSkills, detectDisciplines };

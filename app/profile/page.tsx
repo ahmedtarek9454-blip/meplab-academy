@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getT, L } from '@/lib/i18n';
 import { requireUser } from '@/lib/auth';
-import { ROLES, MARKETS, type Market } from '@/lib/cv/data';
+import { ROLES, MARKETS, roleGroups, type Market } from '@/lib/cv/data';
 import SubmitButton from '@/components/SubmitButton';
 import { saveProfile, uploadCv, deleteCv } from './actions';
 
@@ -119,7 +119,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
             <F name="full_name" label={ar ? 'الاسم بالكامل' : 'Full name'} />
             <F name="phone" label={ar ? 'رقم الموبايل (واتساب)' : 'Mobile (WhatsApp)'} ltr ph="+20 1xx xxx xxxx" />
             <div><label className="label">{ar ? 'التخصص' : 'Specialty'}</label>
-              <select name="role_id" defaultValue={p?.role_id ?? ''} className="input"><option value="">—</option>{ROLES.map((r) => <option key={r.id} value={r.id}>{r[locale]}</option>)}</select></div>
+              <select name="role_id" defaultValue={p?.role_id ?? ''} className="input"><option value="">—</option>{roleGroups(locale as 'ar' | 'en').map((g) => <optgroup key={g.id} label={g.label}>{g.roles.map((r) => <option key={r.id} value={r.id}>{r[locale as 'ar' | 'en']}</option>)}</optgroup>)}</select></div>
             <F name="years" label={ar ? 'سنين الخبرة' : 'Years of experience'} type="number" ltr />
             <div><label className="label">{ar ? 'بتدوّر على شغل في' : 'Looking for work in'}</label>
               <select name="market" defaultValue={p?.market ?? ''} className="input"><option value="">—</option>{(Object.keys(MARKETS) as Market[]).map((m) => <option key={m} value={m}>{MARKETS[m][ar ? 'name_ar' : 'name_en']}</option>)}</select></div>

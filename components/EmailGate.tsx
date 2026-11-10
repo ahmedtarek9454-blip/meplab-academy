@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { Mark } from './Logo';
-import { ROLES, MARKETS, type Market } from '@/lib/cv/data';
+import { ROLES, MARKETS, roleGroups, type Market } from '@/lib/cv/data';
 
 type Loc = 'ar' | 'en';
 const T = {
@@ -183,7 +183,7 @@ export default function EmailGate({ locale, onDone, nextPath = '/cv-check?resume
                 <div><label className="label">{t.role}</label>
                   <select value={roleId} onChange={(e) => setRoleId(e.target.value)} className="input">
                     <option value="">{t.role_ph}</option>
-                    {ROLES.map((r) => <option key={r.id} value={r.id}>{r[locale]}</option>)}
+                    {roleGroups(locale).map((g) => <optgroup key={g.id} label={g.label}>{g.roles.map((r) => <option key={r.id} value={r.id}>{r[locale]}</option>)}</optgroup>)}
                   </select></div>
                 <div><label className="label">{t.years}</label><input value={years} onChange={(e) => setYears(e.target.value.replace(/[^\d.]/g, '').slice(0, 4))} className="input" dir="ltr" inputMode="decimal" placeholder="0" /></div>
                 <div><label className="label">{t.market}</label>

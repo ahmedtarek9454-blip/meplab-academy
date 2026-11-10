@@ -1,0 +1,300 @@
+[
+ {
+  "id": "m01",
+  "text": "MOHAMED ADEL HASSAN\nCivil Site Engineer\nGiza, Egypt | +20 111 234 5678 | m.adel.civil@gmail.com | linkedin.com/in/madel-civil\n\nSUMMARY\nCivil engineer with 6 years of site execution on residential compounds and commercial buildings. Experienced in concrete works, formwork and reinforcement inspection, finishing works and managing subcontractors.\n\nEXPERIENCE\nCivil Site Engineer — Hassan Allam Construction\nMar 2021 – Present\n• Supervised RC works for 12 residential buildings (G+7), including formwork, rebar fixing and concrete pouring of 9,000 m3.\n• Checked bar bending schedules and reviewed shop drawings before casting; ran slump and cube tests with the QC team.\n• Managed 4 subcontractors and 120 workers for blockwork, plastering, tiling and waterproofing.\n• Prepared method statements and inspection requests (WIR) and daily progress reports.\n\nSite Engineer — Redcon Construction\nJan 2019 – Feb 2021\n• Excavation, backfilling and compaction for raft foundations; coordinated piling works.\n• Setting out with total station alongside the surveyor.\n\nEDUCATION\nB.Sc. Civil Engineering, Cairo University, 2018\n\nSKILLS\nAutoCAD, Primavera P6, MS Excel, ETABS (basic), quantity take-off",
+  "expected": {
+   "role": "civil_site",
+   "acceptable_roles": [],
+   "years_min": 5.5,
+   "years_max": 6.5
+  }
+ },
+ {
+  "id": "m02",
+  "text": "Omar Khaled Fathy\nStructural Design Engineer\nRiyadh, KSA | +966 55 123 4567 | omar.fathy.struct@outlook.com\n\nPROFESSIONAL SUMMARY\nStructural engineer with 8 years in consultancy designing reinforced concrete and steel buildings, hospitals and towers up to 40 floors. Expert in ETABS, SAFE and SAP2000 with seismic and wind analysis per ACI 318, ASCE 7 and SBC 301/304.\n\nEXPERIENCE\nSenior Structural Engineer — Dar Al Riyadh, Riyadh\nJun 2020 – Present\n• Led structural analysis and design of 6 towers (25–40 floors) using ETABS and SAFE, including post-tensioned slabs.\n• Performed seismic and wind load analysis and load combinations per ASCE 7 and SBC 301.\n• Reviewed shop drawings and RFIs from contractors; mentored 3 junior engineers.\n\nStructural Engineer — ECG Engineering Consultants Group, Cairo\nSep 2016 – May 2020\n• Designed RC buildings and steel structure warehouses using SAP2000 and STAAD Pro per ECP 203 and AISC.\n• Produced foundation design (raft and pile caps) and structural drawings in AutoCAD and Revit.\n\nEDUCATION\nB.Sc. in Civil Engineering (Structural), Ain Shams University, 2016\n\nSKILLS\nETABS, SAFE, SAP2000, STAAD Pro, Tekla, Revit Structure, AutoCAD, Excel\nSaudi Council of Engineers — Professional Engineer",
+  "expected": {
+   "role": "structural",
+   "acceptable_roles": [],
+   "years_min": 7.5,
+   "years_max": 8.5
+  }
+ },
+ {
+  "id": "m03",
+  "text": "AHMED NABIL SOLIMAN\nRoads & Infrastructure Engineer\nDubai, UAE | +971 50 765 4321 | ahmed.soliman.roads@gmail.com\n\nSUMMARY\nInfrastructure engineer with 4.5 years in road design and wet utilities for master-planned communities.\n\nWORK EXPERIENCE\nInfrastructure Design Engineer — AECOM Middle East, Dubai\nJan 2022 – Present\n• Geometric design of 35 km of local roads and two interchanges using Civil 3D and OpenRoads per AASHTO and RTA standards.\n• Pavement design and earthworks grading for a 2 km² development.\n• Designed sewer networks and storm network with SewerGEMS and StormCAD; water networks with WaterGEMS.\n\nHighway Engineer — Arab Contractors, Cairo\nJul 2020 – Dec 2021\n• Supervised asphalt works, subgrade and base course compaction and Marshall tests on a 20 km highway.\n• Coordinated culverts and traffic management plans.\n\nEDUCATION\nBachelor of Science in Civil Engineering — Alexandria University (2020)\n\nSOFTWARE\nCivil 3D, OpenRoads, WaterGEMS, SewerGEMS, AutoCAD, Synchro",
+  "expected": {
+   "role": "infra",
+   "acceptable_roles": [],
+   "years_min": 4.0,
+   "years_max": 5.0
+  }
+ },
+ {
+  "id": "m04",
+  "text": "Youssef Ibrahim\nLand Surveyor / GIS Engineer\nCairo, Egypt — 01001234567 — youssef.survey@yahoo.com\n\nExperience\nSurvey Engineer, Orascom Construction — Feb 2023 to Present\n- Setting out for buildings and roads using Leica total station and GNSS RTK.\n- Topographic survey of 400 hectares; as-built survey of utilities.\n- Produced contour maps and volumes in Civil 3D.\n\nGIS Analyst, Egyptian Survey Authority — Jan 2022 to Jan 2023\n- Built geodatabase for cadastral parcels in ArcGIS Pro and QGIS.\n- Drone survey and photogrammetry processing.\n\nEducation\nB.Sc. Surveying Engineering (Geomatics), Shoubra Faculty of Engineering, 2021\n\nSkills\nTotal station, Trimble GNSS, levelling, ArcGIS, QGIS, Civil 3D, AutoCAD",
+  "expected": {
+   "role": "survey",
+   "acceptable_roles": [],
+   "years_min": 3.0,
+   "years_max": 4.0
+  }
+ },
+ {
+  "id": "m05",
+  "text": "SARA MAHMOUD\nArchitect\nCairo, Egypt | +20 122 333 4455 | sara.mahmoud.arch@gmail.com | behance.net/saramahmoud\n\nPROFILE\nArchitect with 5+ years in architectural design of residential, hospitality and mixed-use projects, from concept to construction drawings.\n\nEXPERIENCE\nProject Architect — Shehab Mazhar Architects, Cairo\nApr 2021 – Present\n• Led architectural design of a 200-key resort and 3 villa compounds, including facade design and master planning.\n• Produced Revit models and detailed architectural detailing packages; coordinated with structural and MEP consultants.\n• Prepared presentations with Lumion, V-Ray and Photoshop.\n\nJunior Architect — Dar Al-Handasah, Giza\nSep 2019 – Mar 2021\n• Urban design studies and landscape design for a new city district.\n• 3D modelling in SketchUp and Rhino; design competitions entries.\n\nEDUCATION\nBachelor of Architecture, Cairo University, 2019\n\nSKILLS\nRevit, AutoCAD, Rhino, SketchUp, Lumion, V-Ray, Photoshop, Illustrator, InDesign",
+  "expected": {
+   "role": "architect",
+   "acceptable_roles": [],
+   "years_min": 5.0,
+   "years_max": 6.0
+  }
+ },
+ {
+  "id": "m06",
+  "text": "Nour El-Din Hany\nInterior Designer\nSheikh Zayed, Giza | 01112223344 | nour.interiors@gmail.com\n\nSummary\nInterior designer with 3.5 years in residential and retail interiors, space planning, material selection and FF&E.\n\nExperience\nInterior Designer — Design Studio X, Cairo | Jan 2023 – Present\n• Space planning and furniture layout for 40+ apartments and villas.\n• Mood boards, material selection and FF&E schedules; joinery shop drawings.\n• Photorealistic rendering with 3ds Max and Corona; SketchUp + Enscape for quick views.\n\nJunior Interior Designer — Hometown Decor | Jul 2021 – Dec 2022\n• Interior fit-out of 6 retail shops; site visits to follow finishing works.\n\nEducation\nB.Sc. Architecture Engineering — Helwan University (Interior design track), 2021\n\nSoftware: 3ds Max, Corona Renderer, V-Ray, SketchUp, AutoCAD, Photoshop",
+  "expected": {
+   "role": "interior",
+   "acceptable_roles": [
+    "architect"
+   ],
+   "years_min": 3.0,
+   "years_max": 4.0
+  }
+ },
+ {
+  "id": "m07",
+  "text": "Karim Mostafa Elsayed\nElectrical Design Engineer (MEP)\nJeddah, Saudi Arabia | +966 50 987 6543 | karim.elsayed.elec@gmail.com\n\nSUMMARY\nElectrical design engineer with 6.5 years in MEP consultancy designing power and lighting for hospitals, malls and residential towers.\n\nEXPERIENCE\nElectrical Design Engineer — Saudi Consulting Services, Jeddah\nFeb 2021 – Present\n• Lighting design and lighting calculations with DIALux for 5 hospitals and a 120,000 m² mall.\n• Power distribution design: load schedules, SMDB/MDB sizing, single line diagrams and riser diagrams.\n• Cable sizing, voltage drop and short circuit calculations using ETAP and Ecodial per IEC 60364 and SBC 401.\n• Generator and UPS sizing; earthing and lightning protection design; fire alarm interface with ELV team.\n\nElectrical Engineer — Engineering Consultants Group, Cairo\nJan 2019 – Jan 2021\n• Prepared electrical drawings in AutoCAD and Revit MEP for residential compounds.\n\nEDUCATION\nB.Sc. Electrical Power and Machines Engineering, Cairo University, 2018\n\nSKILLS\nDIALux, ETAP, Ecodial, AutoCAD, Revit MEP, Excel, IEC, BS 7671, NEC\nSaudi Council of Engineers — member",
+  "expected": {
+   "role": "elec_design",
+   "acceptable_roles": [],
+   "years_min": 6.0,
+   "years_max": 7.0
+  }
+ },
+ {
+  "id": "m08",
+  "text": "HOSSAM ALI\nElectrical Site Engineer\nAlexandria, Egypt | 01223456789 | hossam.ali.elec@gmail.com\n\nEXPERIENCE\nElectrical Site Engineer — Elsewedy Electric Contracting | Mar 2022 – Present\n- Supervised electrical installation for 3 commercial buildings: cable trays, conduits, cable pulling and terminations.\n- Panel installation and switchgear installation; earthing installation.\n- Megger and insulation resistance tests, continuity tests and energization of DBs.\n- Managed electrical subcontractor and 40 electricians; submitted inspection requests and method statements.\n\nJunior Electrical Engineer — Petrojet | Sep 2020 – Feb 2022\n- Lighting and small power installation in staff housing; as-built drawings.\n\nEDUCATION\nB.Sc. Electrical Engineering (Power), Alexandria University, 2020\n\nSKILLS\nAutoCAD, MS Project, Excel, testing and commissioning",
+  "expected": {
+   "role": "elec_site",
+   "acceptable_roles": [],
+   "years_min": 3.5,
+   "years_max": 4.5
+  }
+ },
+ {
+  "id": "m09",
+  "text": "Tarek Hamdy Abdelrahman\nSenior Substation / Protection Engineer\nDammam, KSA | +966 53 444 5566 | tarek.hamdy.power@gmail.com\n\nSUMMARY\nPower systems engineer with nearly 10 years in 132kV and 380kV GIS substations: protection relays, testing and commissioning and power system studies.\n\nEXPERIENCE\nSenior Protection Engineer — Saudi Electricity Company contractor (ABB), Dammam\nApr 2019 – Present\n• Relay setting and protection coordination for 14 GIS substations (132/33kV, 380/132kV).\n• Distance protection and differential protection testing with Omicron; primary injection and secondary injection.\n• Load flow, short circuit and arc flash studies using ETAP and DIgSILENT PowerFactory.\n• SCADA and IEC 61850 integration with the control center.\n\nTesting & Commissioning Engineer — Siemens Egypt\nJan 2015 – Mar 2019\n• Commissioned MV switchgear, power transformers and HV cables for 22kV and 66kV substations.\n• Overhead line and underground cable testing for distribution networks.\n\nEDUCATION\nB.Sc. Electrical Power Engineering, Ain Shams University, 2014",
+  "expected": {
+   "role": "power",
+   "acceptable_roles": [
+    "elec_site"
+   ],
+   "years_min": 9.0,
+   "years_max": 10.5
+  }
+ },
+ {
+  "id": "m10",
+  "text": "Mahmoud Saeed\nELV Engineer\nRiyadh, KSA | +966 56 111 2233 | mahmoud.elv@gmail.com\n\nExperience\nELV Engineer — Al Fanar Projects | Feb 2022 – Present\n• Design and installation of CCTV, access control and intrusion alarm systems for 2 hospitals.\n• Public address, nurse call, SMATV/IPTV and intercom systems.\n• Structured cabling (Cat6A, fiber optic cabling) and data racks; fire alarm interface.\n\nLow Current Engineer — Integrated Systems Co. | Jan 2021 – Jan 2022\n• Supervised low current works and testing; prepared shop drawings and material submittals.\n\nEducation\nB.Sc. Electronics and Communications Engineering, Mansoura University, 2020\n\nSkills: AutoCAD, Visio, Milestone VMS, Genetec, BMS integration",
+  "expected": {
+   "role": "elv",
+   "acceptable_roles": [],
+   "years_min": 4.0,
+   "years_max": 5.0
+  }
+ },
+ {
+  "id": "m11",
+  "text": "Ahmed Fawzy\nMechanical Design Engineer — Product & Machines\n6th of October City, Egypt | 01012341234 | ahmed.fawzy.design@gmail.com\n\nSUMMARY\nMechanical design engineer with 4.5 years designing packaging machines and conveyors, from concept to manufacturing drawings.\n\nEXPERIENCE\nDesign Engineer — Elaraby Group (R&D) | Jan 2022 – Present\n• Machine design of filling and packaging machines in SolidWorks; sheet metal design and weldments.\n• GD&T and tolerance analysis on manufacturing drawings and assembly drawings; BOM release and ECNs.\n• FEA and stress analysis in ANSYS Workbench for frames and shafts.\n• Built and tested prototypes; worked with the workshop on design for manufacturing (DFM).\n\nJunior Design Engineer — Fresh Electric | Jul 2020 – Dec 2021\n• Product design of home appliances parts in Creo; jigs and fixtures for the assembly line.\n\nEDUCATION\nB.Sc. Mechanical Engineering (Design and Production), Helwan University, 2020\n\nSKILLS\nSolidWorks, Creo, AutoCAD, ANSYS, GD&T, Excel, 3D printing",
+  "expected": {
+   "role": "mech_design",
+   "acceptable_roles": [],
+   "years_min": 4.0,
+   "years_max": 5.0
+  }
+ },
+ {
+  "id": "m12",
+  "text": "Mostafa Gamal\nProduction Engineer\n10th of Ramadan City, Egypt | 01155667788 | mostafa.gamal.prod@gmail.com\n\nPROFILE\nProduction engineer with 6 years in FMCG and automotive components manufacturing, focused on lean manufacturing and line efficiency.\n\nEXPERIENCE\nProduction Engineer — Ghabbour Auto Components | Mar 2021 – Present\n• Run 3 production lines (injection molding and assembly); raised OEE from 61% to 78%.\n• Production planning and capacity planning in SAP PP; line balancing and time study.\n• Led Kaizen and 5S programs; SMED reduced changeover by 40%.\n• Lean Six Sigma Green Belt projects saving EGP 3.2 million per year.\n\nProduction Supervisor — Juhayna Food Industries | Feb 2019 – Feb 2021\n• Supervised 60 operators on filling lines; root cause analysis of downtime.\n\nEDUCATION\nB.Sc. Industrial Engineering, Zagazig University, 2018\n\nSKILLS\nSAP PP, Excel, Minitab, AutoCAD, Lean, Six Sigma Green Belt",
+  "expected": {
+   "role": "production",
+   "acceptable_roles": [
+    "quality"
+   ],
+   "years_min": 6.0,
+   "years_max": 7.0
+  }
+ },
+ {
+  "id": "m13",
+  "text": "Waleed Ezzat\nMechanical Maintenance Engineer\nSuez, Egypt | 01277889900 | waleed.ezzat.maint@gmail.com\n\nSUMMARY\nMechanical maintenance engineer with 8.5 years in petrochemical and fertilizer plants, specialised in rotating equipment and plant shutdowns.\n\nEXPERIENCE\nRotating Equipment Engineer — Egyptian Ethylene & Derivatives (ETHYDCO) | Jan 2020 – Present\n• Maintenance of centrifugal pumps, centrifugal compressors, steam turbines and gearboxes.\n• Vibration analysis, laser alignment and dynamic balancing; condition monitoring program.\n• Planned plant shutdown and turnaround (45 days, 300 jobs); overhaul of 2 gas compressors.\n• Preventive maintenance plans in SAP PM; root cause analysis reduced pump failures by 35%.\n\nMechanical Maintenance Engineer — Abu Qir Fertilizers | Jul 2017 – Dec 2019\n• Maintenance of pressure vessels, storage tanks and shell and tube exchangers per API 510.\n• Hydraulics and mechanical seals troubleshooting.\n\nEDUCATION\nB.Sc. Mechanical Power Engineering, Suez Canal University, 2017",
+  "expected": {
+   "role": "mech_maint",
+   "acceptable_roles": [
+    "fm"
+   ],
+   "years_min": 8.0,
+   "years_max": 9.0
+  }
+ },
+ {
+  "id": "m14",
+  "text": "Mariam Sherif\nProcess Engineer\nAlexandria, Egypt | +20 100 999 8877 | mariam.process@gmail.com\n\nSUMMARY\nChemical engineer with 5.5 years in refinery and gas processing: process simulation, P&IDs and HAZOP.\n\nEXPERIENCE\nProcess Engineer — ENPPI (Engineering for the Petroleum & Process Industries) | Feb 2022 – Present\n• Process simulation in Aspen HYSYS and heat and material balance for a 50 MMSCFD gas processing plant.\n• Prepared PFDs and P&IDs, equipment datasheets and line sizing; heat exchanger rating in HTRI.\n• Participated in HAZOP and SIL studies; process safety reviews.\n\nProcess Engineer — Alexandria National Refining & Petrochemicals | Jan 2020 – Jan 2022\n• Distillation unit optimisation increasing yield by 3%; troubleshooting reactors.\n\nEDUCATION\nB.Sc. Chemical Engineering, Alexandria University, 2019",
+  "expected": {
+   "role": "process",
+   "acceptable_roles": [],
+   "years_min": 5.0,
+   "years_max": 6.0
+  }
+ },
+ {
+  "id": "m15",
+  "text": "Hany Ramadan\nPetroleum Engineer — Production & Reservoir\nCairo, Egypt | +20 128 765 4321 | hany.ramadan.pe@gmail.com\n\nSUMMARY\nPetroleum engineer with 7 years in Western Desert oil fields: production optimisation, artificial lift and reservoir studies.\n\nEXPERIENCE\nProduction Engineer — Khalda Petroleum Company | Mar 2021 – Present\n• Production optimization for 120 wells; nodal analysis in PROSPER software and network modelling in PIPESIM.\n• Designed ESP pumps and gas lift installations, raising field output by 2,400 bopd.\n• Well testing, workover programs and well completion design.\n\nReservoir Engineer — Qarun Petroleum | Jan 2018 – Feb 2021\n• Reservoir simulation in Eclipse and Petrel; decline curve and material balance analysis; PVT reports.\n\nEDUCATION\nB.Sc. Petroleum Engineering, Suez University, 2017\n\nCERTIFICATES\nIWCF Well Control Level 2",
+  "expected": {
+   "role": "petroleum",
+   "acceptable_roles": [],
+   "years_min": 6.5,
+   "years_max": 7.5
+  }
+ },
+ {
+  "id": "m16",
+  "text": "Islam Fathy\nAutomation & Control Engineer\nCairo, Egypt | 01099887766 | islam.automation@gmail.com\n\nExperience\nAutomation Engineer — Siemens Solution Partner (Elsewedy Automation) | Jan 2022 – Present\n• PLC programming on Siemens S7-1500 with TIA Portal and Allen Bradley Studio 5000.\n• SCADA and HMI development in WinCC and FactoryTalk for water treatment plants.\n• Profinet, Modbus and OPC UA communication; VSD and motion control integration.\n• FAT/SAT and loop checking with the instrumentation team.\n\nInstrumentation Engineer — Misr Fertilizers (MOPCO) | Jul 2020 – Dec 2021\n• Calibration of field instruments, pressure transmitters and analyzers; DCS (Yokogawa Centum) maintenance.\n\nEducation\nB.Sc. Mechatronics Engineering, Ain Shams University, 2020",
+  "expected": {
+   "role": "automation",
+   "acceptable_roles": [],
+   "years_min": 5.0,
+   "years_max": 6.0
+  }
+ },
+ {
+  "id": "m17",
+  "text": "Ziad Ashraf\nSoftware Engineer (Full-Stack)\nCairo, Egypt | +20 101 234 5678 | ziad.dev@gmail.com | github.com/ziaddev | linkedin.com/in/ziad-ashraf\n\nSUMMARY\nFull-stack software engineer with 3.5 years building web apps with React, Node.js and PostgreSQL on AWS.\n\nEXPERIENCE\nSoftware Engineer — Swvl, Cairo | Mar 2023 – Present\n• Built booking features in React and TypeScript used by 400k monthly users.\n• Designed REST APIs and microservices in Node.js; PostgreSQL and Redis.\n• CI/CD with GitHub Actions and Docker; deployed on AWS (ECS, S3).\n• Wrote unit tests (Jest) raising coverage to 80%; Agile/Scrum with Jira.\n\nJunior Backend Developer — Instabug | Jun 2022 – Feb 2023\n• Django REST services and Celery jobs; SQL performance tuning.\n\nEDUCATION\nB.Sc. Computer and Systems Engineering, Cairo University, 2022\n\nSKILLS\nJavaScript, TypeScript, Python, React, Next.js, Node.js, Django, PostgreSQL, Docker, AWS, Git",
+  "expected": {
+   "role": "software",
+   "acceptable_roles": [],
+   "years_min": 3.0,
+   "years_max": 4.0
+  }
+ },
+ {
+  "id": "m18",
+  "text": "Laila Mohamed\nData Scientist / Machine Learning Engineer\nGiza, Egypt | laila.ml@gmail.com | +20 115 555 0000 | github.com/lailaml\n\nExperience\nMachine Learning Engineer — Valeo Egypt | Jan 2024 – Present\n• Computer vision models in PyTorch for driver monitoring; deployed with ONNX.\n• Data pipelines in PySpark and Airflow; experiment tracking.\n\nData Analyst — Vodafone Egypt | Jul 2022 – Dec 2023\n• Churn prediction with scikit-learn (AUC 0.86); Power BI dashboards; SQL on a data warehouse.\n\nEducation\nB.Sc. Computer Engineering, Ain Shams University, 2022\n\nSkills\nPython, pandas, NumPy, scikit-learn, TensorFlow, PyTorch, SQL, Spark, NLP, LLMs, Power BI",
+  "expected": {
+   "role": "data",
+   "acceptable_roles": [
+    "software"
+   ],
+   "years_min": 2.5,
+   "years_max": 3.5
+  }
+ },
+ {
+  "id": "m19",
+  "text": "Amr Salah\nNetwork Engineer\nCairo | 01066554433 | amr.network@gmail.com\n\nEXPERIENCE\nNetwork Engineer — Orange Business Services | Feb 2022 – Present\n• Routing and switching for enterprise customers: OSPF, BGP, VLANs on Cisco and Juniper.\n• Firewalls (Fortinet FortiGate, Palo Alto), site-to-site VPN and network security policies.\n• Windows Server, Active Directory and VMware support for 3 data centers.\n\nIT Support Engineer — Raya Holding | Jan 2021 – Jan 2022\n• Help desk and Office 365 administration for 600 users; structured cabling projects.\n\nEDUCATION\nB.Sc. Communications and Electronics Engineering, Helwan University, 2020\n\nCERTIFICATIONS\nCCNA, CCNP Enterprise, Fortinet NSE 4",
+  "expected": {
+   "role": "network",
+   "acceptable_roles": [],
+   "years_min": 4.0,
+   "years_max": 5.0
+  }
+ },
+ {
+  "id": "m20",
+  "text": "Mohamed Hassan Eid\nRF Optimization Engineer\nCairo, Egypt | +20 100 777 6655 | m.eid.rf@gmail.com\n\nExperience\nRF Optimization Engineer — Ericsson Egypt | Mar 2021 – Present\n• 4G LTE and 5G NR RAN optimisation for 2,500 sites; KPI optimization and parameter tuning.\n• Drive test analysis with TEMS and Actix; antenna tilt and azimuth changes.\n• RF planning in Atoll for new sites; link budget calculations.\n\nRF Engineer — Huawei Technologies (Vodafone project) | Jan 2019 – Feb 2021\n• 2G/3G optimization, drive testing and cluster acceptance.\n• Microwave links and transmission planning support.\n\nEducation\nB.Sc. Electronics and Communications Engineering, Menoufia University, 2018",
+  "expected": {
+   "role": "telecom",
+   "acceptable_roles": [],
+   "years_min": 5.0,
+   "years_max": 6.0
+  }
+ },
+ {
+  "id": "m21",
+  "text": "Ahmed Tamer\nEmbedded Systems Engineer\nAlexandria, Egypt | ahmed.embedded@gmail.com | 01288776655\n\nExperience\nEmbedded Software Engineer — Valeo | Feb 2023 – Present\n• Embedded C on STM32 and AUTOSAR-based ECUs; CAN bus and LIN drivers.\n• RTOS (FreeRTOS) tasks, bootloader and firmware updates; unit testing with VectorCAST.\n\nHardware Engineer — Si-Vision | Jan 2022 – Jan 2023\n• PCB design in Altium Designer for IoT boards; power electronics and analog circuits.\n• FPGA prototyping in Verilog on Xilinx Vivado.\n\nEducation\nB.Sc. Electronics and Communications Engineering, Alexandria University, 2021\n\nSkills: C, C++, Embedded C, STM32, ESP32, FreeRTOS, UART, SPI, I2C, Altium, Verilog, MATLAB",
+  "expected": {
+   "role": "embedded",
+   "acceptable_roles": [],
+   "years_min": 3.0,
+   "years_max": 4.0
+  }
+ },
+ {
+  "id": "m22",
+  "text": "Rana Adel\nBiomedical Engineer\nCairo, Egypt | 01033221100 | rana.biomed@gmail.com\n\nSummary\nBiomedical engineer with 5 years in hospital medical equipment maintenance and imaging systems service.\n\nExperience\nField Service Engineer — Medical Imaging — Siemens Healthineers Egypt | Jan 2022 – Present\n• Installation and preventive maintenance of CT scanners, MRI and X-ray systems for 25 hospitals.\n• Troubleshooting and repair; calibration per IEC 60601 safety tests.\n\nBiomedical Engineer — Dar Al Fouad Hospital | Jan 2020 – Dec 2021\n• Maintained ICU equipment: ventilators, patient monitors, infusion pumps and defibrillators.\n• CMMS for work orders and PPM plans; supported JCI accreditation.\n\nEducation\nB.Sc. Systems and Biomedical Engineering, Cairo University, 2019",
+  "expected": {
+   "role": "biomedical",
+   "acceptable_roles": [],
+   "years_min": 4.5,
+   "years_max": 5.5
+  }
+ },
+ {
+  "id": "m23",
+  "text": "Sherif Nagy\nPlanning Engineer\nRiyadh, KSA | +966 54 222 3344 | sherif.planning@gmail.com\n\nSUMMARY\nPlanning and project control engineer with 7.5 years on infrastructure and building projects worth SAR 2 billion.\n\nEXPERIENCE\nSenior Planning Engineer — Nesma & Partners, Riyadh | Apr 2021 – Present\n• Baseline schedule and WBS in Primavera P6 for a SAR 900M hospital project (12,000 activities).\n• Earned value (EVM) reporting, S-curve and progress measurement; monthly reports to client.\n• Delay analysis and EOT claims (time impact analysis); recovery schedule.\n\nPlanning Engineer — Orascom Construction, Cairo | Jan 2018 – Mar 2021\n• Resource loading, cost loading and look-ahead schedules; critical path monitoring.\n\nEDUCATION\nB.Sc. Civil Engineering, Mansoura University, 2017\n\nCERTIFICATIONS\nPMI-SP, PMP",
+  "expected": {
+   "role": "planning",
+   "acceptable_roles": [
+    "pm"
+   ],
+   "years_min": 7.0,
+   "years_max": 8.0
+  }
+ },
+ {
+  "id": "m24",
+  "text": "Ayman Lotfy\nQA/QC Engineer (Civil)\nDubai, UAE | +971 55 333 2211 | ayman.qaqc@gmail.com\n\nExperience\nQA/QC Engineer — ALEC Engineering | Feb 2022 – Present\n• Implemented ISO 9001 QMS on site; internal audits and quality audits of subcontractors.\n• Inspection and test plans (ITP), inspection requests and NCRs; CAPA and root cause analysis.\n• Concrete quality control: cube tests, slump tests and pour cards.\n\nQuality Control Engineer — Arabtec | Jan 2020 – Jan 2022\n• Material inspection and testing; method statements review.\n\nEducation\nB.Sc. Civil Engineering, Zagazig University, 2019\n\nCertificates: ISO 9001 Lead Auditor, CSWIP 3.1",
+  "expected": {
+   "role": "quality",
+   "acceptable_roles": [
+    "civil_site"
+   ],
+   "years_min": 5.0,
+   "years_max": 6.0
+  }
+ },
+ {
+  "id": "m25",
+  "text": "Khaled Mansour\nHSE Engineer\nNEOM, KSA | +966 50 444 9988 | khaled.hse@gmail.com\n\nSummary\nHSE engineer with 6.5 years on mega construction projects, NEBOSH IGC and OSHA 30 certified.\n\nExperience\nHSE Engineer — Shapoorji Pallonji (NEOM project) | Mar 2022 – Present\n• HSE plan, risk assessment and JSA for 3,000 workers; permit to work system.\n• Daily toolbox talks, safety inspections and incident investigation; LTIFR reduced by 40%.\n• Emergency response plans and drills; ISO 45001 and ISO 14001 compliance.\n\nSafety Officer — Concord Engineering | Jan 2020 – Feb 2022\n• Safety induction for new workers; scaffolding and lifting inspections.\n\nEducation\nB.Sc. Mechanical Engineering, Benha University, 2019\n\nCertifications: NEBOSH IGC, OSHA 30 Hours, IOSH Managing Safely",
+  "expected": {
+   "role": "hse",
+   "acceptable_roles": [],
+   "years_min": 6.0,
+   "years_max": 7.0
+  }
+ },
+ {
+  "id": "m26",
+  "text": "Mahmoud Reda\nQuantity Surveyor (Civil)\nCairo, Egypt | 01144332211 | mahmoud.qs@gmail.com\n\nExperience\nSenior Quantity Surveyor — Hassan Allam Holding | Feb 2021 – Present\n• Quantity take-off and BOQ preparation for civil and finishing works of 5 towers.\n• Tender pricing and cost estimate for bids worth EGP 2.5 billion.\n• Variation orders, claims and monthly interim payments; cost control reports.\n\nQuantity Surveyor — SIAC | Jan 2019 – Jan 2021\n• Take-off of concrete, reinforcement and finishing quantities from shop drawings; subcontractor invoices.\n\nEducation\nB.Sc. Civil Engineering, Ain Shams University, 2018\n\nSoftware: CostX, Excel, AutoCAD, Planswift",
+  "expected": {
+   "role": "estimation",
+   "acceptable_roles": [],
+   "years_min": 6.0,
+   "years_max": 7.0
+  }
+ },
+ {
+  "id": "m27",
+  "text": "Hossam Eldin Magdy\nBackend Developer\nCairo | hossam.backend@gmail.com | 01022334455 | github.com/hossamdev\n\nSummary\nMechanical engineer turned backend developer. 2.5 years building APIs in Python and Go.\n\nExperience\nBackend Developer — Breadfast | Jan 2024 – Present\n• REST APIs and microservices in Go and FastAPI; PostgreSQL; Docker and Kubernetes.\n• Unit tests and code reviews; Agile.\n\nJunior Python Developer — Freelance (Upwork) | Jun 2023 – Dec 2023\n• Django websites and automation scripts.\n\nPrevious: Mechanical Site Engineer (HVAC installation), 2021–2023.\n\nEducation\nB.Sc. Mechanical Power Engineering, Helwan University, 2020\nITI 9-month Professional Diploma in Software Development, 2023",
+  "expected": {
+   "role": "software",
+   "acceptable_roles": [
+    "data"
+   ],
+   "years_min": 2.0,
+   "years_max": 3.0
+  }
+ },
+ {
+  "id": "m28",
+  "text": "محمد عبد الله السيد\nمهندس مدني - موقع\nالقاهرة - 01011112222 - mohamed.civil.ar@gmail.com\n\nالخبرات\nمهندس تنفيذ مدني — شركة المقاولون العرب | مارس 2021 – حتى الآن\n- الإشراف على صب الخرسانة والنجارة المسلحة والحدادة المسلحة لعمارات سكنية.\n- متابعة أعمال الحفر والردم والأساسات والخوازيق.\n- متابعة التشطيبات: مباني ومحارة وعزل.\n- إعداد المستخلصات وحصر الكميات.\n\nمهندس موقع — شركة رواد | يناير 2020 – فبراير 2021\n- استلام التسليح وتجهيز طلبات الاستلام.\n\nالتعليم\nبكالوريوس الهندسة المدنية — جامعة الأزهر 2019\n\nالمهارات\nAutoCAD، ETABS، Excel، Primavera",
+  "expected": {
+   "role": "civil_site",
+   "acceptable_roles": [
+    "structural"
+   ],
+   "years_min": 4.0,
+   "years_max": 5.0
+  }
+ }
+]

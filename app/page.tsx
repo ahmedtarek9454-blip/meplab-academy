@@ -55,7 +55,7 @@ export default async function Home() {
             <div className="p-4 sm:p-6"><HeroSchematic locale={locale} courses={bySys} /></div>
             <figcaption className="tb grid-cols-3 bg-white text-start [&>div+div]:border-s">
               <div><span className="tb-k">{t.about_s1}</span><span className="tb-v" dir="ltr">4</span></div>
-              <div><span className="tb-k">{t.about_s3}</span><span className="tb-v" dir="ltr">MEP ATS</span></div>
+              <div><span className="tb-k">{t.about_s3}</span><span className="tb-v" dir="ltr">ATS</span></div>
               <div><span className="tb-k">{t.about_s2}</span><span className="tb-v" dir="ltr">AT Tools</span></div>
             </figcaption>
           </figure>
@@ -95,7 +95,7 @@ export default async function Home() {
             <dl className="grid grid-cols-1 gap-px overflow-hidden rounded-sheet border border-white/15 bg-white/15 text-sm">
               {[
                 [ar ? 'درجة ATS' : 'ATS score', ar ? 'من 100، مع كل نقطة ناقصة' : 'out of 100, with every gap'],
-                [ar ? 'أقرب وظيفة' : 'Closest role', ar ? 'من 10 تخصصات MEP' : 'across 10 MEP roles'],
+                [ar ? 'أقرب وظيفة' : 'Closest role', ar ? 'من 35 وظيفة في كل أقسام الهندسة' : 'across 35 roles in every engineering field'],
                 [ar ? 'المرتب التقريبي' : 'Salary range', ar ? 'مصر، السعودية، الإمارات' : 'Egypt, KSA, UAE']
               ].map(([k, v]) => (
                 <div key={k} className="flex items-baseline justify-between gap-4 bg-ink px-4 py-3">

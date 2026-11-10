@@ -60,7 +60,7 @@ const ar = {
 
   new_badge: 'مجاني',
   cvp_t: 'الـ CV بتاعك هيعدّي من الـ ATS؟',
-  cvp_d: 'افحصه مجانًا في ثواني: نتيجة ATS، أقرب وظيفة MEP ليك، والمرتب التقريبي في مصر والسعودية والإمارات.',
+  cvp_d: 'افحصه مجانًا في ثواني: نتيجة ATS، أقرب وظيفة ليك في أي تخصص هندسي، والمرتب التقريبي في مصر والسعودية والإمارات.',
   cvp_b: 'افحص الـ CV دلوقتي',
   nav_dashboard: 'حسابي',
   nav_profile: 'بروفايلي',
@@ -240,7 +240,7 @@ const ar = {
   about_v1_t: 'عملي 100%', about_v1_d: 'كل درس على مشروع حقيقي، ومع كل جزء تاسك بنصحّحه لك.',
   about_v2_t: 'بلغتك', about_v2_d: 'شرح بالعربي المصري مع المصطلحات الإنجليزية اللي هتقابلها في الشغل.',
   about_v3_t: 'متابعة بعد الكورس', about_v3_d: 'فحص وتعديل الـ CV، وجروب دعم على واتساب.',
-  about_s1: 'كورسات مسجّلة', about_s2: 'أداة مجانية للـ Revit', about_s3: 'فحص ATS للـ MEP',
+  about_s1: 'كورسات مسجّلة', about_s2: 'أداة مجانية للـ Revit', about_s3: 'فحص ATS لكل المهندسين',
   // ---- tasks (member) ----
   task_submit: 'تسليم التاسك', task_resubmit: 'إعادة التسليم', task_file: 'ارفع ملف التاسك', task_file_hint: 'PDF / DOCX / XLSX / RVT / DWG / ZIP / صور — حتى 50 ميجا',
   task_note: 'ملاحظة للمحاضر (اختياري)', task_quiz: 'اختار الإجابة الصحيحة', task_answers_hint: 'بيتصحّح أوتوماتيك فور التسليم.',
@@ -322,7 +322,7 @@ const en: Dict = {
 
   new_badge: 'Free',
   cvp_t: 'Will your CV pass the ATS?',
-  cvp_d: 'Check it free in seconds: ATS score, closest MEP job title and estimated salary in Egypt, KSA and UAE.',
+  cvp_d: 'Check it free in seconds: ATS score, closest job title in any engineering field and estimated salary in Egypt, KSA and UAE.',
   cvp_b: 'Check my CV',
   nav_dashboard: 'My account',
   nav_profile: 'My profile',
@@ -502,7 +502,7 @@ const en: Dict = {
   about_v1_t: '100% practical', about_v1_d: 'Every lesson is on a real project, and every module has a graded assignment.',
   about_v2_t: 'In your language', about_v2_d: 'Egyptian Arabic explanations with the English terms you will meet at work.',
   about_v3_t: 'Support after the course', about_v3_d: 'CV checks and rewrites, and a WhatsApp support group.',
-  about_s1: 'Recorded courses', about_s2: 'Free Revit tool', about_s3: 'MEP ATS check',
+  about_s1: 'Recorded courses', about_s2: 'Free Revit tool', about_s3: 'ATS check for every engineer',
   // ---- tasks (member) ----
   task_submit: 'Submit assignment', task_resubmit: 'Resubmit', task_file: 'Upload your file', task_file_hint: 'PDF / DOCX / XLSX / RVT / DWG / ZIP / images — up to 50 MB',
   task_note: 'Note to instructor (optional)', task_quiz: 'Choose the correct answer', task_answers_hint: 'Graded automatically on submit.',

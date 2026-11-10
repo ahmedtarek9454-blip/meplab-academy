@@ -7,7 +7,10 @@
  * =====================================================================
  */
 
-export type Cat = 'design' | 'systems' | 'fire' | 'plumbing' | 'software' | 'codes' | 'execution' | 'office' | 'commercial' | 'management' | 'cert';
+import { EXTRA_SKILLS, SKILL_ROLE_ADDS } from './taxonomy-extra';
+
+export type Cat = 'design' | 'systems' | 'fire' | 'plumbing' | 'software' | 'codes' | 'execution' | 'office' | 'commercial' | 'management' | 'cert'
+  | 'civil' | 'structural' | 'survey' | 'arch' | 'electrical' | 'mech' | 'process' | 'petroleum' | 'automation' | 'it' | 'telecom' | 'biomed';
 
 export type Skill = {
   id: string;
@@ -19,7 +22,7 @@ export type Skill = {
 
 const s = (id: string, label: string, cat: Cat, syn: string[], roles: Skill['roles']): Skill => ({ id, label, cat, syn, roles });
 
-export const SKILLS: Skill[] = [
+const MEP_SKILLS: Skill[] = [
   /* ---------------- HVAC design ---------------- */
   s('load_calc', 'Cooling/heating load calculation', 'design', ['cooling load', 'heat load', 'heating load', 'load calculation', 'load calc', 'load estimation', 'thermal load', 'hvac load', 'حساب الأحمال', 'الأحمال الحرارية'], { hvac_design: 3, sales: 1 }),
   s('duct_design', 'Duct design & sizing', 'design', ['duct design', 'duct sizing', 'ductwork design', 'duct layout', 'equal friction', 'static regain', 'ductulator', 'duct sizer', 'تصميم الدكت', 'مجاري الهواء'], { hvac_design: 3, bim: 1 }),
@@ -135,5 +138,8 @@ export const SKILLS: Skill[] = [
   s('cfps', 'NFPA certification (CFPS/CFI)', 'cert', ['cfps', 'cfi', 'nicet', 'certified fire protection specialist'], { fire: 2 }),
   s('cem', 'Energy manager (CEM)', 'cert', ['cem', 'certified energy manager'], { fm: 1, hvac_design: 1 })
 ];
+
+/** all disciplines: MEP knowledge graph + every other engineering discipline (taxonomy-extra.ts) */
+export const SKILLS: Skill[] = [...MEP_SKILLS, ...EXTRA_SKILLS].map((k) => (SKILL_ROLE_ADDS[k.id] ? { ...k, roles: { ...k.roles, ...SKILL_ROLE_ADDS[k.id] } } : k));
 
 export const SKILL_BY_ID = new Map(SKILLS.map((k) => [k.id, k]));
