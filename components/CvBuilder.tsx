@@ -1,0 +1,282 @@
+'use client';
+import { useEffect, useMemo, useState } from 'react';
+import { useSpeech, speechSupported } from './useSpeech';
+import { tasksFor } from '@/lib/cv/taskBank';
+import { buildFromData, emptyData, emptyJob, hasArabic, type BuilderData, type Job } from '@/lib/cv/builder';
+import { analyzeCv } from '@/lib/cv/analyze';
+import { buildDocx, buildPrintHtml } from '@/lib/cv/export';
+import { roleGroups, MARKETS, type Market } from '@/lib/cv/data';
+
+type Loc = 'ar' | 'en';
+const KEY = 'meplab_cv_builder_v1';
+
+const T = {
+  ar: {
+    steps: ['بياناتك', 'الوظيفة', 'الخبرة', 'التعليم', 'الـ CV'],
+    next: 'التالي', back: 'رجوع', speakLang: 'هتتكلم بأنهي لغة؟', en: 'إنجليزي (أحسن للـ CV)', ar: 'عربي',
+    mic: 'اتكلم', stop: 'خلاص', listening: 'بسمعك…', noMic: 'المتصفح ده مش بيدعم الكلام. افتح الصفحة من Chrome، أو اكتب عادي.',
+    denied: 'لازم تسمح للموقع يستخدم المايك. دوس على علامة القفل جنب اللينك واختار Allow.',
+    failed: 'المايك ما اشتغلش. جرّب تاني أو اكتب.',
+    name: 'الاسم بالإنجليزي زي ما هتكتبه في الـ CV', phone: 'رقم الموبايل', email: 'الإيميل', city: 'المدينة والدولة', linkedin: 'لينك لينكدإن (اختياري)',
+    role: 'الوظيفة اللي بتقدّم عليها', pick: 'اختار…', market: 'هتقدّم فين؟',
+    job: 'وظيفة', title: 'المسمّى الوظيفي (بالإنجليزي)', company: 'اسم الشركة', jcity: 'المدينة', from: 'من', to: 'لحد', present: 'لسه شغال هنا',
+    picks: 'علّم على اللي عملته فعلًا في الشغلانة دي', said: 'احكي بصوتك عملت إيه كمان',
+    saidHint: 'اتكلم براحتك: المشروع كان إيه، كنت مسؤول عن إيه، وأي أرقام (عدد أدوار، مساحات، فريق، ميزانية). كل جملة هتبقى سطر في الـ CV.',
+    arWarn: 'فيه جمل بالعربي. الـ CV هيطلع بالإنجليزي، فالأحسن تقولها بالإنجليزي أو تختار من القائمة اللي فوق.',
+    addJob: '+ ضيف وظيفة تانية', removeJob: 'شيل الوظيفة دي', noExp: 'لسه متخرج ومعنديش خبرة', noExpD: 'تمام، هنركّز على التعليم والمهارات ومشروع التخرج.',
+    degree: 'المؤهل (مثال: B.Sc. Mechanical Engineering)', school: 'الجامعة', year: 'سنة التخرج',
+    skills: 'البرامج والمهارات (افصل بفاصلة)', certs: 'الكورسات والشهادات (كل واحدة في سطر)', langs: 'اللغات',
+    build: 'اعمل الـ CV', score: 'نتيجة الـ ATS', top: 'أقرب وظيفة', word: 'نزّله Word', pdf: 'نزّله PDF', check: 'افحصه بالتفصيل', edit: 'عدّل',
+    note: 'الـ CV ده مكتوب من كلامك إنت بس. راجعه كويس قبل ما تبعته، وزوّد أي أرقام تعرفها.',
+    privacy: 'كل اللي بتكتبه بيفضل على جهازك ومش بيتبعتلنا. تحويل الصوت لكلام بيتم عن طريق خدمة المتصفح (في كروم دي خدمة جوجل)، وإحنا مش بنسجّل صوتك.',
+    reset: 'ابدأ من الأول', required: 'اكتب اسمك الأول.'
+  },
+  en: {
+    steps: ['Details', 'Target', 'Experience', 'Education', 'CV'],
+    next: 'Next', back: 'Back', speakLang: 'Which language will you speak?', en: 'English (best for the CV)', ar: 'Arabic',
+    mic: 'Speak', stop: 'Done', listening: 'Listening…', noMic: 'This browser has no speech support. Open the page in Chrome, or type.',
+    denied: 'Allow microphone access: click the lock icon next to the address and choose Allow.',
+    failed: 'The microphone did not start. Try again or type.',
+    name: 'Full name as it should appear on the CV', phone: 'Mobile', email: 'Email', city: 'City and country', linkedin: 'LinkedIn link (optional)',
+    role: 'The job you are applying for', pick: 'Choose…', market: 'Where will you apply?',
+    job: 'Job', title: 'Job title', company: 'Company', jcity: 'City', from: 'From', to: 'To', present: 'I still work here',
+    picks: 'Tick what you actually did in this job', said: 'Say what else you did',
+    saidHint: 'Talk freely: the project, what you were responsible for, and any numbers (floors, areas, team size, budget). Each sentence becomes a CV line.',
+    arWarn: 'Some lines are in Arabic. The CV is in English, so say them in English or pick from the list above.',
+    addJob: '+ Add another job', removeJob: 'Remove this job', noExp: 'Fresh graduate, no experience yet', noExpD: 'Fine, we will focus on education, skills and your graduation project.',
+    degree: 'Degree (e.g. B.Sc. Mechanical Engineering)', school: 'University', year: 'Graduation year',
+    skills: 'Software and skills (comma separated)', certs: 'Courses and certificates (one per line)', langs: 'Languages',
+    build: 'Build my CV', score: 'ATS score', top: 'Closest job', word: 'Download Word', pdf: 'Download PDF', check: 'Full check', edit: 'Edit',
+    note: 'This CV is written only from what you said. Read it before sending and add any numbers you know.',
+    privacy: 'Everything you type stays on your device and is never sent to us. Speech is turned into text by your browser\'s speech service (Google in Chrome); we never record your voice.',
+    reset: 'Start over', required: 'Enter your name first.'
+  }
+};
+
+function Mic({ t, lang, onText, size = 'sm' }: { t: typeof T.ar; lang: string; onText: (s: string) => void; size?: 'sm' | 'lg' }) {
+  const s = useSpeech(onText);
+  const [supported, setSupported] = useState(false); // decided after hydration, so server and client render the same
+  useEffect(() => setSupported(speechSupported()), []);
+  if (!supported) return null;
+  return (
+    <span className="inline-flex flex-col items-start gap-1">
+      <button type="button" onClick={() => (s.listening ? s.stop() : s.start(lang))}
+        className={`${s.listening ? 'btn-red' : 'btn-ghost'} ${size === 'lg' ? 'px-5 py-3 text-base' : 'btn-sm'} gap-2`}
+        aria-pressed={s.listening} aria-label={s.listening ? t.stop : t.mic}>
+        <svg viewBox="0 0 24 24" className={`h-5 w-5 ${s.listening ? 'animate-pulse' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
+        {s.listening ? t.stop : t.mic}
+      </button>
+      {s.listening && <span className="text-xs text-ink-mute" role="status">{s.interim || t.listening}</span>}
+      {s.error === 'denied' && <span className="text-xs font-semibold text-brand-red" role="alert">{t.denied}</span>}
+      {s.error === 'failed' && <span className="text-xs font-semibold text-brand-red" role="alert">{t.failed}</span>}
+    </span>
+  );
+}
+
+function Field({ label, value, onChange, t, lang, type = 'text', dir, mic = true }: { label: string; value: string; onChange: (v: string) => void; t: typeof T.ar; lang: string; type?: string; dir?: string; mic?: boolean }) {
+  return (
+    <label className="block">
+      <span className="text-sm font-semibold text-ink">{label}</span>
+      <span className="mt-1 flex items-start gap-2">
+        <input className="input flex-1" type={type} dir={dir} value={value} onChange={(e) => onChange(e.target.value)} />
+        {mic && <Mic t={t} lang={lang} onText={(s) => onChange(s)} />}
+      </span>
+    </label>
+  );
+}
+
+export default function CvBuilder({ locale }: { locale: Loc }) {
+  const t = T[locale];
+  const ar = locale === 'ar';
+  const [d, setD] = useState<BuilderData>(emptyData);
+  const [step, setStep] = useState(0);
+  const [lang, setLang] = useState('en-US');
+  const [noExp, setNoExp] = useState(false);
+  const [err, setErr] = useState('');
+  const [hasMic, setHasMic] = useState(true);
+
+  useEffect(() => {
+    setHasMic(speechSupported());
+    try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s?.d) { setD({ ...emptyData(), ...s.d }); setStep(s.step || 0); setNoExp(!!s.noExp); } } catch {}
+  }, []);
+  useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify({ d, step, noExp })); } catch {} }, [d, step, noExp]);
+
+  const set = (patch: Partial<BuilderData>) => setD((x) => ({ ...x, ...patch }));
+  const setJob = (i: number, patch: Partial<Job>) => setD((x) => ({ ...x, jobs: x.jobs.map((j, k) => (k === i ? { ...j, ...patch } : j)) }));
+  const tasks = useMemo(() => tasksFor(d.roleId), [d.roleId]);
+
+  const out = useMemo(() => (step === 4 ? buildFromData(noExp ? { ...d, jobs: [] } : d) : null), [step, d, noExp]);
+  const res = useMemo(() => (out ? analyzeCv(out.text, d.market) : null), [out, d.market]);
+
+  function go(n: number) {
+    if (n > 0 && step === 0 && !d.name.trim()) { setErr(t.required); return; }
+    setErr(''); setStep(n); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  async function word() {
+    if (!out) return;
+    const blob = await buildDocx(out.model, out.summary);
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${(d.name || 'CV').replace(/[^\w ]+/g, '').trim() || 'CV'} - CV (MEP LAB).docx`; a.click();
+  }
+  function pdf() {
+    if (!out) return;
+    const w = window.open('', '_blank'); if (!w) return;
+    w.document.write(buildPrintHtml(out.model, out.summary)); w.document.close();
+  }
+
+  return (
+    <div className="card p-6 md:p-8">
+      {/* steps */}
+      <ol className="mb-8 grid grid-cols-5 gap-2 text-center text-xs font-semibold sm:text-sm" aria-label={ar ? 'الخطوات' : 'Steps'}>
+        {t.steps.map((s, i) => (
+          <li key={s}>
+            <button type="button" onClick={() => (i <= step || d.name ? go(i) : null)} aria-current={i === step ? 'step' : undefined}
+              className={`w-full rounded-sheet border-b-4 px-1 pb-2 pt-1 ${i === step ? 'border-brand-red text-ink' : i < step ? 'border-ink/40 text-ink-soft' : 'border-line text-ink-mute'}`}>
+              <span className="display block text-xl">{i + 1}</span>{s}
+            </button>
+          </li>
+        ))}
+      </ol>
+
+      {step < 4 && (
+        <div className="mb-6 flex flex-wrap items-center gap-3 rounded-sheet bg-paper p-3 text-sm">
+          {hasMic ? (
+            <>
+              <span className="font-semibold text-ink">{t.speakLang}</span>
+              {[['en-US', t.en], ['ar-EG', t.ar]].map(([v, l]) => (
+                <label key={v} className="flex items-center gap-1.5"><input type="radio" name="lang" className="accent-brand-red" checked={lang === v} onChange={() => setLang(v)} />{l}</label>
+              ))}
+            </>
+          ) : <span className="text-ink-soft">{t.noMic}</span>}
+        </div>
+      )}
+
+      {step === 0 && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2"><Field t={t} lang={lang} label={t.name} value={d.name} onChange={(v) => set({ name: v })} dir="ltr" /></div>
+          <Field t={t} lang={lang} label={t.phone} value={d.phone} onChange={(v) => set({ phone: v })} type="tel" dir="ltr" mic={false} />
+          <Field t={t} lang={lang} label={t.email} value={d.email} onChange={(v) => set({ email: v })} type="email" dir="ltr" mic={false} />
+          <Field t={t} lang={lang} label={t.city} value={d.location} onChange={(v) => set({ location: v })} dir="ltr" />
+          <Field t={t} lang={lang} label={t.linkedin} value={d.linkedin} onChange={(v) => set({ linkedin: v })} dir="ltr" mic={false} />
+        </div>
+      )}
+
+      {step === 1 && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className="text-sm font-semibold text-ink">{t.role}</span>
+            <select className="input mt-1" value={d.roleId} onChange={(e) => set({ roleId: e.target.value })}>
+              <option value="">{t.pick}</option>
+              {roleGroups(locale).map((g) => <optgroup key={g.id} label={g.label}>{g.roles.map((r) => <option key={r.id} value={r.id}>{r[locale]}</option>)}</optgroup>)}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-sm font-semibold text-ink">{t.market}</span>
+            <select className="input mt-1" value={d.market} onChange={(e) => set({ market: e.target.value as Market })}>
+              {(Object.keys(MARKETS) as Market[]).map((m) => <option key={m} value={m}>{MARKETS[m][ar ? 'name_ar' : 'name_en']}</option>)}
+            </select>
+          </label>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="space-y-6">
+          <label className="flex items-center gap-3 text-ink">
+            <input type="checkbox" className="h-5 w-5 accent-brand-red" checked={noExp} onChange={(e) => setNoExp(e.target.checked)} />
+            <span className="font-semibold">{t.noExp}</span>
+          </label>
+          {noExp ? <p className="text-ink-soft">{t.noExpD}</p> : d.jobs.map((j, i) => (
+            <fieldset key={i} className="rounded-sheet border border-line p-4 md:p-5">
+              <legend className="px-2 font-bold text-ink">{t.job} {i + 1}</legend>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field t={t} lang={lang} label={t.title} value={j.title} onChange={(v) => setJob(i, { title: v })} dir="ltr" />
+                <Field t={t} lang={lang} label={t.company} value={j.company} onChange={(v) => setJob(i, { company: v })} dir="ltr" />
+                <Field t={t} lang={lang} label={t.jcity} value={j.location} onChange={(v) => setJob(i, { location: v })} dir="ltr" />
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="block"><span className="text-sm font-semibold text-ink">{t.from}</span><input type="month" className="input mt-1" dir="ltr" value={j.from} onChange={(e) => setJob(i, { from: e.target.value })} /></label>
+                  <label className="block"><span className="text-sm font-semibold text-ink">{t.to}</span><input type="month" className="input mt-1" dir="ltr" disabled={j.present} value={j.to} onChange={(e) => setJob(i, { to: e.target.value })} /></label>
+                  <label className="col-span-2 flex items-center gap-2 text-sm"><input type="checkbox" className="accent-brand-red" checked={j.present} onChange={(e) => setJob(i, { present: e.target.checked })} />{t.present}</label>
+                </div>
+              </div>
+              <div className="mt-5">
+                <div className="text-sm font-semibold text-ink">{t.picks}</div>
+                <div className="mt-2 grid gap-2 md:grid-cols-2" dir="ltr">
+                  {tasks.map((task) => (
+                    <label key={task} className="flex items-start gap-2 rounded-sheet border border-line p-2.5 text-sm leading-6 text-ink-soft has-[:checked]:border-ink has-[:checked]:text-ink">
+                      <input type="checkbox" className="mt-1 accent-brand-red" checked={j.picks.includes(task)}
+                        onChange={(e) => setJob(i, { picks: e.target.checked ? [...j.picks, task] : j.picks.filter((p) => p !== task) })} />
+                      {task}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-5">
+                <div className="flex flex-wrap items-end justify-between gap-2">
+                  <div><div className="text-sm font-semibold text-ink">{t.said}</div><p className="mt-1 max-w-2xl text-xs leading-5 text-ink-mute">{t.saidHint}</p></div>
+                  <Mic t={t} lang={lang} size="lg" onText={(s) => setJob(i, { said: (j.said ? j.said.replace(/\s+$/, '') + (/[.!؟?]$/.test(j.said.trim()) ? ' ' : '. ') : '') + s })} />
+                </div>
+                <textarea className="input mt-2 min-h-[120px]" dir="auto" value={j.said} onChange={(e) => setJob(i, { said: e.target.value })} />
+                {hasArabic(j.said) && <p className="mt-2 text-sm font-semibold text-brand-amber" role="note">{t.arWarn}</p>}
+              </div>
+              {d.jobs.length > 1 && <button type="button" className="mt-4 text-sm font-semibold text-brand-red underline" onClick={() => set({ jobs: d.jobs.filter((_, k) => k !== i) })}>{t.removeJob}</button>}
+            </fieldset>
+          ))}
+          {!noExp && <button type="button" className="btn-ghost" onClick={() => set({ jobs: [...d.jobs, emptyJob()] })}>{t.addJob}</button>}
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="space-y-5">
+          {d.edu.map((e, i) => (
+            <div key={i} className="grid gap-4 sm:grid-cols-3">
+              <Field t={t} lang={lang} label={t.degree} value={e.degree} onChange={(v) => set({ edu: d.edu.map((x, k) => (k === i ? { ...x, degree: v } : x)) })} dir="ltr" />
+              <Field t={t} lang={lang} label={t.school} value={e.school} onChange={(v) => set({ edu: d.edu.map((x, k) => (k === i ? { ...x, school: v } : x)) })} dir="ltr" />
+              <Field t={t} lang={lang} label={t.year} value={e.year} onChange={(v) => set({ edu: d.edu.map((x, k) => (k === i ? { ...x, year: v } : x)) })} dir="ltr" mic={false} />
+            </div>
+          ))}
+          {[['skills', t.skills], ['certs', t.certs]].map(([k, label]) => (
+            <label key={k} className="block">
+              <span className="flex items-end justify-between gap-2"><span className="text-sm font-semibold text-ink">{label}</span>
+                <Mic t={t} lang={lang} onText={(s) => set({ [k]: ((d as any)[k] ? (d as any)[k] + (k === 'skills' ? ', ' : '\n') : '') + s } as any)} /></span>
+              <textarea className="input mt-1 min-h-[80px]" dir="ltr" value={(d as any)[k]} onChange={(e) => set({ [k]: e.target.value } as any)} />
+            </label>
+          ))}
+          <Field t={t} lang={lang} label={t.langs} value={d.languages} onChange={(v) => set({ languages: v })} dir="ltr" mic={false} />
+        </div>
+      )}
+
+      {step === 4 && out && res && (
+        <div className="space-y-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-sheet bg-ink p-5 text-white">
+              <div className="text-sm text-slate-300">{t.score}</div>
+              <div className="display text-5xl">{res.score}<span className="text-xl text-slate-300">/100</span></div>
+            </div>
+            <div className="rounded-sheet bg-paper p-5">
+              <div className="text-sm text-ink-mute">{t.top}</div>
+              <div className="mt-1 text-lg font-bold text-ink">{res.roles[0]?.role[locale]}</div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button type="button" className="btn-red" onClick={word}>{t.word}</button>
+            <button type="button" className="btn-ghost" onClick={pdf}>{t.pdf}</button>
+            <button type="button" className="btn-ghost" onClick={() => go(2)}>{t.edit}</button>
+          </div>
+          <p className="text-sm font-semibold text-ink-soft">{t.note}</p>
+          <pre className="max-h-[560px] overflow-auto whitespace-pre-wrap rounded-sheet border border-line bg-white p-5 font-sans text-sm leading-7 text-ink" dir="ltr">{out.text}</pre>
+        </div>
+      )}
+
+      {err && <p className="mt-4 text-sm font-semibold text-brand-red" role="alert">{err}</p>}
+
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
+        <div className="flex gap-2">
+          {step > 0 && <button type="button" className="btn-ghost" onClick={() => go(step - 1)}>{t.back}</button>}
+          {step < 3 && <button type="button" className="btn-red" onClick={() => go(step + 1)}>{t.next}</button>}
+          {step === 3 && <button type="button" className="btn-red" onClick={() => go(4)}>{t.build}</button>}
+        </div>
+        <button type="button" className="text-sm text-ink-mute underline" onClick={() => { setD(emptyData()); setNoExp(false); setStep(0); }}>{t.reset}</button>
+      </div>
+      <p className="mt-4 text-xs leading-5 text-ink-mute">{t.privacy}</p>
+    </div>
+  );
+}

@@ -22,6 +22,10 @@ export default async function CvCheckPage() {
               ? 'ارفع الـ CV وفي ثواني تعرف نسبة توافقه مع أنظمة الـ ATS، وأقرب وظيفة ليه في تخصصك الهندسي، والمرتب التقريبي في مصر والسعودية والإمارات.'
               : 'Upload your CV and in seconds see its ATS score, the closest job title in your engineering discipline and an estimated salary in Egypt, KSA and UAE.'}
           </p>
+          <p className="mt-3 text-sm text-white/85">
+            {ar ? 'مش عندك CV؟ ' : 'No CV yet? '}
+            <a href="/cv-builder" className="font-bold text-white underline">{ar ? 'اعمله بصوتك في دقايق' : 'Build one by voice in minutes'}</a>
+          </p>
         </div>
       </section>
       <section className="container-x relative z-10 -mt-10 pb-4">
