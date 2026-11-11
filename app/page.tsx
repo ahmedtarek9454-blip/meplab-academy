@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getT } from '@/lib/i18n';
 import { safeCourses } from '@/lib/data/courses';
 import { SUPABASE_READY } from '@/lib/supabase/env';
+import { SHOW_PRICES } from '@/lib/features';
 import CourseCard from '@/components/CourseCard';
 import { Mark } from '@/components/Logo';
 
@@ -14,7 +15,8 @@ export default async function Home() {
   const ar = locale === 'ar';
 
   const steps = [t.how1, t.how2, t.how3, t.how4];
-  const faqs = [[t.q1, t.a1], [t.q2, t.a2], [t.q3, t.a3], [t.q4, t.a4]];
+  // enrollment & payment content stays hidden until sales open (NEXT_PUBLIC_SHOW_PRICES=1)
+  const faqs = [...(SHOW_PRICES ? [[t.q1, t.a1]] : []), [t.q2, t.a2], [t.q3, t.a3], [t.q4, t.a4]];
   const ticker = ar
     ? ['Revit Mechanical', 'HVAC Design', 'فحص CV مجاني', 'Fire Fighting', 'Plumbing', 'الكهرباء', 'MEP LAB Player']
     : ['Revit Mechanical', 'HVAC Design', 'Free CV check', 'Fire Fighting', 'Plumbing', 'Electrical', 'MEP LAB Player'];
@@ -117,7 +119,7 @@ export default async function Home() {
       </section>
 
       {/* ============ HOW (a real sequence) ============ */}
-      <section id="how" className="container-x scroll-mt-24 pt-20 md:pt-24">
+      {SHOW_PRICES && <section id="how" className="container-x scroll-mt-24 pt-20 md:pt-24">
         <h2 className="h-section">{t.how_title}</h2>
         <ol className="mt-10 grid border-t-4 border-ink sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((s, i) => (
@@ -128,7 +130,7 @@ export default async function Home() {
           ))}
         </ol>
         {SUPABASE_READY && <Link href="/download" className="btn-blue mt-10">{t.nav_download}</Link>}
-      </section>
+      </section>}
 
       {/* ============ FAQ ============ */}
       <section className="container-x max-w-4xl pt-20 md:pt-24">
