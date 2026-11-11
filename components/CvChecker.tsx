@@ -291,6 +291,21 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // handed over from the voice CV builder: analyse the built CV right away
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('meplab_cv_handoff');
+      if (!raw) return;
+      sessionStorage.removeItem('meplab_cv_handoff');
+      const p = JSON.parse(raw);
+      if (!p?.text) return;
+      const mk = (p.market || 'eg') as Market;
+      setMarket(mk); setPaste(p.text);
+      setTimeout(() => run({ text: p.text, market: mk }), 50);
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // after analysis: load matching jobs for the detected role & market
   useEffect(() => {
     if (!res || process.env.NEXT_PUBLIC_JOBS !== '1') { setJobs([]); return; }

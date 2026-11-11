@@ -30,7 +30,15 @@ const T = {
     ai: 'حسّن الصياغة بالذكاء الاصطناعي', aiBusy: 'بيفكّر…', aiNote: 'هنبعت الجمل دي بس لخدمة Gemini من جوجل عشان تتفهم وتتترجم بدقة أعلى، من غير اسمك أو رقمك أو إيميلك.',
     aiDone: 'اتحسّنت الصياغة. راجع كل سطر.', aiUnclear: 'الذكاء الاصطناعي ماقدرش يفهم الجملة دي من غير ما يخمّن، فسيبناها زي ما هي.', aiErr: 'الخدمة مشغولة دلوقتي. جرّب كمان شوية.', aiTag: 'ذكاء اصطناعي', fromAr: 'اتترجم من كلامك:', unknownW: 'كلمات مفهمناهاش:', unknownD: 'عدّل السطر بإيدك أو قوله تاني بشكل أوضح.',
     similarT: 'فيه صياغة جاهزة قريبة:', useIt: 'استخدمها', undo: 'رجّع كلامي', facts: 'معلومات طلعناها:', drop: 'شيل السطر ده',
-    addJob: '+ ضيف وظيفة تانية', removeJob: 'شيل الوظيفة دي', noExp: 'لسه متخرج ومعنديش خبرة', noExpD: 'تمام، هنركّز على التعليم والمهارات ومشروع التخرج.',
+    addJob: '+ ضيف وظيفة تانية', removeJob: 'شيل الوظيفة دي', noExp: 'لسه متخرج ومعنديش خبرة', noExpD: 'تمام. احكيلنا عن مشروع التخرج وأي تدريب صيفي عملته، دول بيعوّضوا الخبرة في الـ CV.',
+    proj: 'مشروع / تدريب', ptitle: 'اسم المشروع أو التدريب (مثال: Graduation Project – HVAC Design of a Hospital)', porg: 'الجامعة أو الشركة اللي اتدربت فيها',
+    psaid: 'احكي بصوتك عملت إيه في المشروع أو التدريب', addProj: '+ ضيف مشروع أو تدريب تاني', removeProj: 'شيل ده',
+    badDate: 'تاريخ «لحد» لازم يكون بعد تاريخ «من».', tipsH: 'عشان الـ CV يبقى أقوى',
+    tipNum: 'مفيش ولا رقم في الخبرة. زوّد أرقام زي عدد الأدوار، المساحة، حجم الفريق أو قيمة المشروع.',
+    tipFew: 'السطور قليلة. الـ CV القوي فيه من ٤ لـ ٦ سطور لكل وظيفة.',
+    tipSkills: 'ضيف البرامج اللي بتشتغل عليها (Revit، AutoCAD، Navisworks…). الـ ATS بيدوّر عليها بالاسم.',
+    tipSummary: 'الملخص اتكتب من كلامك. اقراه واتأكد إنه بيوصفك صح.',
+    tipMissing: 'كلمات مهمة للوظيفة دي مش موجودة:', checkD: 'هيفتح فاحص الـ CV على النسخة دي ويطلعلك تقرير كامل.',
     degree: 'المؤهل (مثال: B.Sc. Mechanical Engineering)', school: 'الجامعة', year: 'سنة التخرج',
     skills: 'البرامج والمهارات (افصل بفاصلة)', certs: 'الكورسات والشهادات (كل واحدة في سطر)', langs: 'اللغات',
     build: 'اعمل الـ CV', score: 'نتيجة الـ ATS', top: 'أقرب وظيفة', word: 'نزّله Word', pdf: 'نزّله PDF', check: 'افحصه بالتفصيل', edit: 'عدّل',
@@ -55,7 +63,15 @@ const T = {
     ai: 'Improve the wording with AI', aiBusy: 'Thinking…', aiNote: 'Only these sentences are sent to Google Gemini to understand and translate them more accurately, without your name, phone or email.',
     aiDone: 'Wording improved. Check every line.', aiUnclear: 'The AI could not understand this sentence without guessing, so we left it as it was.', aiErr: 'The service is busy. Try again in a bit.', aiTag: 'AI', fromAr: 'Translated from what you said:', unknownW: 'Words we did not get:', unknownD: 'Edit the line or say it again more clearly.',
     similarT: 'A ready line is close to this:', useIt: 'Use it', undo: 'Back to my words', facts: 'Facts we picked up:', drop: 'Remove this line',
-    addJob: '+ Add another job', removeJob: 'Remove this job', noExp: 'Fresh graduate, no experience yet', noExpD: 'Fine, we will focus on education, skills and your graduation project.',
+    addJob: '+ Add another job', removeJob: 'Remove this job', noExp: 'Fresh graduate, no experience yet', noExpD: 'Fine. Tell us about your graduation project and any summer training. They stand in for experience on your CV.',
+    proj: 'Project / training', ptitle: 'Project or training name (e.g. Graduation Project – HVAC Design of a Hospital)', porg: 'University or training company',
+    psaid: 'Say what you did in this project or training', addProj: '+ Add another project or training', removeProj: 'Remove this',
+    badDate: 'The "To" date has to be after the "From" date.', tipsH: 'To make this CV stronger',
+    tipNum: 'There are no numbers in your experience. Add floors, area, team size or project value.',
+    tipFew: 'Only a few lines. A strong CV has 4 to 6 lines per job.',
+    tipSkills: 'Add the software you use (Revit, AutoCAD, Navisworks…). ATS systems search for them by name.',
+    tipSummary: 'The summary was written from what you said. Read it and make sure it describes you.',
+    tipMissing: 'Important keywords for this role that are missing:', checkD: 'Opens the CV checker on this version for a full report.',
     degree: 'Degree (e.g. B.Sc. Mechanical Engineering)', school: 'University', year: 'Graduation year',
     skills: 'Software and skills (comma separated)', certs: 'Courses and certificates (one per line)', langs: 'Languages',
     build: 'Build my CV', score: 'ATS score', top: 'Closest job', word: 'Download Word', pdf: 'Download PDF', check: 'Full check', edit: 'Edit',
@@ -194,12 +210,31 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
   const setJob = (i: number, patch: Partial<Job>) => setD((x) => ({ ...x, jobs: x.jobs.map((j, k) => (k === i ? { ...j, ...patch } : j)) }));
   const tasks = useMemo(() => tasksFor(d.roleId), [d.roleId]);
 
-  const out = useMemo(() => (step === 4 ? buildFromData(noExp ? { ...d, jobs: [] } : d) : null), [step, d, noExp]);
+  const out = useMemo(() => (step === 4 ? buildFromData(d, noExp) : null), [step, d, noExp]);
   const res = useMemo(() => (out ? analyzeCv(out.text, d.market) : null), [out, d.market]);
 
   function go(n: number) {
     if (n > 0 && step === 0 && !d.name.trim()) { setErr(t.required); return; }
+    if (n > step && step === 2 && d.jobs.some((j) => j.from && !j.present && j.to && j.to < j.from)) { setErr(t.badDate); return; }
     setErr(''); setStep(n); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  const tips = useMemo(() => {
+    if (!out || !res) return [] as string[];
+    const L: string[] = [];
+    const bl = [...(out.model.experience || []), ...(out.model.projects || [])].flatMap((e) => e.bullets);
+    if (bl.length && !bl.some((b) => /\d/.test(b))) L.push(t.tipNum);
+    const n = Math.max(1, d.jobs.length);
+    if (bl.length / n < 4) L.push(t.tipFew);
+    if (!d.skills.trim()) L.push(t.tipSkills);
+    const miss = (res.roles[0]?.missing || []).slice(0, 6);
+    if (miss.length) L.push(`${t.tipMissing}|${miss.join(', ')}`);
+    L.push(t.tipSummary);
+    return L;
+  }, [out, res, d.jobs.length, d.skills, t, ar]);
+  function check() {
+    if (!out) return;
+    try { sessionStorage.setItem('meplab_cv_handoff', JSON.stringify({ text: out.text, market: d.market })); } catch {}
+    window.location.href = '/cv-check';
   }
   async function word() {
     if (!out) return;
@@ -273,17 +308,18 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
             <input type="checkbox" className="h-5 w-5 accent-brand-red" checked={noExp} onChange={(e) => setNoExp(e.target.checked)} />
             <span className="font-semibold">{t.noExp}</span>
           </label>
-          {noExp ? <p className="text-ink-soft">{t.noExpD}</p> : d.jobs.map((j, i) => (
+          {noExp && <p className="text-ink-soft">{t.noExpD}</p>}
+          {d.jobs.map((j, i) => (
             <fieldset key={i} className="rounded-sheet border border-line p-4 md:p-5">
-              <legend className="px-2 font-bold text-ink">{t.job} {i + 1}</legend>
+              <legend className="px-2 font-bold text-ink">{noExp ? t.proj : t.job} {i + 1}</legend>
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field t={t} lang={lang} label={t.title} value={j.title} onChange={(v) => setJob(i, { title: v })} dir="auto" suggest={suggestTitle} />
-                <Field t={t} lang={lang} label={t.company} value={j.company} onChange={(v) => setJob(i, { company: v })} dir="auto" suggest={suggestCompany} lookup />
+                <Field t={t} lang={lang} label={noExp ? t.ptitle : t.title} value={j.title} onChange={(v) => setJob(i, { title: v })} dir="auto" suggest={suggestTitle} />
+                <Field t={t} lang={lang} label={noExp ? t.porg : t.company} value={j.company} onChange={(v) => setJob(i, { company: v })} dir="auto" suggest={suggestCompany} lookup={!noExp} />
                 <Field t={t} lang={lang} label={t.jcity} value={j.location} onChange={(v) => setJob(i, { location: v })} dir="auto" suggest={suggestCity} />
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block"><span className="text-sm font-semibold text-ink">{t.from}</span><input type="month" className="input mt-1" dir="ltr" value={j.from} onChange={(e) => setJob(i, { from: e.target.value })} /></label>
-                  <label className="block"><span className="text-sm font-semibold text-ink">{t.to}</span><input type="month" className="input mt-1" dir="ltr" disabled={j.present} value={j.to} onChange={(e) => setJob(i, { to: e.target.value })} /></label>
-                  <label className="col-span-2 flex items-center gap-2 text-sm"><input type="checkbox" className="accent-brand-red" checked={j.present} onChange={(e) => setJob(i, { present: e.target.checked })} />{t.present}</label>
+                  <label className="block"><span className="text-sm font-semibold text-ink">{t.to}</span><input type="month" className="input mt-1" dir="ltr" disabled={j.present} min={j.from || undefined} aria-invalid={!!(j.from && j.to && !j.present && j.to < j.from)} value={j.to} onChange={(e) => setJob(i, { to: e.target.value })} /></label>
+                  <label className={`col-span-2 flex items-center gap-2 text-sm ${noExp ? 'hidden' : ''}`}><input type="checkbox" className="accent-brand-red" checked={j.present} onChange={(e) => setJob(i, { present: e.target.checked })} />{t.present}</label>
                 </div>
               </div>
               <div className="mt-5">
@@ -300,17 +336,17 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
               </div>
               <div className="mt-5">
                 <div className="flex flex-wrap items-end justify-between gap-2">
-                  <div><div className="text-sm font-semibold text-ink">{t.said}</div><p className="mt-1 max-w-2xl text-xs leading-5 text-ink-mute">{t.saidHint}</p></div>
+                  <div><div className="text-sm font-semibold text-ink">{noExp ? t.psaid : t.said}</div><p className="mt-1 max-w-2xl text-xs leading-5 text-ink-mute">{t.saidHint}</p></div>
                   <Mic t={t} lang={lang} size="lg" onText={(s) => setJob(i, { said: (j.said ? j.said.replace(/\s+$/, '') + (/[.!؟?]$/.test(j.said.trim()) ? ' ' : '. ') : '') + s })} />
                 </div>
                 <textarea className="input mt-2 min-h-[120px]" dir="auto" value={j.said} onChange={(e) => setJob(i, { said: e.target.value })} />
                 <Understood j={j} roleId={d.roleId} t={t} ai={aiOn} onBulk={(e) => setJob(i, { edits: { ...(j.edits || {}), ...e } })} onEdit={(orig, text) => setJob(i, { edits: { ...(j.edits || {}), [orig]: text } })}
                   onReset={(orig) => { const e = { ...(j.edits || {}) }; delete e[orig]; setJob(i, { edits: e }); }} />
               </div>
-              {d.jobs.length > 1 && <button type="button" className="mt-4 text-sm font-semibold text-brand-red underline" onClick={() => set({ jobs: d.jobs.filter((_, k) => k !== i) })}>{t.removeJob}</button>}
+              {d.jobs.length > 1 && <button type="button" className="mt-4 text-sm font-semibold text-brand-red underline" onClick={() => set({ jobs: d.jobs.filter((_, k) => k !== i) })}>{noExp ? t.removeProj : t.removeJob}</button>}
             </fieldset>
           ))}
-          {!noExp && <button type="button" className="btn-ghost" onClick={() => set({ jobs: [...d.jobs, emptyJob()] })}>{t.addJob}</button>}
+          <button type="button" className="btn-ghost" onClick={() => set({ jobs: [...d.jobs, emptyJob()] })}>{noExp ? t.addProj : t.addJob}</button>
         </div>
       )}
 
@@ -319,7 +355,7 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
           {d.edu.map((e, i) => (
             <div key={i} className="grid gap-4 sm:grid-cols-3">
               <Field t={t} lang={lang} label={t.degree} value={e.degree} onChange={(v) => set({ edu: d.edu.map((x, k) => (k === i ? { ...x, degree: v } : x)) })} dir="ltr" />
-              <Field t={t} lang={lang} label={t.school} value={e.school} onChange={(v) => set({ edu: d.edu.map((x, k) => (k === i ? { ...x, school: v } : x)) })} dir="ltr" />
+              <Field t={t} lang={lang} label={t.school} value={e.school} onChange={(v) => set({ edu: d.edu.map((x, k) => (k === i ? { ...x, school: v } : x)) })} dir="auto" suggest={suggestCompany} />
               <Field t={t} lang={lang} label={t.year} value={e.year} onChange={(v) => set({ edu: d.edu.map((x, k) => (k === i ? { ...x, year: v } : x)) })} dir="ltr" mic={false} />
             </div>
           ))}
@@ -349,8 +385,15 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
           <div className="flex flex-wrap gap-3">
             <button type="button" className="btn-red" onClick={word}>{t.word}</button>
             <button type="button" className="btn-ghost" onClick={pdf}>{t.pdf}</button>
+            <button type="button" className="btn-ghost" onClick={check} title={t.checkD}>{t.check}</button>
             <button type="button" className="btn-ghost" onClick={() => go(2)}>{t.edit}</button>
           </div>
+          {tips.length > 0 && (
+            <div className="rounded-sheet border-s-4 border-brand-red bg-paper p-5">
+              <div className="font-bold text-ink">{t.tipsH}</div>
+              <ul className="mt-2 list-disc space-y-1.5 ps-5 text-sm leading-6 text-ink-soft">{tips.map((x) => { const [a, k] = x.split('|'); return <li key={x}>{a}{k && <> <bdi dir="ltr" className="font-semibold text-ink">{k}</bdi></>}</li>; })}</ul>
+            </div>
+          )}
           <p className="text-sm font-semibold text-ink-soft">{t.note}</p>
           <pre className="max-h-[560px] overflow-auto whitespace-pre-wrap rounded-sheet border border-line bg-white p-5 font-sans text-sm leading-7 text-ink" dir="ltr">{out.text}</pre>
         </div>

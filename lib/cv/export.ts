@@ -34,6 +34,17 @@ export async function buildDocx(m: CvModel, summary: string): Promise<Blob> {
       for (const b of e.bullets) kids.push(P(b, { bullet: true, after: 30 }));
     }
   }
+  if (m.projects?.length) {
+    kids.push(H('Academic Projects & Training'));
+    for (const e of m.projects) {
+      kids.push(new Paragraph({
+        children: [new TextRun({ text: e.title, font, size: 22, bold: true }), new TextRun({ text: `\t${e.dates}`, font, size: 20, color: '475569' })],
+        tabStops: [{ type: TabStopType.RIGHT, position: 9360 }], spacing: { before: 120, after: 20 }
+      }));
+      if (e.company || e.location) kids.push(P([e.company, e.location].filter(Boolean).join(', '), { size: 20, color: '1E5BD6', after: 40 }));
+      for (const b of e.bullets) kids.push(P(b, { bullet: true, after: 30 }));
+    }
+  }
   if (m.education.length) { kids.push(H('Education')); for (const x of m.education) kids.push(P(x)); }
   if (m.certifications.length) { kids.push(H('Certifications & Training')); for (const x of m.certifications) kids.push(P(x, { bullet: true, after: 30 })); }
   if (m.languages.length) { kids.push(H('Languages'), P(m.languages.join('  |  '))); }
@@ -65,6 +76,7 @@ ul{margin:3px 0 0 16px;padding:0}li{margin:2px 0}.sk b{color:#0B1B3A}
 <h2>Professional Summary</h2><p>${esc(summary)}</p>
 ${cats.length ? `<h2>Core Skills</h2><div class="sk">${cats.map((c) => `<div><b>${esc(CAT_LABEL[c] || c)}:</b> ${esc(m.skills[c].join(', '))}</div>`).join('')}</div>` : ''}
 ${m.experience.length ? `<h2>Professional Experience</h2>${m.experience.map((e) => `<div class="e"><div class="t"><span>${esc(e.title)}</span><span style="font-weight:400;color:#475569;font-size:9.5pt">${esc(e.dates)}</span></div><div class="c">${esc([e.company, e.location].filter(Boolean).join(', '))}</div><ul>${e.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></div>`).join('')}` : ''}
+${m.projects?.length ? `<h2>Academic Projects &amp; Training</h2>${m.projects.map((e) => `<div class="e"><div class="t"><span>${esc(e.title)}</span><span style="font-weight:400;color:#475569;font-size:9.5pt">${esc(e.dates)}</span></div><div class="c">${esc([e.company, e.location].filter(Boolean).join(', '))}</div><ul>${e.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></div>`).join('')}` : ''}
 ${m.education.length ? `<h2>Education</h2>${m.education.map((x) => `<div>${esc(x)}</div>`).join('')}` : ''}
 ${m.certifications.length ? `<h2>Certifications &amp; Training</h2><ul>${m.certifications.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
 ${m.languages.length ? `<h2>Languages</h2><div>${esc(m.languages.join('  |  '))}</div>` : ''}

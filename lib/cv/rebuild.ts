@@ -16,6 +16,7 @@ export type CvModel = {
   name: string; headline: string; email: string; phone: string; linkedin: string; location: string;
   summary: string[]; experience: Entry[]; education: string[]; certifications: string[]; skills: Record<string, string[]>; languages: string[];
   removed: string[]; // personal-data lines dropped for ATS hygiene
+  projects?: Entry[]; // academic projects & training (CV builder, fresh graduates)
 };
 
 const MONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -240,6 +241,13 @@ export function toText(m: CvModel, summary: string) {
   if (m.experience.length) {
     L.push('', 'PROFESSIONAL EXPERIENCE');
     for (const e of m.experience) {
+      L.push('', `${e.title}${e.company ? ' – ' + e.company : ''}${e.location ? ', ' + e.location : ''}`, e.dates);
+      for (const b of e.bullets) L.push(`• ${b}`);
+    }
+  }
+  if (m.projects?.length) {
+    L.push('', 'ACADEMIC PROJECTS & TRAINING');
+    for (const e of m.projects) {
       L.push('', `${e.title}${e.company ? ' – ' + e.company : ''}${e.location ? ', ' + e.location : ''}`, e.dates);
       for (const b of e.bullets) L.push(`• ${b}`);
     }

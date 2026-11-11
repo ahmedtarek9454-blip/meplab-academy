@@ -95,7 +95,7 @@ const MISHEARD: [RegExp, string][] = [
   [/\b(?:shop drawing|shop drawings|shop drawn)\b/gi, 'shop drawings'], [/\b(?:etabs|e tabs|it tabs)\b/gi, 'ETABS'], [/\b(?:primavera|prima vera)\b(?!\s*P6)/gi, 'Primavera P6'],
   [/\b(?:chiller's|chillers?)\b/gi, 'chillers'], [/\b(?:dukt|ducked|ducts? work|duck work)\b/gi, 'ductwork'],
   [/(?:اتش ?فاك|اتش في ايه سي|إتش فاك|اتش فاك)/g, 'HVAC'], [/(?:ام اي بي|إم إي بي|ام ي بي)/g, 'MEP'], [/(?:بي اي ام|بيم)(?=\s|$)/g, 'BIM'],
-  [/(?:ريفيت|ريفت|ريفيد)/g, 'Revit'], [/(?:اوتوكاد|أوتوكاد|اوتو كاد)/g, 'AutoCAD'], [/(?:نافيس ?ووركس|نافيز|نافيس)/g, 'Navisworks'],
+  [/(?:ريفيت|ريفت|ريفيد)/g, 'Revit'], [/(?:اوتوكاد|أوتوكاد|اوتو كاد)/g, 'AutoCAD'], [/(?:نافيس|نافيز) ?(?:ووركس|وركس|ورك|وورك)?/g, 'Navisworks'],
   [/(?:بريمافيرا(?:\s*بي\s*[6٦])?)/g, 'Primavera P6'], [/(?:ايتابس|إيتابس)/g, 'ETABS'], [/(?:سيف)(?=\s|$)/g, 'SAFE'],
   [/(?:ال)?شوب ?(?:دروينجز|دروينج|دراوينج|درونج|درويج)|(?:ال)?شوب(?=\s|$)/g, 'shop drawings'], [/(?:اي ار|آي آر)(?=\s|$)/g, 'IR'], [/(?:ار اف اي|آر إف آي)/g, 'RFI'],
   [/(?:بي او كيو|بوك|البوك)(?=\s|$)/g, 'BOQ'], [/(?:ان اف بي ايه|إن إف بي إيه)/g, 'NFPA'], [/(?:اشري|أشري|اشراي)/g, 'ASHRAE'], [/(?:سماكنا)/g, 'SMACNA'],
@@ -119,6 +119,9 @@ const arFold = (s: string) => s.replace(/[أإآ]/g, 'ا').replace(/ة(?=$|[\s،
 /* -------------------------------------------- Arabic → English phrase table */
 // Order matters: longer phrases first. Values are CV English.
 const AR_VERBS: [RegExp, string][] = [
+  [/^(?:انا\s+)?(?:كنت\s+)?(?:شاركت|بشارك|اشتركت|ساهمت|بساهم)\s+(?:في|ف|فى)\s+/, 'Participated in '],
+  [/^(?:انا\s+)?(?:كنت\s+)?(?:ساعدت|بساعد)\s+(?:في|ف|فى)\s+/, 'Assisted in '],
+  [/^(?:انا\s+)?(?:اتدربت|تدربت|اخدت تدريب|خدت تدريب)\s+(?:عل[ىي]|في|فى)\s+/, 'Trained in '],
   [/^(?:انا\s+)?(?:كنت|اشتغلت)\s+(?=(?:مهندس|مدير|منسق|رسام|فني|مشرف|مساعد)\s)/, 'Worked as '],
   [/^(?:انا\s+)?(?:اشتغلت|كنت شغال|اشتغل)\s+(?=at\s)/, 'Worked '],
   [/^(?:كنت|كان)\s+(?:مسؤول|مسئول|المسؤول|المسئول)\s+(?:عن|عل[ىي]|علي)\s+/, 'Responsible for '],
@@ -133,6 +136,10 @@ const AR_VERBS: [RegExp, string][] = [
   [/^(?:كنت\s+)?(?:بنسق|نسقت|تنسيق|بعمل تنسيق|عملت تنسيق)\s+(?:بين\s+|مع\s+)?/, 'Coordinated '],
   [/^(?:كنت\s+)?(?:باختار|اخترت|اختيار)\s+/, 'Selected '],
   [/^(?:كنت\s+)?(?:برسم|رسمت|رسم)\s+/, 'Drafted '],
+  [/^(?:كنت\s+)?(?:بعمل|عملت)\s+الموديل\s+(?:ال)?(?:ميكانيكال|ميكانيكي|ميكانيكا)\s*/, 'Built the mechanical BIM model '],
+  [/^(?:كنت\s+)?(?:بعمل|عملت)\s+الموديل\s+(?:ال)?(?:الكتريكال|كهربا|كهرباء|الكهربا)\s*/, 'Built the electrical BIM model '],
+  [/^(?:كنت\s+)?(?:بعمل|عملت)\s+الموديل\s+(?:ال)?(?:بلامبينج|صحي)\s*/, 'Built the plumbing BIM model '],
+  [/^(?:كنت\s+)?(?:بعمل|عملت)\s+الموديل\s*/, 'Built the BIM model '],
   [/^(?:كنت\s+)?(?:بعمل|عملت)\s+(?:موديل|موديلنج|مودلينج)\s+/, 'Modelled '],
   [/^(?:كنت\s+)?(?:بعمل|عملت)\s+(?:حصر(?:\s+(?:ال)?كميات)?|كميات)\s+/, 'Prepared quantity take-offs for '],
   [/^(?:كنت\s+)?(?:بعمل|عملت)\s+(?:تست|تستات|اختبار|اختبارات)\s+(?:ال)?ضغط\s+/, 'Performed pressure tests '],
@@ -154,7 +161,7 @@ const AR_VERBS: [RegExp, string][] = [
 
 const AR_TERMS: [string, string][] = [
   // work nouns ("مسؤول عن تنفيذ …")
-  ['تنفيذ', 'execution of'], ['تصميم', 'design of'], ['تركيب', 'installation of'], ['توريد', 'supply of'], ['مراجعة', 'review of'], ['متابعة', 'follow-up of'],
+  ['تنفيذ', 'execution of'], ['رسم', 'drafting'], ['الرسم', 'drafting'], ['عمل', 'preparing'], ['تصميم', 'design of'], ['تركيب', 'installation of'], ['توريد', 'supply of'], ['مراجعة', 'review of'], ['متابعة', 'follow-up of'],
   ['إعداد', 'preparation of'], ['اعداد', 'preparation of'], ['حساب', 'calculation of'], ['إدارة', 'management of'], ['ادارة', 'management of'], ['تشغيل', 'operation of'],
   ['الحسابات الهيدروليكيه', 'hydraulic calculations'], ['حسابات هيدروليكيه', 'hydraulic calculations'], ['الحسابات', 'calculations'], ['حسابات', 'calculations'],
   ['شبكات الرشاشات', 'sprinkler networks'], ['شبكه الرشاشات', 'sprinkler network'], ['شبكات المواسير', 'piping networks'], ['شبكات الصرف', 'drainage networks'],
@@ -196,7 +203,7 @@ const AR_TERMS: [string, string][] = [
   ['الخزانات', 'tanks'], ['خزانات', 'tanks'], ['خزان', 'tank'], ['المعدات', 'equipment'], ['معدات', 'equipment'], ['الفلاتر', 'filters'],
   // documents & work
   ['الرسومات التنفيذية', 'shop drawings'], ['رسومات تنفيذية', 'shop drawings'], ['الرسومات', 'drawings'], ['رسومات', 'drawings'], ['اللوحات التنفيذية', 'shop drawings'],
-  ['المخططات', 'drawings'], ['مخططات', 'drawings'], ['حسابات الأحمال', 'load calculations'], ['حسابات الاحمال', 'load calculations'], ['الأحمال', 'loads'], ['الاحمال', 'loads'],
+  ['المخططات', 'drawings'], ['مخططات', 'drawings'], ['حسابات الأحمال', 'load calculations'], ['حساب الأحمال', 'load calculations'], ['حساب الاحمال', 'load calculations'], ['حساب أحمال', 'load calculations'], ['حساب احمال', 'load calculations'], ['حساب الأحمال الحراريه', 'cooling load calculations'], ['حساب الاحمال الحراريه', 'cooling load calculations'], ['حسابات الاحمال', 'load calculations'], ['الأحمال', 'loads'], ['الاحمال', 'loads'],
   ['اختيار المعدات', 'equipment selection'], ['المستخلصات', 'interim payment applications'], ['مستخلصات', 'interim payment applications'], ['المستخلص', 'interim payment application'],
   ['الحصر', 'quantity take-off'], ['حصر', 'quantity take-off'], ['الكميات', 'quantities'], ['كميات', 'quantities'], ['عروض الأسعار', 'quotations'], ['عروض اسعار', 'quotations'],
   ['المناقصات', 'tenders'], ['مناقصات', 'tenders'], ['المواصفات', 'specifications'], ['مواصفات', 'specifications'], ['الكود', 'code'], ['كود', 'code'],
@@ -266,6 +273,11 @@ export function tidyEnglish(t: string) {
   x = x.replace(new RegExp(`\\b(in|on|for|at|of|from|to|with|inside|within)\\s+(${BUILDING_NOUN})\\b(?!s)`, 'gi'), (_m, p, b) => `${p} ${/^[aeiou]/i.test(b) ? 'an' : 'a'} ${b}`);
   x = x.replace(new RegExp(`^(\\w+(?:ed|d))\\s+(${BUILDING_NOUN})\\b(?!s)`, 'i'), (_m, v, b) => `${v} ${/^[aeiou]/i.test(b) ? 'an' : 'a'} ${b}`);
   x = x.replace(/\b(a|an) (\d+-floor)/g, 'a $2').replace(/\ba ([aeiou])/gi, (m, v) => (m[0] === 'A' ? 'An ' : 'an ') + v).replace(/\ban (\d)/g, 'a $1').replace(/\b(a|A)n (uni|use|eu|one)/g, '$1 $2');
+  x = x.replace(/^(Modelled|Designed|Drafted|Coordinated|Reviewed) for /, '$1 ');
+  x = x.replace(/\b(a|A) (8\d*|11|18)(?=[-\s])/g, '$1n $2');
+  x = x.replace(/\b(in|to|on) (design|execution|installation|supply|review|follow-up|preparation) of\b/g, '$1 the $2 of');
+  const TL = 'Revit|AutoCAD|Navisworks|HAP|ETABS|SAFE|Primavera P6|MS Project|Excel|DIALux|Dynamo';
+  x = x.replace(new RegExp(`\\b(${TL})\\s+(?=(?:${TL})\\b)`, 'g'), '$1, ').replace(new RegExp(`, (${TL})(?!,)\\b(?![^.]*, (?:${TL})\\b)`), ' and $1');
   x = x.replace(new RegExp(`(${BUILDING_NOUN})\\s+about\\s+(\\d)`, 'gi'), '$1 of about $2');
   x = x.replace(/,\s+(a \d+-floor \w+(?: \w+)?)\s*\.?$/, ' for $1');
   x = x.replace(/\b(\d{4,})(?=\s*(?:m²|m³|TR|EGP|SAR|AED|kW|units|million))/g, (n) => Number(n).toLocaleString('en-US'));

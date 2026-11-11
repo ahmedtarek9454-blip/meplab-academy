@@ -67,13 +67,15 @@ export function totalYears(jobs: Job[]) {
   return Math.round(total * 10) / 10;
 }
 
-export function buildFromData(d: BuilderData) {
+export function buildFromData(d: BuilderData, asProjects = false) {
   const role = ROLES.find((r) => r.id === d.roleId);
   const jobs = d.jobs.filter((j) => j.title || j.company);
   const experience: Entry[] = jobs
     .map((j) => {
       const spoken = jobLines(j, d.roleId).map((l) => l.text);
-      const bullets = [...j.picks.map(polishBullet), ...spoken.map(polishBullet)].filter(Boolean);
+      // the person's own lines with numbers first: recruiters scan for figures
+      const own = spoken.map(polishBullet).filter(Boolean).sort((a, b) => Number(/\d/.test(b)) - Number(/\d/.test(a)));
+      const bullets = [...own.filter((x) => /\d/.test(x)), ...j.picks.map(polishBullet), ...own.filter((x) => !/\d/.test(x))].filter(Boolean);
       const start = ym(j.from), end = ym(j.to, j.present);
       return {
         title: en(j.title, suggestTitle), company: en(j.company, suggestCompany), location: en(j.location, suggestCity),
@@ -97,17 +99,27 @@ export function buildFromData(d: BuilderData) {
   if (extra.length) skills.other = [...(skills.other || []), ...extra];
 
   const m: CvModel = {
-    name: d.name.trim(), headline: (jobs[0] ? en(jobs[0].title, suggestTitle) : '') || role?.en || '',
+    name: d.name.trim(), headline: asProjects ? role?.en || 'Engineer' : (jobs[0] ? en(jobs[0].title, suggestTitle) : '') || role?.en || '',
     email: d.email.trim(), phone: d.phone.trim(), linkedin: d.linkedin.trim(), location: en(d.location, suggestCity),
-    summary: [], experience,
-    education: d.edu.filter((e) => e.degree || e.school).map((e) => [e.degree, e.school, e.year].filter(Boolean).join(' – ')),
+    summary: [], experience: asProjects ? [] : experience, projects: asProjects ? experience : undefined,
+    education: d.edu.filter((e) => e.degree || e.school).map((e) => [e.degree, e.school && en(e.school, suggestCompany), e.year].filter(Boolean).join(' – ')),
     certifications: d.certs.split(/\n+/).map((x) => x.trim()).filter(Boolean),
     skills,
     languages: d.languages.split(/[,،|]+/).map((x) => x.trim()).filter(Boolean),
     removed: []
   };
-  const years = totalYears(jobs);
+  const years = asProjects ? 0 : totalYears(jobs);
   const level = levelFor(years);
-  const summary = buildSummary(m, years, d.roleId || 'tech_office', level, d.market);
+  let summary = buildSummary(asProjects ? { ...m, experience } : m, years, d.roleId || 'tech_office', level, d.market);
+  if (asProjects) {
+    // fresh graduate: say so plainly instead of an experience line
+    const e0 = d.edu.find((e) => e.degree || e.school);
+    const deg = e0?.degree.trim() || 'engineering';
+    const when = [e0?.school && en(e0.school, suggestCompany), e0?.year].filter(Boolean).join(', ');
+    const t = m.headline;
+    const art = /^(?:[AEIOU]|HVAC|MEP|FM\b|SCADA)/i.test(t) ? 'an' : 'a';
+    const rest = summary.replace(/^[^]*?\.\s+/, '').replace(/^Hands-on experience in/, 'Academic and training experience in');
+    summary = `Recent ${deg} graduate${when ? ` (${when})` : ''} seeking ${art} ${t} role.${rest && rest !== summary ? ' ' + rest : ''}`;
+  }
   return { model: m, summary, text: toText(m, summary), years, level };
 }

@@ -94,7 +94,12 @@ export default async function Home() {
                 : ['ATS score out of 100 and the 3 fixes that raise it', 'Your closest role among 35 engineering roles', 'Automatic CV rewrite with Word download']
               ).map((x) => <li key={x} className="flex gap-3"><span className="mt-2.5 h-2 w-2 shrink-0 bg-brand-amber" />{x}</li>)}
             </ul>
-            <Link href="/cv-check" className="btn-red mt-8 px-7 py-3.5 text-base">{t.cvp_b}</Link>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link href="/cv-check" className="btn-red px-7 py-3.5 text-base">{t.cvp_b}</Link>
+              <Link href="/cv-builder" className="text-base font-semibold text-white underline decoration-brand-amber decoration-2 underline-offset-4 hover:text-brand-amber">
+                {ar ? 'مش عندك CV؟ اعمله بصوتك' : 'No CV yet? Build one by voice'}
+              </Link>
+            </div>
           </div>
           <div className="flex items-end justify-center bg-brand-red p-8 md:p-12" aria-hidden>
             <div className="w-full max-w-sm rounded-[10px] bg-white p-6 text-ink">
