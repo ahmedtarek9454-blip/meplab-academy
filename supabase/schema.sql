@@ -534,3 +534,20 @@ create policy "waitlist_admin_read" on public.course_waitlist for select using (
 drop policy if exists "waitlist_admin_update" on public.course_waitlist;
 create policy "waitlist_admin_update" on public.course_waitlist for update using (public.is_admin());
 -- inserts go through /api/waitlist (server, rate-limited)
+
+-- =====================================================================
+-- Opt-in contacts from the free CV checker (guests included)
+-- A visitor ticks "MEP LAB can contact me" and leaves an email (WhatsApp optional).
+-- Nothing is ever taken from the CV itself. Inserts go through /api/leads/optin (service role).
+-- =====================================================================
+alter table public.leads add column if not exists phone text;
+alter table public.leads add column if not exists discipline text;
+alter table public.leads add column if not exists locale text;
+alter table public.leads add column if not exists consent boolean not null default false;
+alter table public.leads add column if not exists consent_at timestamptz;
+alter table public.leads add column if not exists consent_text text;
+alter table public.leads add column if not exists unsub_token uuid not null default gen_random_uuid();
+alter table public.leads add column if not exists unsubscribed_at timestamptz;
+alter table public.leads add column if not exists ip_hash text;
+create index if not exists leads_ip_idx on public.leads(ip_hash, created_at desc);
+create unique index if not exists leads_unsub_token_idx on public.leads(unsub_token);

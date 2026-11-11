@@ -10,6 +10,7 @@ import CvSave from './CvSave';
 import { ocrImageFile, ocrPdfPages } from '@/lib/cv/ocr';
 import { defaultModel, percentile, type AtsModel } from '@/lib/ats/model';
 import ShareCard from './ShareCard';
+import StayInTouch from './StayInTouch';
 import type { Cat } from '@/lib/ats/taxonomy';
 import { analyzeCv, type CvResult, type CheckStatus } from '@/lib/cv/analyze';
 import { MARKETS, LEVELS, roleGroups, type Market } from '@/lib/cv/data';
@@ -547,6 +548,10 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           </div>
         );
       })()}
+
+      {!user && (
+        <StayInTouch locale={locale} roleId={top.role.id} discipline={res.discipline?.id ?? null} market={market} score={res.score} years={res.years} level={res.level} />
+      )}
 
       <ShareCard locale={locale} score={res.score} role={locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
         better={pr ? { pct: pr.pct, scopeLabel: prScope } : null} siteUrl={process.env.NEXT_PUBLIC_SITE_URL} />

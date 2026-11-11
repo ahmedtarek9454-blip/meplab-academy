@@ -264,3 +264,15 @@ lib/
   license.ts               ← توليد كود التفعيل
 supabase/schema.sql        قاعدة البيانات والصلاحيات
 ```
+
+## 19. Opt-in contacts from the CV checker
+
+- Under a guest's result an optional box asks for an email (WhatsApp optional) and an explicit consent tick.
+  Nothing is taken from the CV. The exact consent wording is stored with each row (`leads.consent_text`).
+- `POST /api/leads/optin` validates, rate-limits (8/hour per IP hash), has a honeypot, and stores the row
+  with `source = 'cv-optin'`. `GET` tells the page whether opt-ins are ready (the box stays hidden until then).
+- Every marketing message must include `https://<site>/unsubscribe?t=<unsub_token>`. One click stops all
+  messages to that email. If `RESEND_API_KEY` is set, a short welcome email with that link is sent.
+- Admin → Leads shows "Opted in / Unsubscribed / Member"; the CSV has `opted_in`, `opted_in_at`, `unsubscribed_at`.
+  Contact only rows with `opted_in = yes` and an empty `unsubscribed_at`.
+- Needs the "Opt-in contacts" block at the end of `supabase/schema.sql` run once in the SQL editor.

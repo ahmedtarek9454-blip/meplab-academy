@@ -74,3 +74,21 @@ export function notifyWaitlistLaunch(o: { to: string; course: string; url: strin
 <p><a href="${esc(o.url)}" style="display:inline-block;background:#E53935;color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700">افتح صفحة الكورس</a></p>
 <p style="color:#64748b;font-size:13px">وصلك الإيميل ده لأنك طلبت نبلّغك لما الكورس ينزل.</p>`));
 }
+
+/** Confirms a CV-checker opt-in. Every marketing email must carry the unsubscribe link. */
+export function unsubLink(token: string) {
+  return `${site()}/unsubscribe?t=${encodeURIComponent(token)}`;
+}
+
+export function sendOptinWelcome(o: { to: string; locale: 'ar' | 'en'; score: number | null; token: string }) {
+  const ar = o.locale === 'ar';
+  const off = `<p style="margin-top:24px;color:#94a3b8;font-size:12px">${ar ? 'وصلتك الرسالة دي لأنك وافقت على التواصل بعد فحص الـ CV على MEP LAB.' : 'You received this because you opted in after checking your CV on MEP LAB.'} <a href="${unsubLink(o.token)}" style="color:#64748b">${ar ? 'إلغاء الاشتراك' : 'Unsubscribe'}</a></p>`;
+  const score = o.score != null ? (ar ? `<p>نتيجة الـ ATS اللي طلعتلك: <b>${esc(o.score)}/100</b>.</p>` : `<p>Your ATS score: <b>${esc(o.score)}/100</b>.</p>`) : '';
+  return sendEmail(o.to, ar ? 'تمام، هنبعتلك اللي يفيدك في تخصصك' : "You're in: tips and jobs for your field", layout(
+    ar ? 'شكرًا إنك جرّبت فحص الـ CV' : 'Thanks for trying the CV checker',
+    `${score}${ar
+      ? '<p>هنبعتلك من وقت للتاني نصايح للـ CV ووظايف وكورسات في تخصصك. مش هنزحمك.</p>'
+      : "<p>We'll send you CV tips, jobs and courses in your field now and then. No spam.</p>"}
+${btn(`${site()}/cv-check`, ar ? 'افحص الـ CV تاني بعد التعديل' : 'Re-check your CV after editing')}${off}`
+  ));
+}
