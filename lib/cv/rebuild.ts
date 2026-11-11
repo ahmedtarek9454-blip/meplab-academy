@@ -213,7 +213,14 @@ export function buildSummary(m: CvModel, years: number, roleId: string, level: L
   const lc = (x: string) => x.replace(/^Cooling\/heating load calculation$/, 'cooling and heating load calculations').replace(/^Duct design & sizing$/, 'duct design and sizing').replace(/^Equipment selection$/, 'equipment selection').replace(/^Static pressure \/ fan calculations$/, 'static pressure and fan calculations').replace(/^Chilled-water systems$/, 'chilled-water systems').replace(/^Clash detection & coordination$/, 'clash detection and coordination').replace(/^Revit \/ Revit MEP$/, 'Revit MEP').replace(/^Carrier HAP \/ TRACE$/, 'Carrier HAP').replace(/^([A-Z][a-z])/, (m) => m.toLowerCase()).replace(/^(hvac|mep|bim|ahu|fcu|vrf|boq|nfpa|ashrae|smacna|ipc|upc|cmms|bms|cfd|iso|sbc|leed|pmp)/i, (m) => m.toUpperCase());
   const s1 = `${title} with ${yrs} of experience${sec.length ? ` on ${list(sec)} projects` : ''}${countries.length ? ` in ${list(countries)}` : ''}.`;
   const s2 = topSkills.length ? `Hands-on experience in ${list(topSkills.map(lc))}${tools.length ? `, working with ${list(tools.map(lc).map((x) => x.replace(/^([a-z])/, (c) => c.toUpperCase())))}` : ''}.` : tools.length ? `Proficient in ${list(tools)}.` : '';
-  const s3 = level === 'lead' || level === 'senior' ? (role?.disc === 'mep' ? 'Proven record of delivering compliant, coordinated MEP packages on schedule and leading junior engineers.' : 'Proven record of delivering quality work on schedule and leading junior engineers.') : (role?.disc === 'it' ? 'Strong attention to clean code, testing and on-time delivery.' : 'Strong attention to standards, coordination and on-time delivery.');
+  // Never claim what the CV doesn't say: leadership only when the bullets show it, otherwise a neutral focus line.
+  const bulletsText = m.experience.flatMap((e) => e.bullets).join(' ');
+  const leads = /\b(?:led|lead|leading|mentor(?:ed|ing)?|supervis(?:ed|ing|ion of)|manag(?:ed|ing))\b[^.]{0,60}\b(?:engineers?|team|teams|technicians|foremen|draftsmen|staff|crew)\b/i.test(bulletsText);
+  const s3 = leads
+    ? 'Experienced in leading and supervising engineering teams.'
+    : role?.disc === 'it' ? 'Focused on clean code, testing and on-time delivery.'
+    : role?.disc === 'mep' ? 'Focused on coordinated, code-compliant work delivered on schedule.'
+    : 'Focused on quality, coordination and on-time delivery.';
   // keep the candidate's own quantified achievement from the old summary (numbers are what recruiters scan for)
   const own = m.summary.join(' ').split(/(?<=[.!])\s+/).find((x) => /\d[\d,.]*\s*(?:%|million|billion|bn|mn|engineers|projects?|buildings?|towers|users|sites|wells|km|mw|kv|tr\b|sar|egp|aed|usd)|(?:sar|egp|aed|usd|\$)\s*\d/i.test(x) && x.length < 220);
   const s4 = own ? own.trim().replace(/([^.!])$/, '$1.') : '';

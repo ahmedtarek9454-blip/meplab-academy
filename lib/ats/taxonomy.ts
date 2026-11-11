@@ -26,7 +26,7 @@ const MEP_SKILLS: Skill[] = [
   /* ---------------- HVAC design ---------------- */
   s('load_calc', 'Cooling/heating load calculation', 'design', ['cooling load', 'heat load', 'heating load', 'load calculation', 'load calc', 'load estimation', 'thermal load', 'hvac load', 'حساب الأحمال', 'الأحمال الحرارية'], { hvac_design: 3, sales: 1 }),
   s('duct_design', 'Duct design & sizing', 'design', ['duct design', 'duct sizing', 'ductwork design', 'duct layout', 'equal friction', 'static regain', 'ductulator', 'duct sizer', 'تصميم الدكت', 'مجاري الهواء'], { hvac_design: 3, bim: 1 }),
-  s('pipe_design', 'Chilled-water / refrigerant pipe sizing', 'design', ['pipe sizing', 'piping design', 'chilled water piping', 'refrigerant piping', 'hydronic', 'pump head', 'pipe network'], { hvac_design: 2, plumbing: 1 }),
+  s('pipe_design', 'Chilled-water / refrigerant piping', 'design', ['pipe sizing', 'piping design', 'chilled water piping', 'refrigerant piping', 'hydronic', 'pump head', 'pipe network'], { hvac_design: 2, plumbing: 1 }),
   s('equip_sel', 'Equipment selection', 'design', ['equipment selection', 'chiller selection', 'ahu selection', 'fan selection', 'pump selection', 'equipment sizing', 'selection of equipment', 'اختيار المعدات'], { hvac_design: 3, sales: 2 }),
   s('esp', 'Static pressure / fan calculations', 'design', ['external static pressure', 'static pressure calculation', 'esp calculation', 'fan static', 'pressure drop calculation'], { hvac_design: 2 }),
   s('ventilation', 'Ventilation & IAQ', 'design', ['ventilation', 'fresh air', 'outdoor air', 'iaq', 'indoor air quality', 'exhaust system', 'car park ventilation', 'kitchen exhaust', 'jet fans', 'تهوية'], { hvac_design: 2, fm: 1 }),
