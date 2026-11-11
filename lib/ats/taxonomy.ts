@@ -99,7 +99,7 @@ const MEP_SKILLS: Skill[] = [
   s('tnc', 'Testing & commissioning', 'execution', ['testing and commissioning', 't&c', 'commissioning', 'pre-commissioning', 'pressure test', 'hydrostatic test', 'start-up'], { site: 3, fm: 1, fire: 1 }),
   s('ms_ir', 'Method statements & IRs', 'execution', ['method statement', 'method statements', 'inspection request', 'inspection requests', 'wir', 'mir', 'itp'], { site: 2, tech_office: 1 }),
   s('handover', 'Handover & snagging', 'execution', ['handover', 'snag list', 'snagging', 'punch list', 'o&m manuals'], { site: 2, fm: 1 }),
-  s('subcon', 'Subcontractor & manpower management', 'execution', ['subcontractor', 'subcontractors', 'manpower', 'foremen', 'labour'], { site: 2, pm: 1 }),
+  s('subcon', 'Subcontractor & site workforce coordination', 'execution', ['subcontractor', 'subcontractors', 'manpower', 'foremen', 'labour'], { site: 2, pm: 1 }),
   s('hse', 'HSE', 'execution', ['hse', 'health and safety', 'osha', 'nebosh', 'iosh'], { site: 1, fm: 1 }),
   s('qaqc', 'QA/QC', 'execution', ['qa/qc', 'quality control', 'quality assurance', 'ncr'], { site: 1 }),
 
