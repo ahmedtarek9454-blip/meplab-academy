@@ -1,6 +1,6 @@
 import { getLocale } from '@/lib/i18n';
 import CvChecker from '@/components/CvChecker';
-import { createClient } from '@/lib/supabase/server';
+import { safeCourses } from '@/lib/data/courses';
 
 export const metadata = {
   title: 'فحص الـ CV بنظام ATS مجانًا — MEP LAB',
@@ -10,8 +10,7 @@ export const metadata = {
 export default async function CvCheckPage() {
   const locale = await getLocale();
   const ar = locale === 'ar';
-  const supabase = await createClient();
-  const { data } = await supabase.from('courses').select('slug, title_ar, title_en, desc_ar, desc_en, price_egp, access_days, status').eq('published', true).order('sort_order').limit(4);
+  const data = (await safeCourses()).slice(0, 4);
   return (
     <>
       <section className="relative overflow-hidden bg-brand-red text-white">

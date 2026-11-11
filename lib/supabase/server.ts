@@ -7,6 +7,8 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'missing-key',
     {
+      db: { retry: false } as any,
+      global: { fetch: (input, init) => fetch(input, { ...init, signal: init?.signal ?? AbortSignal.timeout(8000) }) },
       cookies: {
         getAll() {
           return cookieStore.getAll();

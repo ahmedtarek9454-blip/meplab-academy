@@ -1,5 +1,5 @@
 'use server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { requireAdmin } from '@/lib/auth';
 import { generateActivationCode } from '@/lib/license';
@@ -71,6 +71,7 @@ export async function saveCourse(formData: FormData) {
     ? await supabase.from('courses').update(row).eq('id', id)
     : await supabase.from('courses').insert(row);
   if (error) redirect(`/admin/courses?${id ? `edit=${id}&` : ''}error=${encodeURIComponent(error.message)}`);
+  revalidateTag('courses');
   revalidatePath('/', 'layout');
   redirect('/admin/courses');
 }

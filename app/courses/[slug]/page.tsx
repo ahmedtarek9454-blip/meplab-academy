@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getT, L } from '@/lib/i18n';
 import { getSession } from '@/lib/auth';
+import { getCourseBySlug } from '@/lib/data/courses';
 import { artKey, COURSE_COLOR, COURSE_GLOW } from '@/lib/ui/courseArt';
 import CourseArt from '@/components/CourseArt';
 import { COURSE_DEEP } from '@/components/CourseCard';
@@ -14,9 +15,8 @@ const lines = (s: string) => (s || '').split('\n').map((x) => x.trim()).filter(B
 export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const { t, locale } = await getT();
-  const { supabase, user } = await getSession();
-  const { data: c } = await supabase.from('courses').select('*').eq('slug', slug).maybeSingle();
-  if (!c) notFound();
+  const [{ supabase, user, isAdmin }, c] = await Promise.all([getSession(), getCourseBySlug(slug).catch(() => null)]);
+  if (!c || (!c.published && !isAdmin)) notFound();
 
   let existing: any = null;
   let taskCount = 0;

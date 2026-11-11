@@ -1,14 +1,12 @@
 import Link from 'next/link';
 import { getT } from '@/lib/i18n';
-import { createClient } from '@/lib/supabase/server';
+import { safeCourses } from '@/lib/data/courses';
 import CourseCard from '@/components/CourseCard';
 import { Mark } from '@/components/Logo';
 
 export default async function Home() {
   const { t, locale } = await getT();
-  const supabase = await createClient();
-  const { data } = await supabase.from('courses').select('*').eq('published', true).order('sort_order');
-  const courses = data ?? [];
+  const courses = await safeCourses();
   const available = courses.filter((c: any) => c.status !== 'soon');
   const soon = courses.filter((c: any) => c.status === 'soon');
   const wa = process.env.NEXT_PUBLIC_WHATSAPP;

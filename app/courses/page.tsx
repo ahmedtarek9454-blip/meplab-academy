@@ -1,12 +1,10 @@
 import { getT } from '@/lib/i18n';
-import { createClient } from '@/lib/supabase/server';
+import { safeCourses } from '@/lib/data/courses';
 import CourseCard from '@/components/CourseCard';
 
 export default async function Courses() {
   const { t, locale } = await getT();
-  const supabase = await createClient();
-  const { data } = await supabase.from('courses').select('*').eq('published', true).order('sort_order');
-  const courses = data ?? [];
+  const courses = await safeCourses();
   const available = courses.filter((c: any) => c.status !== 'soon');
   const soon = courses.filter((c: any) => c.status === 'soon');
   const ar = locale === 'ar';
