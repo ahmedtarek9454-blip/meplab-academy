@@ -23,7 +23,9 @@ const T = {
     job: 'وظيفة', title: 'المسمّى الوظيفي (بالإنجليزي)', company: 'اسم الشركة', jcity: 'المدينة', from: 'من', to: 'لحد', present: 'لسه شغال هنا',
     picks: 'علّم على اللي عملته فعلًا في الشغلانة دي', said: 'احكي بصوتك عملت إيه كمان',
     saidHint: 'اتكلم براحتك: المشروع كان إيه، كنت مسؤول عن إيه، وأي أرقام (عدد أدوار، مساحات، فريق، ميزانية). كل جملة هتبقى سطر في الـ CV.',
-    understood: 'اللي فهمناه (ده اللي هيتكتب في الـ CV، وتقدر تعدّله)', fromAr: 'اتترجم من كلامك:', unknownW: 'كلمات مفهمناهاش:', unknownD: 'عدّل السطر بإيدك أو قوله تاني بشكل أوضح.',
+    understood: 'اللي فهمناه (ده اللي هيتكتب في الـ CV، وتقدر تعدّله)',
+    ai: 'حسّن الصياغة بالذكاء الاصطناعي', aiBusy: 'بيفكّر…', aiNote: 'هنبعت الجمل دي بس لخدمة Gemini من جوجل عشان تتفهم وتتترجم بدقة أعلى، من غير اسمك أو رقمك أو إيميلك.',
+    aiDone: 'اتحسّنت الصياغة. راجع كل سطر.', aiUnclear: 'الذكاء الاصطناعي ماقدرش يفهم الجملة دي من غير ما يخمّن، فسيبناها زي ما هي.', aiErr: 'الخدمة مشغولة دلوقتي. جرّب كمان شوية.', aiTag: 'ذكاء اصطناعي', fromAr: 'اتترجم من كلامك:', unknownW: 'كلمات مفهمناهاش:', unknownD: 'عدّل السطر بإيدك أو قوله تاني بشكل أوضح.',
     similarT: 'فيه صياغة جاهزة قريبة:', useIt: 'استخدمها', undo: 'رجّع كلامي', facts: 'معلومات طلعناها:', drop: 'شيل السطر ده',
     addJob: '+ ضيف وظيفة تانية', removeJob: 'شيل الوظيفة دي', noExp: 'لسه متخرج ومعنديش خبرة', noExpD: 'تمام، هنركّز على التعليم والمهارات ومشروع التخرج.',
     degree: 'المؤهل (مثال: B.Sc. Mechanical Engineering)', school: 'الجامعة', year: 'سنة التخرج',
@@ -44,7 +46,9 @@ const T = {
     job: 'Job', title: 'Job title', company: 'Company', jcity: 'City', from: 'From', to: 'To', present: 'I still work here',
     picks: 'Tick what you actually did in this job', said: 'Say what else you did',
     saidHint: 'Talk freely: the project, what you were responsible for, and any numbers (floors, areas, team size, budget). Each sentence becomes a CV line.',
-    understood: 'What we understood (this goes in the CV; you can edit it)', fromAr: 'Translated from what you said:', unknownW: 'Words we did not get:', unknownD: 'Edit the line or say it again more clearly.',
+    understood: 'What we understood (this goes in the CV; you can edit it)',
+    ai: 'Improve the wording with AI', aiBusy: 'Thinking…', aiNote: 'Only these sentences are sent to Google Gemini to understand and translate them more accurately, without your name, phone or email.',
+    aiDone: 'Wording improved. Check every line.', aiUnclear: 'The AI could not understand this sentence without guessing, so we left it as it was.', aiErr: 'The service is busy. Try again in a bit.', aiTag: 'AI', fromAr: 'Translated from what you said:', unknownW: 'Words we did not get:', unknownD: 'Edit the line or say it again more clearly.',
     similarT: 'A ready line is close to this:', useIt: 'Use it', undo: 'Back to my words', facts: 'Facts we picked up:', drop: 'Remove this line',
     addJob: '+ Add another job', removeJob: 'Remove this job', noExp: 'Fresh graduate, no experience yet', noExpD: 'Fine, we will focus on education, skills and your graduation project.',
     degree: 'Degree (e.g. B.Sc. Mechanical Engineering)', school: 'University', year: 'Graduation year',
@@ -76,19 +80,42 @@ function Mic({ t, lang, onText, size = 'sm' }: { t: typeof T.ar; lang: string; o
   );
 }
 
-function Understood({ j, roleId, t, onEdit, onReset }: { j: Job; roleId: string; t: typeof T.ar; onEdit: (orig: string, text: string) => void; onReset: (orig: string) => void }) {
+function Understood({ j, roleId, t, ai, onEdit, onReset, onBulk }: { j: Job; roleId: string; t: typeof T.ar; ai: boolean; onEdit: (orig: string, text: string) => void; onReset: (orig: string) => void; onBulk: (e: Record<string, string>) => void }) {
   const lines = useMemo(() => jobLines(j, roleId), [j.said, j.edits, roleId]);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [aiLines, setAiLines] = useState<Record<string, 'ok' | 'unclear'>>({});
   if (!lines.length) return null;
+  async function improve() {
+    const todo = lines.filter((l) => !l.edited || aiLines[l.orig] === 'ok');
+    if (!todo.length) return;
+    setBusy(true); setMsg('');
+    try {
+      const r = await fetch('/api/cv-builder/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lines: todo.map((l) => l.orig), roleId }) });
+      const data = await r.json();
+      if (!r.ok || !Array.isArray(data.lines)) throw new Error();
+      const edits: Record<string, string> = {}; const marks: Record<string, 'ok' | 'unclear'> = {};
+      todo.forEach((l, i) => { const o = data.lines[i]; if (o && !o.unclear && o.text) { edits[l.orig] = o.text; marks[l.orig] = 'ok'; } else marks[l.orig] = 'unclear'; });
+      onBulk(edits); setAiLines((x) => ({ ...x, ...marks })); setMsg(t.aiDone);
+    } catch { setMsg(t.aiErr); }
+    setBusy(false);
+  }
   return (
     <div className="mt-4 rounded-sheet border border-line bg-paper/60 p-4">
-      <div className="text-sm font-bold text-ink">{t.understood}</div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="text-sm font-bold text-ink">{t.understood}</div>
+        {ai && <button type="button" className="btn-ghost btn-sm" disabled={busy} onClick={improve}>{busy ? t.aiBusy : t.ai}</button>}
+      </div>
+      {ai && <p className="mt-1 text-xs leading-5 text-ink-mute">{t.aiNote}</p>}
+      {msg && <p className="mt-2 text-xs font-semibold text-ink-soft" role="status">{msg}</p>}
       <ul className="mt-3 space-y-3">
         {lines.map((l) => {
           const dropped = l.edited && l.text === '';
           const chips = [...l.facts.numbers, ...l.facts.buildings, ...l.facts.systems, ...l.facts.tools];
           return (
             <li key={l.orig} className={`rounded-sheet bg-white p-3 ring-1 ${l.unknown.length && !l.edited ? 'ring-brand-amber' : 'ring-line'} ${dropped ? 'opacity-50' : ''}`}>
-              {l.translated && <div className="mb-1 text-xs text-ink-mute" dir="rtl">{t.fromAr} «{l.orig}»</div>}
+              {(l.translated || aiLines[l.orig]) && <div className="mb-1 text-xs text-ink-mute" dir="rtl">{aiLines[l.orig] === 'ok' && <span className="badge me-1 bg-ink/5 text-ink-soft">{t.aiTag}</span>}{t.fromAr} «{l.orig}»</div>}
+              {aiLines[l.orig] === 'unclear' && <p className="mb-1 text-xs font-semibold text-brand-amber" role="note">{t.aiUnclear}</p>}
               <textarea className="input min-h-[5rem] resize-y leading-6" rows={3} dir="ltr" value={l.edited ? l.text : polishBullet(l.text).replace(/\.$/, '')} aria-label={t.understood}
                 onChange={(e) => onEdit(l.orig, e.target.value)} />
               {chips.length > 0 && <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs" dir="ltr"><span className="text-ink-mute" dir="rtl">{t.facts}</span>{chips.map((c) => <span key={c} className="badge bg-ink/5 text-ink-soft">{c}</span>)}</div>}
@@ -101,7 +128,7 @@ function Understood({ j, roleId, t, onEdit, onReset }: { j: Job; roleId: string;
                     <button type="button" className="mt-1 font-bold text-brand-red underline" onClick={() => onEdit(l.orig, l.similar!)}>{t.useIt}</button>
                   </div>
                 )}
-                {l.edited && <button type="button" className="font-semibold text-ink-mute underline" onClick={() => onReset(l.orig)}>{t.undo}</button>}
+                {l.edited && <button type="button" className="font-semibold text-ink-mute underline" onClick={() => { onReset(l.orig); setAiLines((x) => { const y = { ...x }; delete y[l.orig]; return y; }); }}>{t.undo}</button>}
                 {!dropped && <button type="button" className="font-semibold text-ink-mute underline" onClick={() => onEdit(l.orig, '')}>{t.drop}</button>}
               </div>
             </li>
@@ -133,6 +160,8 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
   const [noExp, setNoExp] = useState(false);
   const [err, setErr] = useState('');
   const [hasMic, setHasMic] = useState(true);
+  const [aiOn, setAiOn] = useState(false);
+  useEffect(() => { fetch('/api/cv-builder/ai').then((r) => r.json()).then((j) => setAiOn(!!j?.enabled)).catch(() => {}); }, []);
 
   useEffect(() => {
     setHasMic(speechSupported());
@@ -254,7 +283,7 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
                   <Mic t={t} lang={lang} size="lg" onText={(s) => setJob(i, { said: (j.said ? j.said.replace(/\s+$/, '') + (/[.!؟?]$/.test(j.said.trim()) ? ' ' : '. ') : '') + s })} />
                 </div>
                 <textarea className="input mt-2 min-h-[120px]" dir="auto" value={j.said} onChange={(e) => setJob(i, { said: e.target.value })} />
-                <Understood j={j} roleId={d.roleId} t={t} onEdit={(orig, text) => setJob(i, { edits: { ...(j.edits || {}), [orig]: text } })}
+                <Understood j={j} roleId={d.roleId} t={t} ai={aiOn} onBulk={(e) => setJob(i, { edits: { ...(j.edits || {}), ...e } })} onEdit={(orig, text) => setJob(i, { edits: { ...(j.edits || {}), [orig]: text } })}
                   onReset={(orig) => { const e = { ...(j.edits || {}) }; delete e[orig]; setJob(i, { edits: e }); }} />
               </div>
               {d.jobs.length > 1 && <button type="button" className="mt-4 text-sm font-semibold text-brand-red underline" onClick={() => set({ jobs: d.jobs.filter((_, k) => k !== i) })}>{t.removeJob}</button>}

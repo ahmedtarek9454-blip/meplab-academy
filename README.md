@@ -276,3 +276,13 @@ supabase/schema.sql        قاعدة البيانات والصلاحيات
 - Admin → Leads shows "Opted in / Unsubscribed / Member"; the CSV has `opted_in`, `opted_in_at`, `unsubscribed_at`.
   Contact only rows with `opted_in = yes` and an empty `unsubscribed_at`.
 - Needs the "Opt-in contacts" block at the end of `supabase/schema.sql` run once in the SQL editor.
+
+## 20. Voice CV builder (/cv-builder)
+
+- Guided steps; people speak (Egyptian Arabic or English) or type. Speech uses the browser's Web Speech API.
+- `lib/cv/speech.ts` cleans the transcript (fillers, misheard terms, spoken numbers), translates Arabic
+  engineering sentences with a domain phrase table, extracts facts and suggests the closest ready-made task line.
+  Unknown words are flagged, never guessed. Runs fully in the browser.
+- Optional AI pass: set `GEMINI_API_KEY` on the host and a "Improve the wording with AI" button appears.
+  Only the sentences are sent (phones/emails stripped). Lines whose numbers were not said are rejected
+  (`addsNumbers`), and lines the model can't read without guessing stay as they were.
