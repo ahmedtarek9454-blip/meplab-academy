@@ -11,7 +11,15 @@ export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return response;
+  if (!url || !key) {
+    // accounts can't work without the database keys: send sign-in and member pages to the CV checker
+    const p = request.nextUrl.pathname;
+    if (/^\/(login|signup|dashboard|profile|checkout|admin|download|tools|reset|auth)(\/|$)/.test(p) || MEMBERS_ONLY.some((re) => re.test(p))) {
+      const to = request.nextUrl.clone(); to.pathname = '/cv-check'; to.search = '';
+      return NextResponse.redirect(to);
+    }
+    return response;
+  }
 
   const path = request.nextUrl.pathname;
   const membersOnly = MEMBERS_ONLY.some((re) => re.test(path));

@@ -11,6 +11,7 @@ import { ocrImageFile, ocrPdfPages } from '@/lib/cv/ocr';
 import { defaultModel, percentile, type AtsModel } from '@/lib/ats/model';
 import ShareCard from './ShareCard';
 import StayInTouch from './StayInTouch';
+import { SUPABASE_READY } from '@/lib/supabase/env';
 import type { Cat } from '@/lib/ats/taxonomy';
 import { analyzeCv, type CvResult, type CheckStatus } from '@/lib/cv/analyze';
 import { MARKETS, LEVELS, roleGroups, type Market } from '@/lib/cv/data';
@@ -614,12 +615,12 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         </div>
       )}
 
-      <CvSave file={file} locale={locale} profileHref={`${hrefBase}/profile`} signedIn={!!user} signupHref={`${hrefBase}/signup?next=/cv-check`} />
+      {SUPABASE_READY && <CvSave file={file} locale={locale} profileHref={`${hrefBase}/profile`} signedIn={!!user} signupHref={`${hrefBase}/signup?next=/cv-check`} />}
       <CvRewrite locale={locale} text={cvText} res={res} market={market} model={model} whatsapp={whatsapp} />
 
       <JdMatch locale={locale} cvText={cvText} years={res.years} jd={jd} setJd={setJd} />
 
-      <AiReview locale={locale} text={cvText} res={res} market={market} jd={jd} loginHref={loginHref} />
+      {SUPABASE_READY && <AiReview locale={locale} text={cvText} res={res} market={market} jd={jd} loginHref={loginHref} />}
 
       {jobs.length > 0 && (
         <div>

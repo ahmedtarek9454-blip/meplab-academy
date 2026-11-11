@@ -3,6 +3,7 @@ import Logo from './Logo';
 import { getT } from '@/lib/i18n';
 import { getSession } from '@/lib/auth';
 import { signOut } from '@/app/login/actions';
+import { SUPABASE_READY } from '@/lib/supabase/env';
 import { JOBS_ENABLED } from '@/lib/features';
 
 export default async function Header() {
@@ -13,8 +14,7 @@ export default async function Header() {
     { href: '/courses', label: t.nav_courses },
     { href: '/cv-check', label: t.nav_cv },
     ...(JOBS_ENABLED ? [{ href: '/jobs', label: t.nav_jobs }] : []),
-    { href: '/download', label: t.nav_download },
-    { href: '/tools', label: t.nav_tools },
+    ...(SUPABASE_READY ? [{ href: '/download', label: t.nav_download }, { href: '/tools', label: t.nav_tools }] : []),
     { href: '/#about', label: t.about_tag },
     ...(user ? [{ href: '/profile', label: t.nav_profile }] : []),
     ...(isAdmin ? [{ href: '/admin', label: t.nav_admin, cls: 'text-brand-amber' }] : [])
@@ -36,10 +36,14 @@ export default async function Header() {
           {user ? (
             <form action={signOut}><button className="btn-outline-white btn-sm">{t.nav_logout}</button></form>
           ) : (
-            <>
-              <Link href="/login" className="btn-outline-white btn-sm hidden sm:inline-flex">{t.nav_login}</Link>
-              <Link href="/signup" className="btn-red btn-sm">{t.nav_signup}</Link>
-            </>
+            SUPABASE_READY ? (
+              <>
+                <Link href="/login" className="btn-outline-white btn-sm hidden sm:inline-flex">{t.nav_login}</Link>
+                <Link href="/signup" className="btn-red btn-sm">{t.nav_signup}</Link>
+              </>
+            ) : (
+              <Link href="/cv-check" className="btn-red btn-sm">{locale === 'ar' ? 'افحص الـ CV ببلاش' : 'Check your CV free'}</Link>
+            )
           )}
         </div>
       </div>

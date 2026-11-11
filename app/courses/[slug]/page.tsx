@@ -8,7 +8,8 @@ import CourseArt from '@/components/CourseArt';
 import { COURSE_DEEP } from '@/components/CourseCard';
 import { videoEmbed } from '@/lib/ui/video';
 import NotifyMe from '@/components/NotifyMe';
-import ContactButtons from '@/components/ContactButtons';
+import ContactButtons, { contactLinks } from '@/components/ContactButtons';
+import { SUPABASE_READY } from '@/lib/supabase/env';
 
 const lines = (s: string) => (s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
@@ -160,6 +161,8 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
                 </>
               ) : existing?.status === 'pending' ? (
                 <Link href="/dashboard" className="btn-ghost mt-6 w-full">{t.already_pending}</Link>
+              ) : !SUPABASE_READY ? (
+                <a href={contactLinks(L(c, 'title', locale), locale).whatsapp || contactLinks(L(c, 'title', locale), locale).messenger} target="_blank" rel="noopener" className="btn-red mt-6 w-full py-3">{ar ? 'احجز مكانك: ابعتلنا' : 'Enrol: message us'}</a>
               ) : (
                 <Link href={user ? `/checkout/${c.slug}` : `/signup?next=/checkout/${c.slug}`} className="btn-red mt-6 w-full py-3">{t.enroll}</Link>
               )}

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getT } from '@/lib/i18n';
 import { safeCourses } from '@/lib/data/courses';
+import { SUPABASE_READY } from '@/lib/supabase/env';
 import CourseCard from '@/components/CourseCard';
 import { Mark } from '@/components/Logo';
 
@@ -121,7 +122,7 @@ export default async function Home() {
             </li>
           ))}
         </ol>
-        <Link href="/download" className="btn-blue mt-10">{t.nav_download}</Link>
+        {SUPABASE_READY && <Link href="/download" className="btn-blue mt-10">{t.nav_download}</Link>}
       </section>
 
       {/* ============ FAQ ============ */}

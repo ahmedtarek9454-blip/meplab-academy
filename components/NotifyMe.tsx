@@ -1,5 +1,8 @@
 'use client';
 import { useState } from 'react';
+import { SUPABASE_READY } from '@/lib/supabase/env';
+
+const MESSENGER = process.env.NEXT_PUBLIC_MESSENGER_URL || 'https://m.me/MEPLAB.EGY';
 
 const T = {
   ar: { ph: 'إيميلك', b: 'بلّغني لما ينزل', busy: '...', ok: 'تمام! هنبعتلك إيميل أول ما الكورس ينزل.', bad: 'اكتب إيميل صحيح.', err: 'حصلت مشكلة، جرّب تاني.' },
@@ -23,6 +26,14 @@ export default function NotifyMe({ slug, locale, email: initial = '', className 
       if (!r.ok) throw new Error();
       setSt('ok');
     } catch { setSt('err'); setMsg(t.err); }
+  }
+  if (!SUPABASE_READY && !(typeof window !== 'undefined' && (window as any).__AUTH_MOCK__)) {
+    // no database yet: ask on Messenger instead of a form that can't save
+    return (
+      <a href={MESSENGER} target="_blank" rel="noopener" className={`${buttonClass} ${className}`}>
+        {locale === 'ar' ? 'ابعتلنا على ماسنجر ونبلّغك أول ما ينزل' : 'Message us and we will tell you when it launches'}
+      </a>
+    );
   }
   if (st === 'ok') return <p className={`text-sm font-semibold text-sys-plumb ${className}`} role="status">{t.ok}</p>;
   return (

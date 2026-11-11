@@ -1,6 +1,10 @@
 import { unstable_cache } from 'next/cache';
 import { createClient as createPlain } from '@supabase/supabase-js';
 import { SUPABASE_ANON, SUPABASE_READY, SUPABASE_URL } from '@/lib/supabase/env';
+import FALLBACK from './fallback-courses.json';
+
+/** Until the database keys are set on the host, the site shows this built-in catalog (exported from the seed). */
+const fallback = () => (FALLBACK as any[]).filter((c) => c.published).sort((a, b) => a.sort_order - b.sort_order);
 
 /**
  * Public course data is the same for every visitor, so it is read with a cookie-less
@@ -22,7 +26,7 @@ let downUntil = 0;
 
 export const getPublishedCourses = unstable_cache(
   async (): Promise<any[]> => {
-    if (!SUPABASE_READY) return [];
+    if (!SUPABASE_READY) return fallback();
     const { data, error } = await anon().from('courses').select('*').eq('published', true).order('sort_order');
     if (error) throw error; // don't cache a failure
     return data ?? [];
@@ -33,7 +37,7 @@ export const getPublishedCourses = unstable_cache(
 
 export const getCourseBySlug = unstable_cache(
   async (slug: string): Promise<any | null> => {
-    if (!SUPABASE_READY) return null;
+    if (!SUPABASE_READY) return fallback().find((c) => c.slug === slug) ?? null;
     const { data, error } = await anon().from('courses').select('*').eq('slug', slug).maybeSingle();
     if (error) throw error;
     return data ?? null;
