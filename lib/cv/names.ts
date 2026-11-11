@@ -85,6 +85,21 @@ const TITLE_WORDS: [string, string][] = [
 ];
 
 /* ----------------------------------------------------- transliteration */
+// how common Arabic names and business words are normally written in English (Egyptian conventions)
+const WORDS: Record<string, string> = {
+  محمد: 'Mohamed', احمد: 'Ahmed', محمود: 'Mahmoud', مصطفي: 'Mostafa', علي: 'Ali', حسن: 'Hassan', حسين: 'Hussein', ابراهيم: 'Ibrahim', يوسف: 'Youssef',
+  خالد: 'Khaled', عمر: 'Omar', طارق: 'Tarek', اسامه: 'Osama', عادل: 'Adel', عماد: 'Emad', هشام: 'Hesham', شريف: 'Sherif', كريم: 'Karim', وليد: 'Waleed',
+  سعيد: 'Saeed', فتحي: 'Fathy', عبدالله: 'Abdallah', صلاح: 'Salah', مجدي: 'Magdy', فاروق: 'Farouk', منصور: 'Mansour', رضا: 'Reda', سامي: 'Samy', ياسر: 'Yasser',
+  ايمن: 'Ayman', اشرف: 'Ashraf', السيد: 'El Sayed', عثمان: 'Osman', زكي: 'Zaky', نبيل: 'Nabil', فؤاد: 'Fouad', جمال: 'Gamal', سمير: 'Samir', عاطف: 'Atef',
+  مجدى: 'Magdy', رامي: 'Ramy', تامر: 'Tamer', هاني: 'Hany', ماهر: 'Maher', مدحت: 'Medhat', ممدوح: 'Mamdouh', جلال: 'Galal', كمال: 'Kamal', نصر: 'Nasr',
+  عبد: 'Abdel', الحميد: 'Hamid', الرحمن: 'Rahman', العزيز: 'Aziz', الله: 'Allah', الفتاح: 'Fattah', المنعم: 'Moneim', الرحيم: 'Rahim', الحليم: 'Halim', اللطيف: 'Latif',
+  المهندس: 'Eng.', مهندس: 'Eng.', مصر: 'Misr', المصريه: 'Egyptian', مصريه: 'Egyptian', العربيه: 'Arabia', الدوليه: 'International', المتحده: 'United', الحديثه: 'Modern',
+  الوطنيه: 'National', السعوديه: 'Saudi', الخليج: 'Gulf', الشرق: 'El Sharq', الغرب: 'El Gharb', النصر: 'El Nasr', الامل: 'El Amal', الهدي: 'El Hoda', السلام: 'El Salam',
+  الفجر: 'El Fagr', النجمه: 'El Negma', المستقبل: 'El Mostakbal', الرياده: 'El Reyada', التقدم: 'El Takadom', النيل: 'El Nile', الاهرام: 'El Ahram', الفتح: 'El Fath',
+  القمه: 'El Qemma', النور: 'El Nour', الشروق: 'El Shorouk', الريان: 'El Rayan', الفرسان: 'El Forsan', الصفوه: 'El Safwa', النخبه: 'El Nokhba', الاتحاد: 'El Ittihad',
+  دلتا: 'Delta', جروب: 'Group', تك: 'Tech', انجينيرنج: 'Engineering', كونستراكشن: 'Construction', للمقاولات: 'Contracting', والتجاره: 'Trading', ابناء: 'Sons', اخوان: 'Brothers'
+};
+
 const TR: Record<string, string> = {
   ا: 'a', أ: 'a', إ: 'e', آ: 'a', ب: 'b', ت: 't', ث: 's', ج: 'g', ح: 'h', خ: 'kh', د: 'd', ذ: 'z', ر: 'r', ز: 'z', س: 's', ش: 'sh', ص: 's', ض: 'd',
   ط: 't', ظ: 'z', ع: 'a', غ: 'gh', ف: 'f', ق: 'k', ك: 'k', ل: 'l', م: 'm', ن: 'n', ه: 'h', ة: 'a', و: 'o', ي: 'y', ى: 'a', ئ: 'e', ؤ: 'o', ء: '', 'ّ': '', 'َ': '', 'ُ': '', 'ِ': '', 'ْ': ''
@@ -92,10 +107,15 @@ const TR: Record<string, string> = {
 export function transliterate(s: string) {
   return String(s || '')
     .split(/\s+/)
-    .map((w) => {
+    .map((w0) => {
+      const w = fold(w0);
+      if (WORDS[w]) return WORDS[w];
+      if (/^ال/.test(w) && WORDS[w.slice(2)]) return 'El ' + WORDS[w.slice(2)];
       let x = w.replace(/^ال/, 'El ').replace(/^وال/, 'w El ');
       x = [...x].map((c, i, a) => (c === 'ي' && i > 0 && !/[اوي]/.test(a[i - 1]) ? 'i' : c === 'و' && i > 0 && /[^\sاوي]/.test(a[i - 1]) ? 'ou' : TR[c] ?? c)).join('');
       x = x.replace(/aa+/g, 'a').replace(/ii+/g, 'i').replace(/\s+/g, ' ');
+      // Arabic omits short vowels: give vowel-less words one, so "Fth" reads "Fath"
+      x = x.split(' ').map((p) => (p.length >= 3 && !/[aeiou]/i.test(p) ? p[0] + 'a' + p.slice(1) : p)).join(' ');
       return x.split(' ').map((p) => (p ? p[0].toUpperCase() + p.slice(1) : p)).join(' ');
     })
     .join(' ')

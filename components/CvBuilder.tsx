@@ -26,6 +26,7 @@ const T = {
     saidHint: 'اتكلم براحتك: المشروع كان إيه، كنت مسؤول عن إيه، وأي أرقام (عدد أدوار، مساحات، فريق، ميزانية). كل جملة هتبقى سطر في الـ CV.',
     understood: 'اللي فهمناه (ده اللي هيتكتب في الـ CV، وتقدر تعدّله)',
     nameKnown: 'الاسم بالإنجليزي:', nameGuess: 'كتابة تقريبية بالإنجليزي (اتأكد من الاسم الرسمي):',
+    lookup: 'دوّر عليها في لينكدإن', lookupD: 'مش متأكد من الاسم الرسمي؟ هتلاقيه مكتوب على صفحة الشركة أو في عقدك.',
     ai: 'حسّن الصياغة بالذكاء الاصطناعي', aiBusy: 'بيفكّر…', aiNote: 'هنبعت الجمل دي بس لخدمة Gemini من جوجل عشان تتفهم وتتترجم بدقة أعلى، من غير اسمك أو رقمك أو إيميلك.',
     aiDone: 'اتحسّنت الصياغة. راجع كل سطر.', aiUnclear: 'الذكاء الاصطناعي ماقدرش يفهم الجملة دي من غير ما يخمّن، فسيبناها زي ما هي.', aiErr: 'الخدمة مشغولة دلوقتي. جرّب كمان شوية.', aiTag: 'ذكاء اصطناعي', fromAr: 'اتترجم من كلامك:', unknownW: 'كلمات مفهمناهاش:', unknownD: 'عدّل السطر بإيدك أو قوله تاني بشكل أوضح.',
     similarT: 'فيه صياغة جاهزة قريبة:', useIt: 'استخدمها', undo: 'رجّع كلامي', facts: 'معلومات طلعناها:', drop: 'شيل السطر ده',
@@ -50,6 +51,7 @@ const T = {
     saidHint: 'Talk freely: the project, what you were responsible for, and any numbers (floors, areas, team size, budget). Each sentence becomes a CV line.',
     understood: 'What we understood (this goes in the CV; you can edit it)',
     nameKnown: 'English name:', nameGuess: 'Approximate English spelling (check the official name):',
+    lookup: 'Search it on LinkedIn', lookupD: 'Not sure of the official name? It is on the company page or your contract.',
     ai: 'Improve the wording with AI', aiBusy: 'Thinking…', aiNote: 'Only these sentences are sent to Google Gemini to understand and translate them more accurately, without your name, phone or email.',
     aiDone: 'Wording improved. Check every line.', aiUnclear: 'The AI could not understand this sentence without guessing, so we left it as it was.', aiErr: 'The service is busy. Try again in a bit.', aiTag: 'AI', fromAr: 'Translated from what you said:', unknownW: 'Words we did not get:', unknownD: 'Edit the line or say it again more clearly.',
     similarT: 'A ready line is close to this:', useIt: 'Use it', undo: 'Back to my words', facts: 'Facts we picked up:', drop: 'Remove this line',
@@ -142,7 +144,7 @@ function Understood({ j, roleId, t, ai, onEdit, onReset, onBulk }: { j: Job; rol
   );
 }
 
-function Field({ label, value, onChange, t, lang, type = 'text', dir, mic = true, suggest }: { label: string; value: string; onChange: (v: string) => void; t: typeof T.ar; lang: string; type?: string; dir?: string; mic?: boolean; suggest?: (v: string) => NameHint }) {
+function Field({ label, value, onChange, t, lang, type = 'text', dir, mic = true, suggest, lookup }: { label: string; value: string; onChange: (v: string) => void; t: typeof T.ar; lang: string; type?: string; dir?: string; mic?: boolean; suggest?: (v: string) => NameHint; lookup?: boolean }) {
   const hint = suggest && value ? suggest(value) : null;
   return (
     <div>
@@ -158,6 +160,12 @@ function Field({ label, value, onChange, t, lang, type = 'text', dir, mic = true
           <span className="text-ink-soft">{hint.known ? t.nameKnown : t.nameGuess}</span>{' '}
           <span dir="ltr" className="font-bold text-ink">{hint.value}</span>{' '}
           <button type="button" className="font-bold text-brand-red underline" onClick={() => onChange(hint.value)}>{t.useIt}</button>
+          {!hint.known && lookup && (
+            <div className="mt-1 text-ink-soft">
+              {t.lookupD}{' '}
+              <a className="font-bold text-ink underline" target="_blank" rel="noopener" href={`https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(value.replace(/^(?:شركة|شركه)\s+/, ''))}`}>{t.lookup}</a>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -270,7 +278,7 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
               <legend className="px-2 font-bold text-ink">{t.job} {i + 1}</legend>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field t={t} lang={lang} label={t.title} value={j.title} onChange={(v) => setJob(i, { title: v })} dir="auto" suggest={suggestTitle} />
-                <Field t={t} lang={lang} label={t.company} value={j.company} onChange={(v) => setJob(i, { company: v })} dir="auto" suggest={suggestCompany} />
+                <Field t={t} lang={lang} label={t.company} value={j.company} onChange={(v) => setJob(i, { company: v })} dir="auto" suggest={suggestCompany} lookup />
                 <Field t={t} lang={lang} label={t.jcity} value={j.location} onChange={(v) => setJob(i, { location: v })} dir="auto" suggest={suggestCity} />
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block"><span className="text-sm font-semibold text-ink">{t.from}</span><input type="month" className="input mt-1" dir="ltr" value={j.from} onChange={(e) => setJob(i, { from: e.target.value })} /></label>
