@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSpeech, speechSupported } from './useSpeech';
 import { tasksFor } from '@/lib/cv/taskBank';
-import { buildFromData, emptyData, emptyJob, hasArabic, type BuilderData, type Job } from '@/lib/cv/builder';
+import { buildFromData, emptyData, emptyJob, jobLines, type BuilderData, type Job } from '@/lib/cv/builder';
+import { polishBullet } from '@/lib/cv/rebuild';
 import { analyzeCv } from '@/lib/cv/analyze';
 import { buildDocx, buildPrintHtml } from '@/lib/cv/export';
 import { roleGroups, MARKETS, type Market } from '@/lib/cv/data';
@@ -13,7 +14,7 @@ const KEY = 'meplab_cv_builder_v1';
 const T = {
   ar: {
     steps: ['بياناتك', 'الوظيفة', 'الخبرة', 'التعليم', 'الـ CV'],
-    next: 'التالي', back: 'رجوع', speakLang: 'هتتكلم بأنهي لغة؟', en: 'إنجليزي (أحسن للـ CV)', ar: 'عربي',
+    next: 'التالي', back: 'رجوع', speakLang: 'هتتكلم بأنهي لغة؟', en: 'إنجليزي', ar: 'عربي مصري (هنترجمه للإنجليزي)',
     mic: 'اتكلم', stop: 'خلاص', listening: 'بسمعك…', noMic: 'المتصفح ده مش بيدعم الكلام. افتح الصفحة من Chrome، أو اكتب عادي.',
     denied: 'لازم تسمح للموقع يستخدم المايك. دوس على علامة القفل جنب اللينك واختار Allow.',
     failed: 'المايك ما اشتغلش. جرّب تاني أو اكتب.',
@@ -22,7 +23,8 @@ const T = {
     job: 'وظيفة', title: 'المسمّى الوظيفي (بالإنجليزي)', company: 'اسم الشركة', jcity: 'المدينة', from: 'من', to: 'لحد', present: 'لسه شغال هنا',
     picks: 'علّم على اللي عملته فعلًا في الشغلانة دي', said: 'احكي بصوتك عملت إيه كمان',
     saidHint: 'اتكلم براحتك: المشروع كان إيه، كنت مسؤول عن إيه، وأي أرقام (عدد أدوار، مساحات، فريق، ميزانية). كل جملة هتبقى سطر في الـ CV.',
-    arWarn: 'فيه جمل بالعربي. الـ CV هيطلع بالإنجليزي، فالأحسن تقولها بالإنجليزي أو تختار من القائمة اللي فوق.',
+    understood: 'اللي فهمناه (ده اللي هيتكتب في الـ CV، وتقدر تعدّله)', fromAr: 'اتترجم من كلامك:', unknownW: 'كلمات مفهمناهاش:', unknownD: 'عدّل السطر بإيدك أو قوله تاني بشكل أوضح.',
+    similarT: 'فيه صياغة جاهزة قريبة:', useIt: 'استخدمها', undo: 'رجّع كلامي', facts: 'معلومات طلعناها:', drop: 'شيل السطر ده',
     addJob: '+ ضيف وظيفة تانية', removeJob: 'شيل الوظيفة دي', noExp: 'لسه متخرج ومعنديش خبرة', noExpD: 'تمام، هنركّز على التعليم والمهارات ومشروع التخرج.',
     degree: 'المؤهل (مثال: B.Sc. Mechanical Engineering)', school: 'الجامعة', year: 'سنة التخرج',
     skills: 'البرامج والمهارات (افصل بفاصلة)', certs: 'الكورسات والشهادات (كل واحدة في سطر)', langs: 'اللغات',
@@ -33,7 +35,7 @@ const T = {
   },
   en: {
     steps: ['Details', 'Target', 'Experience', 'Education', 'CV'],
-    next: 'Next', back: 'Back', speakLang: 'Which language will you speak?', en: 'English (best for the CV)', ar: 'Arabic',
+    next: 'Next', back: 'Back', speakLang: 'Which language will you speak?', en: 'English', ar: 'Egyptian Arabic (we translate it)',
     mic: 'Speak', stop: 'Done', listening: 'Listening…', noMic: 'This browser has no speech support. Open the page in Chrome, or type.',
     denied: 'Allow microphone access: click the lock icon next to the address and choose Allow.',
     failed: 'The microphone did not start. Try again or type.',
@@ -42,7 +44,8 @@ const T = {
     job: 'Job', title: 'Job title', company: 'Company', jcity: 'City', from: 'From', to: 'To', present: 'I still work here',
     picks: 'Tick what you actually did in this job', said: 'Say what else you did',
     saidHint: 'Talk freely: the project, what you were responsible for, and any numbers (floors, areas, team size, budget). Each sentence becomes a CV line.',
-    arWarn: 'Some lines are in Arabic. The CV is in English, so say them in English or pick from the list above.',
+    understood: 'What we understood (this goes in the CV; you can edit it)', fromAr: 'Translated from what you said:', unknownW: 'Words we did not get:', unknownD: 'Edit the line or say it again more clearly.',
+    similarT: 'A ready line is close to this:', useIt: 'Use it', undo: 'Back to my words', facts: 'Facts we picked up:', drop: 'Remove this line',
     addJob: '+ Add another job', removeJob: 'Remove this job', noExp: 'Fresh graduate, no experience yet', noExpD: 'Fine, we will focus on education, skills and your graduation project.',
     degree: 'Degree (e.g. B.Sc. Mechanical Engineering)', school: 'University', year: 'Graduation year',
     skills: 'Software and skills (comma separated)', certs: 'Courses and certificates (one per line)', langs: 'Languages',
@@ -70,6 +73,42 @@ function Mic({ t, lang, onText, size = 'sm' }: { t: typeof T.ar; lang: string; o
       {s.error === 'denied' && <span className="text-xs font-semibold text-brand-red" role="alert">{t.denied}</span>}
       {s.error === 'failed' && <span className="text-xs font-semibold text-brand-red" role="alert">{t.failed}</span>}
     </span>
+  );
+}
+
+function Understood({ j, roleId, t, onEdit, onReset }: { j: Job; roleId: string; t: typeof T.ar; onEdit: (orig: string, text: string) => void; onReset: (orig: string) => void }) {
+  const lines = useMemo(() => jobLines(j, roleId), [j.said, j.edits, roleId]);
+  if (!lines.length) return null;
+  return (
+    <div className="mt-4 rounded-sheet border border-line bg-paper/60 p-4">
+      <div className="text-sm font-bold text-ink">{t.understood}</div>
+      <ul className="mt-3 space-y-3">
+        {lines.map((l) => {
+          const dropped = l.edited && l.text === '';
+          const chips = [...l.facts.numbers, ...l.facts.buildings, ...l.facts.systems, ...l.facts.tools];
+          return (
+            <li key={l.orig} className={`rounded-sheet bg-white p-3 ring-1 ${l.unknown.length && !l.edited ? 'ring-brand-amber' : 'ring-line'} ${dropped ? 'opacity-50' : ''}`}>
+              {l.translated && <div className="mb-1 text-xs text-ink-mute" dir="rtl">{t.fromAr} «{l.orig}»</div>}
+              <textarea className="input min-h-[5rem] resize-y leading-6" rows={3} dir="ltr" value={l.edited ? l.text : polishBullet(l.text).replace(/\.$/, '')} aria-label={t.understood}
+                onChange={(e) => onEdit(l.orig, e.target.value)} />
+              {chips.length > 0 && <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs" dir="ltr"><span className="text-ink-mute" dir="rtl">{t.facts}</span>{chips.map((c) => <span key={c} className="badge bg-ink/5 text-ink-soft">{c}</span>)}</div>}
+              {l.unknown.length > 0 && !l.edited && <p className="mt-2 text-xs font-semibold text-brand-amber" role="note">{t.unknownW} {l.unknown.join('، ')}. {t.unknownD}</p>}
+              <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
+                {l.similar && !l.edited && (
+                  <div className="w-full rounded-sheet bg-paper p-2.5">
+                    <div className="text-ink-mute">{t.similarT}</div>
+                    <div dir="ltr" className="mt-1 font-semibold text-ink-soft">{l.similar}</div>
+                    <button type="button" className="mt-1 font-bold text-brand-red underline" onClick={() => onEdit(l.orig, l.similar!)}>{t.useIt}</button>
+                  </div>
+                )}
+                {l.edited && <button type="button" className="font-semibold text-ink-mute underline" onClick={() => onReset(l.orig)}>{t.undo}</button>}
+                {!dropped && <button type="button" className="font-semibold text-ink-mute underline" onClick={() => onEdit(l.orig, '')}>{t.drop}</button>}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 
@@ -215,7 +254,8 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
                   <Mic t={t} lang={lang} size="lg" onText={(s) => setJob(i, { said: (j.said ? j.said.replace(/\s+$/, '') + (/[.!؟?]$/.test(j.said.trim()) ? ' ' : '. ') : '') + s })} />
                 </div>
                 <textarea className="input mt-2 min-h-[120px]" dir="auto" value={j.said} onChange={(e) => setJob(i, { said: e.target.value })} />
-                {hasArabic(j.said) && <p className="mt-2 text-sm font-semibold text-brand-amber" role="note">{t.arWarn}</p>}
+                <Understood j={j} roleId={d.roleId} t={t} onEdit={(orig, text) => setJob(i, { edits: { ...(j.edits || {}), [orig]: text } })}
+                  onReset={(orig) => { const e = { ...(j.edits || {}) }; delete e[orig]; setJob(i, { edits: e }); }} />
               </div>
               {d.jobs.length > 1 && <button type="button" className="mt-4 text-sm font-semibold text-brand-red underline" onClick={() => set({ jobs: d.jobs.filter((_, k) => k !== i) })}>{t.removeJob}</button>}
             </fieldset>

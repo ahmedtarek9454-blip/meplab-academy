@@ -6,8 +6,9 @@ import { findSkills } from '@/lib/ats/match';
 import { polishBullet, buildSummary, toText, type CvModel, type Entry } from './rebuild';
 import { levelFor } from './analyze';
 import { ROLES, type Market } from './data';
+import { interpretLine, normalizeSpeech } from './speech';
 
-export type Job = { title: string; company: string; location: string; from: string; to: string; present: boolean; picks: string[]; said: string };
+export type Job = { title: string; company: string; location: string; from: string; to: string; present: boolean; picks: string[]; said: string; edits?: Record<string, string> };
 export type Edu = { degree: string; school: string; year: string };
 export type BuilderData = {
   name: string; phone: string; email: string; location: string; linkedin: string;
@@ -39,9 +40,18 @@ function fmt(v: string) {
 /** Spoken text → bullet lines: split on new lines, full stops and "then / also / and also". */
 export function splitSaid(said: string) {
   return String(said || '')
-    .split(/\n+|(?<=[.!؟?])\s+|\s+(?:and then|then|also|and also|كمان|وكمان|وبعدين|و بعدين)\s+/i)
-    .map((x) => x.replace(/^[\s,،\-•]+|[\s,،]+$/g, '').replace(/^(?:(?:and|then|also|so|after that|later|plus|وكمان|كمان|وبعدين|بعدين|و)\s+)+/i, '').trim())
-    .filter((x) => x.split(/\s+/).length >= 3);
+    .split(/\n+|(?<=[.!؟?])\s+|\s+(?:and then|then|also|and also|كمان|وكمان|وبعدين|و بعدين)\s+|\s+(?=و(?:كنت|بعمل|عملت|بتابع|تابعت|نسقت|بنسق|صممت|بصمم|راجعت|براجع|حسبت|بحسب|جهزت|بجهز|استلمت|بستلم|سلمت|بسلم|اشتغلت|ركبت|بركب|نفذت|بنفذ|اشرفت|أشرفت|بشرف|دربت|قدمت|حليت|اختار|اخترت|بختار)\s)/i)
+    .map((x) => x.replace(/^[\s,،\-•]+|[\s,،]+$/g, '').replace(/^(?:(?:and|then|also|so|after that|later|plus|وكمان|كمان|وبعدين|بعدين|و)\s+)+/i, '').replace(/^و(?=(?:كنت|بعمل|عملت|بتابع|تابعت|نسقت|بنسق|صممت|بصمم|راجعت|براجع|حسبت|بحسب|جهزت|بجهز|استلمت|بستلم|سلمت|بسلم|اشتغلت|ركبت|بركب|نفذت|بنفذ|اشرفت|أشرفت|بشرف|دربت|قدمت|حليت|اختار|اخترت|بختار)\s)/, '').trim())
+    .filter((x) => x.split(/\s+/).length >= (/[\u0600-\u06FF]/.test(x) ? 2 : 3));
+}
+
+/** Each spoken/typed sentence, cleaned, translated if Arabic, and the person's own edit if they made one. */
+export function jobLines(j: Job, roleId: string) {
+  return splitSaid(normalizeSpeech(j.said)).map((orig) => {
+    const it = interpretLine(orig, roleId);
+    const edited = j.edits?.[orig];
+    return { ...it, text: edited ?? it.text, edited: edited !== undefined };
+  });
 }
 
 export function totalYears(jobs: Job[]) {
@@ -58,7 +68,8 @@ export function buildFromData(d: BuilderData) {
   const jobs = d.jobs.filter((j) => j.title || j.company);
   const experience: Entry[] = jobs
     .map((j) => {
-      const bullets = [...j.picks.map(polishBullet), ...splitSaid(j.said).map(polishBullet)].filter(Boolean);
+      const spoken = jobLines(j, d.roleId).map((l) => l.text);
+      const bullets = [...j.picks.map(polishBullet), ...spoken.map(polishBullet)].filter(Boolean);
       const start = ym(j.from), end = ym(j.to, j.present);
       return {
         title: j.title.trim(), company: j.company.trim(), location: j.location.trim(),
