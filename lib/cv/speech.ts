@@ -11,6 +11,7 @@
  * =====================================================================
  */
 import { tasksFor } from './taskBank';
+import { replaceCompanies } from './names';
 
 /* ---------------------------------------------------------------- digits */
 const AR_DIGITS = '٠١٢٣٤٥٦٧٨٩';
@@ -119,6 +120,7 @@ const arFold = (s: string) => s.replace(/[أإآ]/g, 'ا').replace(/ة(?=$|[\s،
 // Order matters: longer phrases first. Values are CV English.
 const AR_VERBS: [RegExp, string][] = [
   [/^(?:انا\s+)?(?:كنت|اشتغلت)\s+(?=(?:مهندس|مدير|منسق|رسام|فني|مشرف|مساعد)\s)/, 'Worked as '],
+  [/^(?:انا\s+)?(?:اشتغلت|كنت شغال|اشتغل)\s+(?=at\s)/, 'Worked '],
   [/^(?:كنت|كان)\s+(?:مسؤول|مسئول|المسؤول|المسئول)\s+(?:عن|عل[ىي]|علي)\s+/, 'Responsible for '],
   [/^(?:كنت\s+)?(?:ماسك|مسكت)\s+(?:فريق|تيم)\s+(?:من\s+)?/, 'Led a team of '],
   [/^(?:كنت\s+)?(?:بقود|قدت|قائد)\s+(?:فريق|تيم)\s+(?:من\s+)?/, 'Led a team of '],
@@ -168,7 +170,7 @@ const AR_TERMS: [string, string][] = [
   ['شركه مقاولات', 'a contracting company'], ['شركه استشاريه', 'a consultancy firm'], ['مكتب استشاري', 'a consultancy firm'], ['شركه', 'company'],
   ['انظمه انذار الحريق', 'fire alarm systems'], ['انظمه الحريق', 'fire fighting systems'], ['انظمه التكييف', 'HVAC systems'], ['انظمه', 'systems'], ['نظام', 'system'],
   ['الخامات', 'materials'], ['خامات', 'materials'], ['المواد', 'materials'], ['وبراجعها', 'and reviewed them'], ['وبراجعه', 'and reviewed it'],
-  ['علي المواصفات', 'against the specifications'], ['مشاكل الاسقف', 'ceiling issues'], ['التسعير', 'pricing'], ['تسعير', 'pricing'], ['عشان', 'to'], ['علشان', 'to'], ['نحل', 'resolve'], ['احل', 'resolve'], ['مشاكل', 'issues'], ['الاسقف', 'ceilings'], ['السقف', 'ceiling'],
+  ['علي المواصفات', 'against the specifications'], ['مشاكل الاسقف', 'ceiling issues'], ['كاستشاري', 'as the consultant'], ['كمقاول', 'as the contractor'], ['التسعير', 'pricing'], ['تسعير', 'pricing'], ['عشان', 'to'], ['علشان', 'to'], ['نحل', 'resolve'], ['احل', 'resolve'], ['مشاكل', 'issues'], ['الاسقف', 'ceilings'], ['السقف', 'ceiling'],
   ['المشروع كله', 'the entire project'], ['كله', 'entire'], ['فريق من', 'a team of'], ['فريق', 'team'], ['رسامين', 'draftsmen'], ['رسام', 'draftsman'],
   ['مشروع مستشفي جامعي', 'a university hospital project'], ['مستشفي جامعي', 'university hospital'], ['فيه', 'with'], ['فيها', 'with'], ['سرير', 'beds'], ['غرفه', 'rooms'],
   // building + adjective (Arabic puts the adjective after the noun)
@@ -234,7 +236,7 @@ const AR_TERM_RES = AR_TERMS_SORTED.map(([ar, en]) => [new RegExp(`(^|[\\s،,(])
 export type Translation = { text: string; unknown: string[]; translated: boolean };
 
 export function arabicToEnglish(sentence: string): Translation {
-  let s = arFold(normalizeSpeech(sentence)).replace(/[؟]/g, '?').replace(/،/g, ',').trim();
+  let s = replaceCompanies(arFold(normalizeSpeech(sentence))).replace(/[؟]/g, '?').replace(/،/g, ',').trim();
   if (!/[؀-ۿ]/.test(s)) return { text: tidyEnglish(s), unknown: [], translated: false };
   // "12 دور" / "مستشفى 12 دور" → "a 12-floor hospital"
   const ADJ: Record<string, string> = { سكني: 'residential', اداري: 'office', تجاري: 'commercial', حكومي: 'government', جامعي: 'university', طبي: 'medical' };

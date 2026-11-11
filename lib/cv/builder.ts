@@ -7,6 +7,10 @@ import { polishBullet, buildSummary, toText, type CvModel, type Entry } from './
 import { levelFor } from './analyze';
 import { ROLES, type Market } from './data';
 import { interpretLine, normalizeSpeech } from './speech';
+import { suggestCompany, suggestCity, suggestTitle } from './names';
+
+/** The CV is English: Arabic left in a name field is replaced by its English form. */
+const en = (v: string, f: (x: string) => { value: string } | null) => { const x = v.trim(); return /[\u0600-\u06FF]/.test(x) ? f(x)?.value || x : x; };
 
 export type Job = { title: string; company: string; location: string; from: string; to: string; present: boolean; picks: string[]; said: string; edits?: Record<string, string> };
 export type Edu = { degree: string; school: string; year: string };
@@ -72,7 +76,7 @@ export function buildFromData(d: BuilderData) {
       const bullets = [...j.picks.map(polishBullet), ...spoken.map(polishBullet)].filter(Boolean);
       const start = ym(j.from), end = ym(j.to, j.present);
       return {
-        title: j.title.trim(), company: j.company.trim(), location: j.location.trim(),
+        title: en(j.title, suggestTitle), company: en(j.company, suggestCompany), location: en(j.location, suggestCity),
         dates: [fmt(j.from), j.present ? 'Present' : fmt(j.to)].filter(Boolean).join(' – '),
         start: Number.isFinite(start) ? start : 0, end: Number.isFinite(end) ? end : 0,
         bullets: [...new Set(bullets)], notes: []
@@ -93,8 +97,8 @@ export function buildFromData(d: BuilderData) {
   if (extra.length) skills.other = [...(skills.other || []), ...extra];
 
   const m: CvModel = {
-    name: d.name.trim(), headline: jobs[0]?.title?.trim() || role?.en || '',
-    email: d.email.trim(), phone: d.phone.trim(), linkedin: d.linkedin.trim(), location: d.location.trim(),
+    name: d.name.trim(), headline: (jobs[0] ? en(jobs[0].title, suggestTitle) : '') || role?.en || '',
+    email: d.email.trim(), phone: d.phone.trim(), linkedin: d.linkedin.trim(), location: en(d.location, suggestCity),
     summary: [], experience,
     education: d.edu.filter((e) => e.degree || e.school).map((e) => [e.degree, e.school, e.year].filter(Boolean).join(' – ')),
     certifications: d.certs.split(/\n+/).map((x) => x.trim()).filter(Boolean),

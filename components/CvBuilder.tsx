@@ -4,6 +4,7 @@ import { useSpeech, speechSupported } from './useSpeech';
 import { tasksFor } from '@/lib/cv/taskBank';
 import { buildFromData, emptyData, emptyJob, jobLines, type BuilderData, type Job } from '@/lib/cv/builder';
 import { polishBullet } from '@/lib/cv/rebuild';
+import { suggestCompany, suggestCity, suggestTitle, type NameHint } from '@/lib/cv/names';
 import { analyzeCv } from '@/lib/cv/analyze';
 import { buildDocx, buildPrintHtml } from '@/lib/cv/export';
 import { roleGroups, MARKETS, type Market } from '@/lib/cv/data';
@@ -20,10 +21,11 @@ const T = {
     failed: 'المايك ما اشتغلش. جرّب تاني أو اكتب.',
     name: 'الاسم بالإنجليزي زي ما هتكتبه في الـ CV', phone: 'رقم الموبايل', email: 'الإيميل', city: 'المدينة والدولة', linkedin: 'لينك لينكدإن (اختياري)',
     role: 'الوظيفة اللي بتقدّم عليها', pick: 'اختار…', market: 'هتقدّم فين؟',
-    job: 'وظيفة', title: 'المسمّى الوظيفي (بالإنجليزي)', company: 'اسم الشركة', jcity: 'المدينة', from: 'من', to: 'لحد', present: 'لسه شغال هنا',
+    job: 'وظيفة', title: 'المسمّى الوظيفي (قوله عربي أو إنجليزي)', company: 'اسم الشركة', jcity: 'المدينة', from: 'من', to: 'لحد', present: 'لسه شغال هنا',
     picks: 'علّم على اللي عملته فعلًا في الشغلانة دي', said: 'احكي بصوتك عملت إيه كمان',
     saidHint: 'اتكلم براحتك: المشروع كان إيه، كنت مسؤول عن إيه، وأي أرقام (عدد أدوار، مساحات، فريق، ميزانية). كل جملة هتبقى سطر في الـ CV.',
     understood: 'اللي فهمناه (ده اللي هيتكتب في الـ CV، وتقدر تعدّله)',
+    nameKnown: 'الاسم بالإنجليزي:', nameGuess: 'كتابة تقريبية بالإنجليزي (اتأكد من الاسم الرسمي):',
     ai: 'حسّن الصياغة بالذكاء الاصطناعي', aiBusy: 'بيفكّر…', aiNote: 'هنبعت الجمل دي بس لخدمة Gemini من جوجل عشان تتفهم وتتترجم بدقة أعلى، من غير اسمك أو رقمك أو إيميلك.',
     aiDone: 'اتحسّنت الصياغة. راجع كل سطر.', aiUnclear: 'الذكاء الاصطناعي ماقدرش يفهم الجملة دي من غير ما يخمّن، فسيبناها زي ما هي.', aiErr: 'الخدمة مشغولة دلوقتي. جرّب كمان شوية.', aiTag: 'ذكاء اصطناعي', fromAr: 'اتترجم من كلامك:', unknownW: 'كلمات مفهمناهاش:', unknownD: 'عدّل السطر بإيدك أو قوله تاني بشكل أوضح.',
     similarT: 'فيه صياغة جاهزة قريبة:', useIt: 'استخدمها', undo: 'رجّع كلامي', facts: 'معلومات طلعناها:', drop: 'شيل السطر ده',
@@ -47,6 +49,7 @@ const T = {
     picks: 'Tick what you actually did in this job', said: 'Say what else you did',
     saidHint: 'Talk freely: the project, what you were responsible for, and any numbers (floors, areas, team size, budget). Each sentence becomes a CV line.',
     understood: 'What we understood (this goes in the CV; you can edit it)',
+    nameKnown: 'English name:', nameGuess: 'Approximate English spelling (check the official name):',
     ai: 'Improve the wording with AI', aiBusy: 'Thinking…', aiNote: 'Only these sentences are sent to Google Gemini to understand and translate them more accurately, without your name, phone or email.',
     aiDone: 'Wording improved. Check every line.', aiUnclear: 'The AI could not understand this sentence without guessing, so we left it as it was.', aiErr: 'The service is busy. Try again in a bit.', aiTag: 'AI', fromAr: 'Translated from what you said:', unknownW: 'Words we did not get:', unknownD: 'Edit the line or say it again more clearly.',
     similarT: 'A ready line is close to this:', useIt: 'Use it', undo: 'Back to my words', facts: 'Facts we picked up:', drop: 'Remove this line',
@@ -139,15 +142,25 @@ function Understood({ j, roleId, t, ai, onEdit, onReset, onBulk }: { j: Job; rol
   );
 }
 
-function Field({ label, value, onChange, t, lang, type = 'text', dir, mic = true }: { label: string; value: string; onChange: (v: string) => void; t: typeof T.ar; lang: string; type?: string; dir?: string; mic?: boolean }) {
+function Field({ label, value, onChange, t, lang, type = 'text', dir, mic = true, suggest }: { label: string; value: string; onChange: (v: string) => void; t: typeof T.ar; lang: string; type?: string; dir?: string; mic?: boolean; suggest?: (v: string) => NameHint }) {
+  const hint = suggest && value ? suggest(value) : null;
   return (
-    <label className="block">
-      <span className="text-sm font-semibold text-ink">{label}</span>
-      <span className="mt-1 flex items-start gap-2">
-        <input className="input flex-1" type={type} dir={dir} value={value} onChange={(e) => onChange(e.target.value)} />
-        {mic && <Mic t={t} lang={lang} onText={(s) => onChange(s)} />}
-      </span>
-    </label>
+    <div>
+      <label className="block">
+        <span className="text-sm font-semibold text-ink">{label}</span>
+        <span className="mt-1 flex items-start gap-2">
+          <input className="input flex-1" type={type} dir={dir} value={value} onChange={(e) => onChange(e.target.value)} />
+          {mic && <Mic t={t} lang={lang} onText={(s) => onChange(s)} />}
+        </span>
+      </label>
+      {hint && (
+        <div className={`mt-1.5 rounded-sheet p-2 text-xs ${hint.known ? 'bg-sys-plumb/10' : 'bg-brand-amber/10'}`}>
+          <span className="text-ink-soft">{hint.known ? t.nameKnown : t.nameGuess}</span>{' '}
+          <span dir="ltr" className="font-bold text-ink">{hint.value}</span>{' '}
+          <button type="button" className="font-bold text-brand-red underline" onClick={() => onChange(hint.value)}>{t.useIt}</button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -223,7 +236,7 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
           <div className="sm:col-span-2"><Field t={t} lang={lang} label={t.name} value={d.name} onChange={(v) => set({ name: v })} dir="ltr" /></div>
           <Field t={t} lang={lang} label={t.phone} value={d.phone} onChange={(v) => set({ phone: v })} type="tel" dir="ltr" mic={false} />
           <Field t={t} lang={lang} label={t.email} value={d.email} onChange={(v) => set({ email: v })} type="email" dir="ltr" mic={false} />
-          <Field t={t} lang={lang} label={t.city} value={d.location} onChange={(v) => set({ location: v })} dir="ltr" />
+          <Field t={t} lang={lang} label={t.city} value={d.location} onChange={(v) => set({ location: v })} dir="auto" suggest={suggestCity} />
           <Field t={t} lang={lang} label={t.linkedin} value={d.linkedin} onChange={(v) => set({ linkedin: v })} dir="ltr" mic={false} />
         </div>
       )}
@@ -256,9 +269,9 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
             <fieldset key={i} className="rounded-sheet border border-line p-4 md:p-5">
               <legend className="px-2 font-bold text-ink">{t.job} {i + 1}</legend>
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field t={t} lang={lang} label={t.title} value={j.title} onChange={(v) => setJob(i, { title: v })} dir="ltr" />
-                <Field t={t} lang={lang} label={t.company} value={j.company} onChange={(v) => setJob(i, { company: v })} dir="ltr" />
-                <Field t={t} lang={lang} label={t.jcity} value={j.location} onChange={(v) => setJob(i, { location: v })} dir="ltr" />
+                <Field t={t} lang={lang} label={t.title} value={j.title} onChange={(v) => setJob(i, { title: v })} dir="auto" suggest={suggestTitle} />
+                <Field t={t} lang={lang} label={t.company} value={j.company} onChange={(v) => setJob(i, { company: v })} dir="auto" suggest={suggestCompany} />
+                <Field t={t} lang={lang} label={t.jcity} value={j.location} onChange={(v) => setJob(i, { location: v })} dir="auto" suggest={suggestCity} />
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block"><span className="text-sm font-semibold text-ink">{t.from}</span><input type="month" className="input mt-1" dir="ltr" value={j.from} onChange={(e) => setJob(i, { from: e.target.value })} /></label>
                   <label className="block"><span className="text-sm font-semibold text-ink">{t.to}</span><input type="month" className="input mt-1" dir="ltr" disabled={j.present} value={j.to} onChange={(e) => setJob(i, { to: e.target.value })} /></label>
