@@ -10,6 +10,7 @@ import { videoEmbed } from '@/lib/ui/video';
 import NotifyMe from '@/components/NotifyMe';
 import ContactButtons, { contactLinks } from '@/components/ContactButtons';
 import { SUPABASE_READY } from '@/lib/supabase/env';
+import { SHOW_PRICES } from '@/lib/features';
 
 const lines = (s: string) => (s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
@@ -143,7 +144,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           <div className="sheet overflow-hidden">
             <div className="h-1.5" style={{ background: sys.color }} />
             <div className="p-6">
-              {soon ? <div className="text-2xl font-bold text-ink">{ar ? 'قريبًا' : 'Coming soon'}</div> : <div className="text-[2.25rem] font-bold leading-none text-ink">{c.price_egp} <span className="text-base font-medium text-ink-soft">{t.egp}</span></div>}
+              {soon ? <div className="text-2xl font-bold text-ink">{ar ? 'قريبًا' : 'Coming soon'}</div> : SHOW_PRICES ? <div className="text-[2.25rem] font-bold leading-none text-ink">{c.price_egp} <span className="text-base font-medium text-ink-soft">{t.egp}</span></div> : <div className="text-2xl font-bold text-ink">{ar ? 'متاح الآن' : 'Available now'}</div>}
               <dl className="mt-5 space-y-2 text-sm">
                 <div className="flex justify-between gap-4"><dt className="text-ink-mute">{t.access}</dt><dd className="font-semibold text-ink">{c.access_days ? `${c.access_days} ${t.days}` : t.lifetime}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-ink-mute">{t.level}</dt><dd className="font-semibold text-ink">{levelLabel}</dd></div>

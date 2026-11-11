@@ -1,3 +1,4 @@
+import { SHOW_PRICES } from '@/lib/features';
 import { artKey, COURSE_COLOR, COURSE_DEEP } from '@/lib/ui/courseArt';
 import { Mark } from './Logo';
 
@@ -83,7 +84,7 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
                   <div className="mt-3 flex items-center justify-between text-sm">
                     {c.status === 'soon'
                       ? <span className="rounded bg-black/20 px-2 py-0.5 font-bold">{locale === 'ar' ? 'قريبًا' : 'Coming soon'}</span>
-                      : <span className="font-display text-xl font-black">{c.price_egp} <span className="font-sans text-xs font-bold opacity-80">{t.egp}</span></span>}
+                      : SHOW_PRICES ? <span className="font-display text-xl font-black">{c.price_egp} <span className="font-sans text-xs font-bold opacity-80">{t.egp}</span></span> : <span className="rounded bg-black/20 px-2 py-0.5 font-bold">{locale === 'ar' ? 'متاح الآن' : 'Available now'}</span>}
                     <span className="font-bold">{t.view}</span>
                   </div>
                 </a>

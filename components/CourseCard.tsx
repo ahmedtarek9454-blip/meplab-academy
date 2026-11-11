@@ -3,6 +3,7 @@ import { L, type Locale } from '@/lib/i18n';
 import { artKey, COURSE_COLOR, COURSE_GLOW, COURSE_DEEP } from '@/lib/ui/courseArt';
 import CourseArt from './CourseArt';
 import NotifyMe from './NotifyMe';
+import { SHOW_PRICES } from '@/lib/features';
 
 export { COURSE_DEEP };
 
@@ -34,7 +35,7 @@ export default function CourseCard({ c, locale, t, size = 'lg' }: { c: any; loca
               {c.preview_url ? <span>{ar ? 'فيديو تعريفي مجاني' : 'Free intro video'}</span> : null}
             </div>
             <div className="mt-5 flex items-center justify-between gap-3">
-              <span className="font-display text-[2rem] font-black leading-none">{Number(c.price_egp).toLocaleString('en-US')} <span className="font-sans text-base font-medium opacity-80">{t.egp}</span></span>
+              {SHOW_PRICES ? <span className="font-display text-[2rem] font-black leading-none">{Number(c.price_egp).toLocaleString('en-US')} <span className="font-sans text-base font-medium opacity-80">{t.egp}</span></span> : <span />}
               <Link href={href} className="btn-white btn-sm">{ar ? 'تفاصيل الكورس' : 'Course details'}</Link>
             </div>
           </>
