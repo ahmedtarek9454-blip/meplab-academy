@@ -52,21 +52,21 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
   return (
     <div style={{ ['--sys' as any]: sys.color }}>
-      {/* header block in the course's discipline colour */}
-      <section className="text-white" style={{ background: soon ? sys.deep : sys.color }}>
+      {/* header: a drawing sheet, the discipline colour as its only accent */}
+      <section className="border-b-[1.5px] border-ink bg-sheet">
         <div className="container-x grid items-center gap-8 py-10 md:py-14 lg:grid-cols-[1.15fr,.85fr]">
           <div>
-            <nav className="text-sm font-medium text-white/80"><Link href="/courses" className="hover:text-white hover:underline">{t.nav_courses}</Link> <span className="mx-1">/</span> {L(c, 'title', locale)}</nav>
-            <span className="mt-5 inline-block rounded bg-black/20 px-2.5 py-1 text-sm font-bold">{soon ? (ar ? 'قريبًا' : 'Coming soon') : isLive ? 'Live' : (ar ? 'متاح الآن · كورس مسجّل' : 'Available now · recorded')}</span>
-            <h1 className="display mt-3 text-[2.4rem] leading-[1.15] md:text-[3.6rem]">{L(c, 'title', locale)}</h1>
-            <p className="mt-4 max-w-2xl text-lg leading-8 text-white/90">{L(c, 'desc', locale)}</p>
-            {!isLive && <p className="mt-3 max-w-2xl text-sm leading-7 text-white/75">{t.recorded_note}</p>}
+            <nav className="text-sm font-medium text-ink-mute"><Link href="/courses" className="hover:text-ink hover:underline">{t.nav_courses}</Link> <span className="mx-1">/</span> {L(c, 'title', locale)}</nav>
+            <span className="mt-5 inline-block rounded-[3px] border px-2 py-0.5 text-[13px] font-bold" style={{ borderColor: soon ? '#D5D9DF' : sys.color, color: soon ? '#6E7784' : sys.color }}>{soon ? (ar ? 'قريبًا' : 'Coming soon') : isLive ? 'Live' : (ar ? 'متاح الآن · كورس مسجّل' : 'Available now · recorded')}</span>
+            <h1 className="display mt-3 text-[2.4rem] leading-[1.15] md:text-[3.2rem]">{L(c, 'title', locale)}</h1>
+            <p className="mt-4 max-w-2xl text-lg leading-8 text-ink-soft">{L(c, 'desc', locale)}</p>
+            {!isLive && <p className="mt-3 max-w-2xl text-sm leading-7 text-ink-mute">{t.recorded_note}</p>}
             <div className="mt-6 flex flex-wrap gap-3">
-              {embed && <a href="#intro" className="btn-white">{ar ? 'اتفرّج على الفيديو التعريفي' : 'Watch the free intro'}</a>}
-              <a href="#enroll" className="btn-outline-white">{soon ? (ar ? 'بلّغني لما ينزل' : 'Notify me') : !SUPABASE_READY ? (ar ? 'احجز مكانك' : 'Book your seat') : (ar ? 'اشترك' : 'Enrol')}</a>
+              {embed && <a href="#intro" className="btn-red">{ar ? 'اتفرّج على الفيديو التعريفي' : 'Watch the free intro'}</a>}
+              <a href="#enroll" className={embed ? 'btn-ghost' : 'btn-red'}>{soon ? (ar ? 'بلّغني لما ينزل' : 'Notify me') : !SUPABASE_READY ? (ar ? 'احجز مكانك' : 'Book your seat') : (ar ? 'اشترك' : 'Enrol')}</a>
             </div>
           </div>
-          <CourseArt course={c} palette={{ bg: sys.deep, line: '#ffffff', soft: 'rgba(255,255,255,.14)', accent: COURSE_GLOW[k] }} className="hidden aspect-[16/10] overflow-hidden rounded-[10px] lg:block" />
+          <CourseArt course={c} palette={{ bg: '#F7F8FA', line: '#1D2329', soft: 'rgba(31,95,175,.16)', accent: soon ? '#9AA3AE' : sys.color }} className="hidden aspect-[16/10] overflow-hidden rounded-[3px] border-[1.5px] border-ink lg:block" />
         </div>
       </section>
 
@@ -75,7 +75,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           {embed ? (
             <div id="intro" className="scroll-mt-24">
             <h2 className="display mb-3 text-2xl">{ar ? 'الفيديو التعريفي — ببلاش' : 'Free intro video'}</h2>
-            <div className="aspect-video overflow-hidden rounded-[10px] bg-ink">
+            <div className="aspect-video overflow-hidden rounded-[3px] bg-ink">
               <iframe src={embed} className="h-full w-full" allowFullScreen loading="lazy" title={ar ? 'الفيديو التعريفي' : 'Intro video'} allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" />
             </div>
             </div>

@@ -20,7 +20,7 @@ const T = {
     no_courses: 'الكورسات الجديدة بتتعلن هنا وعلى صفحتنا. سجّل بإيميلك خلاص، فهيوصلك إشعار أول ما ينزل كورس.',
     player_t: 'MEP LAB Player',
     player_d: 'البرنامج اللي بتتفرج بيه على كورساتنا على جهازك، من غير نت بعد التفعيل. Windows 10/11.',
-    player_btn: '⬇ تحميل البرنامج',
+    player_btn: 'تحميل البرنامج',
     player_ver: 'الإصدار',
     follow: 'تابعنا',
     tools: 'أدوات مجانية (AT Tools لـ Revit)'
@@ -38,7 +38,7 @@ const T = {
     no_courses: 'New courses are announced here and on our page. You are signed up, so you will be notified when one launches.',
     player_t: 'MEP LAB Player',
     player_d: 'The app you use to watch our courses on your PC, offline after activation. Windows 10/11.',
-    player_btn: '⬇ Download the Player',
+    player_btn: 'Download the Player',
     player_ver: 'Version',
     follow: 'Follow us',
     tools: 'Free tools (AT Tools for Revit)'
@@ -54,17 +54,16 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
   return (
     <section className="space-y-6">
       <div className="card relative overflow-hidden">
-        <div className="grid items-center gap-6 bg-ink p-6 text-white md:grid-cols-[auto,1fr] md:p-8">
-          <div className="bg-grid absolute inset-0 opacity-30" />
-          <div className="relative flex h-24 w-24 items-center justify-center rounded-sheet bg-white/10 ring-1 ring-white/15"><Mark className="h-16 w-16" mono="#fff" center="#E53935" /></div>
+        <div className="grid items-center gap-6 p-6 md:grid-cols-[auto,1fr] md:p-8">
+          <div className="relative flex h-20 w-20 items-center justify-center rounded-sheet border-[1.5px] border-ink"><Mark className="h-14 w-14" /></div>
           <div className="relative">
-            <span className="badge bg-brand-red text-white">{t.tag}</span>
-            <h3 className="mt-2 text-2xl font-extrabold">{t.title}</h3>
-            <p className="mt-2 max-w-3xl leading-7 text-slate-200">{t.desc}</p>
+            <span className="badge rounded-[3px] border border-brand-blue text-brand-blue">{t.tag}</span>
+            <h3 className="mt-2 text-2xl font-bold text-ink">{t.title}</h3>
+            <p className="mt-2 max-w-3xl leading-7 text-ink-soft">{t.desc}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {facebook && <a href={facebook} target="_blank" className="btn btn-sm bg-[#1877F2] text-white">Facebook</a>}
-              {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" className="btn btn-sm bg-green-600 text-white">WhatsApp</a>}
-              {SUPABASE_READY && <a href={hrefs.tools} className="btn btn-sm border border-white/30 text-white hover:bg-white/10">🛠 {t.tools}</a>}
+              {facebook && <a href={facebook} target="_blank" className="btn-ghost btn-sm">Facebook</a>}
+              {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" className="btn-ghost btn-sm">WhatsApp</a>}
+              {SUPABASE_READY && <a href={hrefs.tools} className="btn-ghost btn-sm">{t.tools}</a>}
             </div>
           </div>
         </div>
@@ -79,13 +78,13 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
           {courses.length ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {courses.slice(0, 4).map((c) => (
-                <a key={c.slug} href={hrefs.course(c.slug)} className="group flex flex-col rounded-[10px] p-5 text-white transition" style={{ background: c.status === 'soon' ? COURSE_DEEP[artKey(c)] : COURSE_COLOR[artKey(c)] }}>
-                  <div className="font-display text-lg font-black group-hover:underline">{L(c, 'title')}</div>
-                  <p className="mt-1 line-clamp-2 flex-1 text-sm leading-6 opacity-90">{L(c, 'desc')}</p>
+                <a key={c.slug} href={hrefs.course(c.slug)} className="group flex flex-col rounded-[3px] border-[1.5px] border-ink border-t-[5px] p-5 text-ink transition hover:bg-paper" style={{ borderTopColor: c.status === 'soon' ? '#C5CBD3' : COURSE_COLOR[artKey(c)] }}>
+                  <div className="font-display text-lg font-bold group-hover:underline">{L(c, 'title')}</div>
+                  <p className="mt-1 line-clamp-2 flex-1 text-sm leading-6 text-ink-soft">{L(c, 'desc')}</p>
                   <div className="mt-3 flex items-center justify-between text-sm">
                     {c.status === 'soon'
-                      ? <span className="rounded bg-black/20 px-2 py-0.5 font-bold">{locale === 'ar' ? 'قريبًا' : 'Coming soon'}</span>
-                      : SHOW_PRICES ? <span className="font-display text-xl font-black">{c.price_egp} <span className="font-sans text-xs font-bold opacity-80">{t.egp}</span></span> : <span className="rounded bg-black/20 px-2 py-0.5 font-bold">{locale === 'ar' ? 'متاح الآن' : 'Available now'}</span>}
+                      ? <span className="rounded-[3px] border border-line px-2 py-0.5 font-bold text-ink-soft">{locale === 'ar' ? 'قريبًا' : 'Coming soon'}</span>
+                      : SHOW_PRICES ? <span className="font-display text-xl font-bold">{c.price_egp} <span className="font-sans text-xs font-bold opacity-80">{t.egp}</span></span> : <span className="rounded-[3px] border border-line px-2 py-0.5 font-bold text-ink-soft">{locale === 'ar' ? 'متاح الآن' : 'Available now'}</span>}
                     <span className="font-bold">{t.view}</span>
                   </div>
                 </a>
@@ -95,11 +94,10 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
         </div>
 
         {(SUPABASE_READY || playerUrl) && <div className="card flex flex-col overflow-hidden">
-          <div className="bg-ink p-5 text-white">
-            <div className="text-3xl">🎬</div>
+          <div className="border-b border-line p-5">
             <div className="mt-2 text-lg font-extrabold" dir="ltr" style={{ textAlign: 'inherit' }}>{t.player_t}</div>
-            <p className="mt-1 text-sm leading-6 text-slate-200">{t.player_d}</p>
-            {playerVersion && <div className="mt-2 text-xs text-slate-300">{t.player_ver} {playerVersion}</div>}
+            <p className="mt-1 text-sm leading-6 text-ink-soft">{t.player_d}</p>
+            {playerVersion && <div className="mt-2 text-xs text-ink-mute">{t.player_ver} {playerVersion}</div>}
           </div>
           <div className="p-4"><a href={playerUrl || hrefs.download} target={playerUrl ? '_blank' : undefined} rel="noopener" className="btn-red w-full">{t.player_btn}</a></div>
         </div>}

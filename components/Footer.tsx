@@ -15,27 +15,27 @@ export default async function Footer() {
     ...(SUPABASE_READY ? [['/download', t.nav_download], ['/tools', t.nav_tools], ['/profile', t.nav_profile]] : []), ['/#about', t.about_tag]
   ];
   return (
-    <footer className="border-t-4 border-brand-amber bg-ink text-slate-300">
-      <div className="container-x grid gap-10 py-14 md:grid-cols-[1.4fr,1fr,1fr]">
+    <footer className="border-t-[1.5px] border-ink bg-white text-ink-soft">
+      <div className="container-x grid gap-10 py-12 md:grid-cols-[1.4fr,1fr,1fr]">
         <div>
-          <Logo light />
-          <p className="mt-4 max-w-sm text-sm leading-7 text-slate-400">{t.brand_tag}</p>
+          <Logo />
+          <p className="mt-4 max-w-sm text-sm leading-7 text-ink-soft">{t.brand_tag}</p>
         </div>
         <div>
-          <h4 className="mb-4 text-sm font-semibold text-white">{t.quick_links}</h4>
+          <h4 className="mb-4 text-sm font-bold text-ink">{t.quick_links}</h4>
           <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-            {links.map(([h, l]) => <li key={h}><Link href={h} className="inline-block py-2 hover:text-white">{l}</Link></li>)}
+            {links.map(([h, l]) => <li key={h}><Link href={h} className="inline-block py-2 hover:text-ink hover:underline">{l}</Link></li>)}
           </ul>
         </div>
         <div>
-          <h4 className="mb-4 text-sm font-semibold text-white">{t.contact}</h4>
+          <h4 className="mb-4 text-sm font-bold text-ink">{t.contact}</h4>
           <ul className="space-y-1 text-sm">
-            {wa && <li><a className="inline-block py-2 hover:text-white" href={`https://wa.me/${wa}`} target="_blank" rel="noopener">WhatsApp</a></li>}
-            <li><a className="inline-block py-2 hover:text-white" href={fb} target="_blank" rel="noopener">Facebook — MEPLAB.EGY</a></li>
+            {wa && <li><a className="inline-block py-2 hover:text-ink hover:underline" href={`https://wa.me/${wa}`} target="_blank" rel="noopener">WhatsApp</a></li>}
+            <li><a className="inline-block py-2 hover:text-ink hover:underline" href={fb} target="_blank" rel="noopener">Facebook — MEPLAB.EGY</a></li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10">
+      <div className="border-t border-line">
         <div className="container-x py-5 text-xs text-ink-mute">© {new Date().getFullYear()} MEP LAB. {t.footer_rights}</div>
       </div>
     </footer>

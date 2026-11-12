@@ -10,10 +10,10 @@ export default async function Courses() {
   const ar = locale === 'ar';
   return (
     <>
-      <section className="bg-ink text-white">
+      <section className="border-b-[1.5px] border-ink bg-sheet">
         <div className="container-x py-12 md:py-16">
-          <h1 className="display text-[2.6rem] leading-tight md:text-[4rem]">{t.nav_courses}</h1>
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-300">{t.recorded_note}</p>
+          <h1 className="display text-[2.4rem] leading-tight md:text-[3.4rem]">{t.nav_courses}</h1>
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-ink-soft">{t.recorded_note}</p>
         </div>
       </section>
       <section className="container-x pt-10">

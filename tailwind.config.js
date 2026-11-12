@@ -4,20 +4,22 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Tajawal', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
-        display: ['"Noto Kufi Arabic"', 'Tajawal', 'system-ui', 'sans-serif']
+        sans: ['"IBM Plex Sans Arabic"', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        display: ['"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+        // reviewer's handwriting — only for red markups
+        hand: ['"Aref Ruqaa"', '"IBM Plex Sans Arabic"', 'serif']
       },
       colors: {
         // brand
-        brand: { red: '#E53935', blue: '#1F6FB2', navy: '#0B1B3A', amber: '#F5A524' },
-        // drafting sheet
-        paper: '#F0F1F3',
-        line: '#D9DCE3',
-        ink: { DEFAULT: '#0B1B3A', soft: '#44516A', mute: '#7A869C' },
+        // redline: black linework on white sheets, blue for the design, red only for the reviewer's marks
+        brand: { red: '#D7263D', blue: '#1F5FAF', navy: '#1D2329', amber: '#D7263D' },
+        paper: '#F3F4F6',
+        line: '#D5D9DF',
+        ink: { DEFAULT: '#1D2329', soft: '#4A5361', mute: '#6E7784' },
         // MEP system colours (as used on coordinated drawings)
         sys: { hvac: '#1E9BD7', fire: '#F0442C', plumb: '#12A37A', bim: '#7C5CFF', elec: '#F5A524' }
       },
-      borderRadius: { sheet: '8px' },
+      borderRadius: { sheet: '3px' },
       fontSize: {
         // modular scale ~1.25
         'h1': ['2.75rem', { lineHeight: '1.25', fontWeight: '700' }],

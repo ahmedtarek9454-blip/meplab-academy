@@ -22,18 +22,18 @@ export default async function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-30 bg-ink text-white">
+    <header className="sticky top-0 z-30 border-b-[1.5px] border-ink bg-white text-ink">
       <div className="container-x flex h-[68px] items-center justify-between gap-3 sm:gap-6">
-        <Link href="/" aria-label="MEP LAB"><Logo light /></Link>
+        <Link href="/" aria-label="MEP LAB"><Logo /></Link>
 
-        <nav className="hidden flex-1 items-center gap-1 text-[15px] font-medium text-slate-300 lg:flex">
+        <nav className="hidden flex-1 items-center gap-1 text-[15px] font-medium text-ink-soft lg:flex">
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className={`rounded px-3 py-2 transition-colors hover:bg-white/10 hover:text-white ${l.cls || ''}`}>{l.label}</Link>
+            <Link key={l.href} href={l.href} className={`rounded-[3px] px-3 py-2 transition-colors hover:bg-paper hover:text-ink ${l.cls || ''}`}>{l.label}</Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-1 sm:gap-2">
-          <a href={`/lang?to=${locale === 'ar' ? 'en' : 'ar'}`} className="rounded px-2 py-2.5 text-sm font-bold text-slate-300 hover:bg-white/10 hover:text-white" aria-label={t.lang_switch}><span className="min-[360px]:hidden">{locale === 'ar' ? 'EN' : 'ع'}</span><span className="hidden min-[360px]:inline">{t.lang_switch}</span></a>
+          <a href={`/lang?to=${locale === 'ar' ? 'en' : 'ar'}`} className="rounded px-2 py-2.5 text-sm font-bold text-ink-soft hover:bg-paper hover:text-ink" aria-label={t.lang_switch}><span className="min-[360px]:hidden">{locale === 'ar' ? 'EN' : 'ع'}</span><span className="hidden min-[360px]:inline">{t.lang_switch}</span></a>
           {user ? (
             <form action={signOut}><button className="btn-outline-white btn-sm">{t.nav_logout}</button></form>
           ) : (
@@ -49,9 +49,9 @@ export default async function Header() {
         </div>
       </div>
 
-      <nav className="container-x flex gap-1 overflow-x-auto border-t border-white/10 py-1 text-sm font-medium text-slate-300 [scrollbar-width:none] lg:hidden">
+      <nav className="container-x flex gap-1 overflow-x-auto border-t border-line py-1 text-sm font-medium text-ink-soft [scrollbar-width:none] lg:hidden">
         {links.map((l) => (
-          <Link key={l.href} href={l.href} className={`shrink-0 rounded px-3 py-2.5 hover:bg-white/10 ${l.cls || ''}`}>{l.label}</Link>
+          <Link key={l.href} href={l.href} className={`shrink-0 rounded-[3px] px-3 py-2.5 hover:bg-paper ${l.cls || ''}`}>{l.label}</Link>
         ))}
       </nav>
     </header>
