@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Logo from './Logo';
 import { JOBS_ENABLED } from '@/lib/features';
+import { SUPABASE_READY } from '@/lib/supabase/env';
 
 import { getT } from '@/lib/i18n';
 
@@ -9,8 +10,9 @@ export default async function Footer() {
   const wa = process.env.NEXT_PUBLIC_WHATSAPP;
   const fb = process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://facebook.com/MEPLAB.EGY';
   const links = [
-    ['/courses', t.nav_courses], ['/cv-check', t.nav_cv], ...(JOBS_ENABLED ? [['/jobs', t.nav_jobs]] : []),
-    ['/download', t.nav_download], ['/tools', t.nav_tools], ['/#about', t.about_tag], ['/profile', t.nav_profile]
+    ['/courses', t.nav_courses], ['/cv-check', t.nav_cv], ['/cv-builder', t.nav_courses === 'Courses' ? 'Build a CV' : 'اعمل CV'],
+    ...(JOBS_ENABLED && SUPABASE_READY ? [['/jobs', t.nav_jobs]] : []),
+    ...(SUPABASE_READY ? [['/download', t.nav_download], ['/tools', t.nav_tools], ['/profile', t.nav_profile]] : []), ['/#about', t.about_tag]
   ];
   return (
     <footer className="border-t-4 border-brand-amber bg-ink text-slate-300">
@@ -21,15 +23,15 @@ export default async function Footer() {
         </div>
         <div>
           <h4 className="mb-4 text-sm font-semibold text-white">{t.quick_links}</h4>
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
-            {links.map(([h, l]) => <li key={h}><Link href={h} className="hover:text-white">{l}</Link></li>)}
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+            {links.map(([h, l]) => <li key={h}><Link href={h} className="inline-block py-2 hover:text-white">{l}</Link></li>)}
           </ul>
         </div>
         <div>
           <h4 className="mb-4 text-sm font-semibold text-white">{t.contact}</h4>
-          <ul className="space-y-2.5 text-sm">
-            {wa && <li><a className="hover:text-white" href={`https://wa.me/${wa}`} target="_blank" rel="noopener">WhatsApp</a></li>}
-            <li><a className="hover:text-white" href={fb} target="_blank" rel="noopener">Facebook — MEPLAB.EGY</a></li>
+          <ul className="space-y-1 text-sm">
+            {wa && <li><a className="inline-block py-2 hover:text-white" href={`https://wa.me/${wa}`} target="_blank" rel="noopener">WhatsApp</a></li>}
+            <li><a className="inline-block py-2 hover:text-white" href={fb} target="_blank" rel="noopener">Facebook — MEPLAB.EGY</a></li>
           </ul>
         </div>
       </div>

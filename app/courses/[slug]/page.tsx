@@ -63,14 +63,14 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
             {!isLive && <p className="mt-3 max-w-2xl text-sm leading-7 text-white/75">{t.recorded_note}</p>}
             <div className="mt-6 flex flex-wrap gap-3">
               {embed && <a href="#intro" className="btn-white">{ar ? 'اتفرّج على الفيديو التعريفي' : 'Watch the free intro'}</a>}
-              <a href="#enroll" className="btn-outline-white">{soon ? (ar ? 'بلّغني لما ينزل' : 'Notify me') : (ar ? 'اشترك' : 'Enrol')}</a>
+              <a href="#enroll" className="btn-outline-white">{soon ? (ar ? 'بلّغني لما ينزل' : 'Notify me') : !SUPABASE_READY ? (ar ? 'احجز مكانك' : 'Book your seat') : (ar ? 'اشترك' : 'Enrol')}</a>
             </div>
           </div>
           <CourseArt course={c} palette={{ bg: sys.deep, line: '#ffffff', soft: 'rgba(255,255,255,.14)', accent: COURSE_GLOW[k] }} className="aspect-[16/10] overflow-hidden rounded-[10px]" />
         </div>
       </section>
 
-      <section className="container-x grid gap-10 py-10 lg:grid-cols-[1fr,22rem]">
+      <section className="container-x grid grid-cols-1 gap-10 py-10 lg:grid-cols-[minmax(0,1fr),22rem]">
         <div className="min-w-0">
           {embed ? (
             <div id="intro" className="scroll-mt-24">
@@ -89,7 +89,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
             {facts.map((f, i) => (
               <div key={f.k} className={`border-line px-4 py-3 ${i % 2 ? 'border-s' : ''} ${i > 1 ? 'border-t sm:border-t-0' : ''} ${i === 2 ? 'sm:border-s' : ''}`}>
                 <dt className="tb-k">{f.k}</dt>
-                <dd className="tb-v mt-0.5 truncate" dir={f.ltr ? 'ltr' : undefined} style={f.ltr ? { textAlign: 'end' } : undefined}>{f.v}</dd>
+                <dd className="tb-v mt-0.5 break-words" dir={f.ltr ? 'ltr' : undefined} style={f.ltr ? { textAlign: 'end' } : undefined}>{f.v}</dd>
               </div>
             ))}
           </dl>
@@ -140,7 +140,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           )}
         </div>
 
-        <aside id="enroll" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
+        <aside id="enroll" className="min-w-0 scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
           <div className="sheet overflow-hidden">
             <div className="h-1.5" style={{ background: sys.color }} />
             <div className="p-6">
@@ -178,6 +178,25 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           </div>
         </aside>
       </section>
+
+      {/* phones: the enrol card sits at the very bottom, so keep the action in reach */}
+      {!existing && (
+        <div className="sticky bottom-0 z-20 mt-10 border-t border-line bg-white/95 px-4 py-3 shadow-[0_-4px_16px_rgba(11,27,58,.08)] backdrop-blur lg:hidden" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+          <div className="mx-auto flex max-w-xl items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-bold text-ink">{L(c, 'title', locale)}</div>
+              <div className="text-xs text-ink-mute">{soon ? (ar ? 'قريبًا' : 'Coming soon') : (ar ? 'متاح الآن' : 'Available now')}</div>
+            </div>
+            {soon ? (
+              <a href="#enroll" className="btn-ghost btn-sm shrink-0">{ar ? 'بلّغني لما ينزل' : 'Notify me'}</a>
+            ) : !SUPABASE_READY ? (
+              <a href={contactLinks(L(c, 'title', locale), locale).whatsapp || contactLinks(L(c, 'title', locale), locale).messenger} target="_blank" rel="noopener" className="btn-red btn-sm shrink-0">{ar ? 'احجز مكانك' : 'Book your seat'}</a>
+            ) : (
+              <a href="#enroll" className="btn-red btn-sm shrink-0">{t.enroll}</a>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

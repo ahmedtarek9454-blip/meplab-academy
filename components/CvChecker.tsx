@@ -28,7 +28,7 @@ const T = {
     privacy: '🔒 الـ CV بيتحلل جوه متصفحك ومش بيترفع على أي سيرفر. علشان الأداة تتعلم بنحفظ بس المهارات اللي اتعرفت والنتيجة، من غير اسم أو إيميل أو تليفون.',
     better: (p: number, n: number, sc: string) => `أحسن من ${p}% من ${sc} (${n.toLocaleString('en-US')} CV)`, sc_role: 'الـ CVs اللي اتفحصت لنفس الوظيفة', sc_disc: 'الـ CVs اللي اتفحصت في نفس التخصص', sc_all: 'كل الـ CVs اللي اتفحصت على MEP LAB',
     fb_q: 'الوظيفة دي مظبوطة؟', fb_yes: 'أيوه', fb_no: 'لأ', fb_pick: 'اختار وظيفتك الصح', fb_send: 'ابعت', fb_thanks: 'شكرًا! الأداة هتتعلم من ردك وتبقى أدق للي بعدك.',
-    drop: 'اسحب الـ CV هنا أو اضغط للاختيار',
+    drop: 'اسحب الـ CV هنا أو اضغط للاختيار', dropTouch: 'اضغط هنا واختار الـ CV',
     types: 'PDF أو Word أو صورة (JPG/PNG) أو CV متصوّر',
     ocr_load: 'بنحمّل قارئ الصور (أول مرة بس، حوالي 10 ثواني)...',
     ocr_run: 'بنقرا النص من الصورة...',
@@ -89,7 +89,7 @@ const T = {
     privacy: '🔒 Your CV is analysed inside your browser and never uploaded. To keep improving, we store only the skills found and the score — no name, e-mail or phone.',
     better: (p: number, n: number, sc: string) => `Better than ${p}% of ${sc} (${n.toLocaleString('en-US')} CVs)`, sc_role: 'CVs checked for the same role', sc_disc: 'CVs checked in the same discipline', sc_all: 'all CVs checked on MEP LAB',
     fb_q: 'Is this the right job title?', fb_yes: 'Yes', fb_no: 'No', fb_pick: 'Pick your actual role', fb_send: 'Send', fb_thanks: 'Thanks! The engine learns from your answer and gets more accurate for the next person.',
-    drop: 'Drop your CV here or click to choose',
+    drop: 'Drop your CV here or click to choose', dropTouch: 'Tap here to choose your CV',
     types: 'PDF, Word, image (JPG/PNG) or scanned CV',
     ocr_load: 'Loading the image reader (first time only, ~10 s)...',
     ocr_run: 'Reading text from the image...',
@@ -410,7 +410,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         >
           <input ref={inp} type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
           <div className="flex h-14 w-14 items-center justify-center rounded-sheet bg-ink text-2xl text-white">{file ? '✓' : '⬆'}</div>
-          <div className="mt-4 font-bold text-ink">{file ? file.name : t.drop}</div>
+          <div className="mt-4 font-bold text-ink">{file ? file.name : <><span className="hidden md:inline">{t.drop}</span><span className="md:hidden">{t.dropTouch}</span></>}</div>
           <div className="mt-1 text-sm text-ink-mute">{t.types}</div>
         </div>
 

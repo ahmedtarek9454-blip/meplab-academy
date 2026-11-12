@@ -1,4 +1,5 @@
 import { SHOW_PRICES } from '@/lib/features';
+import { SUPABASE_READY } from '@/lib/supabase/env';
 import { artKey, COURSE_COLOR, COURSE_DEEP } from '@/lib/ui/courseArt';
 import { Mark } from './Logo';
 
@@ -63,14 +64,14 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
             <div className="mt-4 flex flex-wrap gap-2">
               {facebook && <a href={facebook} target="_blank" className="btn btn-sm bg-[#1877F2] text-white">Facebook</a>}
               {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" className="btn btn-sm bg-green-600 text-white">WhatsApp</a>}
-              <a href={hrefs.tools} className="btn btn-sm border border-white/30 text-white hover:bg-white/10">🛠 {t.tools}</a>
+              {SUPABASE_READY && <a href={hrefs.tools} className="btn btn-sm border border-white/30 text-white hover:bg-white/10">🛠 {t.tools}</a>}
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className={SUPABASE_READY || playerUrl ? "lg:col-span-2" : "lg:col-span-3"}>
           <div className="mb-3 flex items-end justify-between">
             <h3 className="display text-xl text-ink">{t.courses}</h3>
             <a href={hrefs.courses} className="text-sm font-bold text-brand-blue">{t.all} {locale === 'ar' ? '←' : '→'}</a>
@@ -93,7 +94,7 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
           ) : <div className="card p-6 text-sm text-ink-soft">{t.no_courses}</div>}
         </div>
 
-        <div className="card flex flex-col overflow-hidden">
+        {(SUPABASE_READY || playerUrl) && <div className="card flex flex-col overflow-hidden">
           <div className="bg-ink p-5 text-white">
             <div className="text-3xl">🎬</div>
             <div className="mt-2 text-lg font-extrabold" dir="ltr" style={{ textAlign: 'inherit' }}>{t.player_t}</div>
@@ -101,7 +102,7 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
             {playerVersion && <div className="mt-2 text-xs text-slate-300">{t.player_ver} {playerVersion}</div>}
           </div>
           <div className="p-4"><a href={playerUrl || hrefs.download} target={playerUrl ? '_blank' : undefined} rel="noopener" className="btn-red w-full">{t.player_btn}</a></div>
-        </div>
+        </div>}
       </div>
     </section>
   );

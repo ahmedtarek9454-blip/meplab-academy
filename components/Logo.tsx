@@ -18,14 +18,14 @@ export function Mark({ className = 'h-9 w-9', center = '#0B1B3A', mono }: { clas
 
 export default function Logo({ light = false }: { light?: boolean }) {
   return (
-    <span className="flex items-center gap-2">
+    <span className="flex shrink-0 items-center gap-2">
       {USE_IMAGE ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src="/logo.png" alt="MEP LAB" className="h-9 w-auto" />
       ) : (
         <Mark center={light ? '#fff' : '#0B1B3A'} />
       )}
-      <span className={`font-display text-lg font-black tracking-wide ${light ? "text-white" : "text-ink"}`} dir="ltr">
+      <span className={`whitespace-nowrap font-display text-lg font-black tracking-wide ${light ? "text-white" : "text-ink"}`} dir="ltr">
         MEP <span className={light ? "text-[#FF5A4F]" : "text-brand-red"}>LAB</span>
       </span>
     </span>

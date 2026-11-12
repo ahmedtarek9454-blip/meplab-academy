@@ -23,7 +23,7 @@ export default async function Header() {
 
   return (
     <header className="sticky top-0 z-30 bg-ink text-white">
-      <div className="container-x flex h-[68px] items-center justify-between gap-6">
+      <div className="container-x flex h-[68px] items-center justify-between gap-3 sm:gap-6">
         <Link href="/" aria-label="MEP LAB"><Logo light /></Link>
 
         <nav className="hidden flex-1 items-center gap-1 text-[15px] font-medium text-slate-300 lg:flex">
@@ -32,8 +32,8 @@ export default async function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <a href={`/lang?to=${locale === 'ar' ? 'en' : 'ar'}`} className="rounded px-2.5 py-1.5 text-sm font-bold text-slate-300 hover:bg-white/10 hover:text-white">{t.lang_switch}</a>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <a href={`/lang?to=${locale === 'ar' ? 'en' : 'ar'}`} className="rounded px-2 py-2.5 text-sm font-bold text-slate-300 hover:bg-white/10 hover:text-white" aria-label={t.lang_switch}><span className="min-[360px]:hidden">{locale === 'ar' ? 'EN' : 'ع'}</span><span className="hidden min-[360px]:inline">{t.lang_switch}</span></a>
           {user ? (
             <form action={signOut}><button className="btn-outline-white btn-sm">{t.nav_logout}</button></form>
           ) : (
@@ -43,15 +43,15 @@ export default async function Header() {
                 <Link href="/signup" className="btn-red btn-sm">{t.nav_signup}</Link>
               </>
             ) : (
-              <Link href="/cv-check" className="btn-red btn-sm">{locale === 'ar' ? 'افحص الـ CV ببلاش' : 'Check your CV free'}</Link>
+              <Link href="/cv-check" className="btn-red btn-sm whitespace-nowrap">{locale === 'ar' ? <>افحص الـ CV<span className="hidden min-[380px]:inline"> ببلاش</span></> : <>Check your CV<span className="hidden min-[380px]:inline"> free</span></>}</Link>
             )
           )}
         </div>
       </div>
 
-      <nav className="container-x flex gap-1 overflow-x-auto border-t border-white/10 py-1.5 text-sm font-medium text-slate-300 [scrollbar-width:none] lg:hidden">
+      <nav className="container-x flex gap-1 overflow-x-auto border-t border-white/10 py-1 text-sm font-medium text-slate-300 [scrollbar-width:none] lg:hidden">
         {links.map((l) => (
-          <Link key={l.href} href={l.href} className={`shrink-0 rounded px-3 py-1.5 hover:bg-white/10 ${l.cls || ''}`}>{l.label}</Link>
+          <Link key={l.href} href={l.href} className={`shrink-0 rounded px-3 py-2.5 hover:bg-white/10 ${l.cls || ''}`}>{l.label}</Link>
         ))}
       </nav>
     </header>
