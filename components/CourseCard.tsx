@@ -16,7 +16,7 @@ export default function CourseCard({ c, locale, t, size = 'lg' }: { c: any; loca
   const href = `/courses/${c.slug}`;
   return (
     <article className="group flex flex-col overflow-hidden rounded-[10px] text-white" style={{ background: soon ? COURSE_DEEP[k] : COURSE_COLOR[k] }}>
-      <Link href={href} tabIndex={-1} aria-hidden className={`block overflow-hidden ${size === 'lg' ? 'aspect-[16/8]' : 'aspect-[16/9]'}`}>
+      <Link href={href} tabIndex={-1} aria-hidden className={`block overflow-hidden ${size === 'lg' ? 'aspect-[16/6] sm:aspect-[16/8]' : 'aspect-[16/6] sm:aspect-[16/9]'}`}>
         <CourseArt course={c} palette={{ bg: COURSE_DEEP[k], line: '#ffffff', soft: 'rgba(255,255,255,.14)', accent: COURSE_GLOW[k] }} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]" />
       </Link>
       <div className="flex flex-1 flex-col p-5 sm:p-6">

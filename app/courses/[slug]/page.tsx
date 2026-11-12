@@ -66,7 +66,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               <a href="#enroll" className="btn-outline-white">{soon ? (ar ? 'بلّغني لما ينزل' : 'Notify me') : !SUPABASE_READY ? (ar ? 'احجز مكانك' : 'Book your seat') : (ar ? 'اشترك' : 'Enrol')}</a>
             </div>
           </div>
-          <CourseArt course={c} palette={{ bg: sys.deep, line: '#ffffff', soft: 'rgba(255,255,255,.14)', accent: COURSE_GLOW[k] }} className="aspect-[16/10] overflow-hidden rounded-[10px]" />
+          <CourseArt course={c} palette={{ bg: sys.deep, line: '#ffffff', soft: 'rgba(255,255,255,.14)', accent: COURSE_GLOW[k] }} className="hidden aspect-[16/10] overflow-hidden rounded-[10px] lg:block" />
         </div>
       </section>
 
