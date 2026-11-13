@@ -373,9 +373,9 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
       {step === 4 && out && res && (
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-sheet bg-ink p-5 text-white">
-              <div className="text-sm text-slate-300">{t.score}</div>
-              <div className="display text-5xl">{res.score}<span className="text-xl text-slate-300">/100</span></div>
+            <div className="rounded-sheet border-[1.5px] border-ink p-5">
+              <div className="text-sm text-ink-mute">{t.score}</div>
+              <div className="display text-5xl">{res.score}<span className="text-xl text-ink-mute">/100</span></div>
             </div>
             <div className="rounded-sheet bg-paper p-5">
               <div className="text-sm text-ink-mute">{t.top}</div>

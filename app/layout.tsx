@@ -1,8 +1,7 @@
-import '@fontsource/tajawal/400.css';
-import '@fontsource/tajawal/500.css';
-import '@fontsource/tajawal/700.css';
-import '@fontsource/noto-kufi-arabic/700.css';
-import '@fontsource/noto-kufi-arabic/900.css';
+import '@fontsource/ibm-plex-sans-arabic/400.css';
+import '@fontsource/ibm-plex-sans-arabic/500.css';
+import '@fontsource/ibm-plex-sans-arabic/700.css';
+import '@fontsource/aref-ruqaa/700.css';
 import './globals.css';
 import type { Metadata } from 'next';
 import Header from '@/components/Header';

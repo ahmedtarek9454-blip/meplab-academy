@@ -409,7 +409,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           className={`flex cursor-pointer flex-col items-center justify-center rounded-sheet border-2 border-dashed p-10 text-center transition ${drag ? 'border-brand-red bg-red-50' : needFile ? 'animate-pulse border-red-400 bg-red-50' : file ? 'border-green-400 bg-green-50' : 'border-line hover:border-brand-blue hover:bg-paper'}`}
         >
           <input ref={inp} type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-          <div className="flex h-14 w-14 items-center justify-center rounded-sheet bg-ink text-2xl text-white">{file ? '✓' : '⬆'}</div>
+          <div className="flex h-14 w-14 items-center justify-center rounded-sheet border-[1.5px] border-ink text-2xl text-ink"><svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{file ? <path d="M5 12l5 5l9 -10" /> : <path d="M12 19V5M6 11l6 -6l6 6" />}</svg></div>
           <div className="mt-4 font-bold text-ink">{file ? file.name : <><span className="hidden md:inline">{t.drop}</span><span className="md:hidden">{t.dropTouch}</span></>}</div>
           <div className="mt-1 text-sm text-ink-mute">{t.types}</div>
         </div>
@@ -517,20 +517,19 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         </div>
 
         {/* salary */}
-        <div className="card relative overflow-hidden bg-ink p-6 text-white ring-0">
-          <div className="bg-grid absolute inset-0 opacity-60" />
+        <div className="card relative overflow-hidden border-[1.5px] border-ink p-6">
           <div className="relative">
-            <div className="text-sm font-bold text-slate-300">{t.salary} — {MARKETS[market][locale === 'ar' ? 'name_ar' : 'name_en']}</div>
+            <div className="text-sm font-bold text-ink-mute">{t.salary} — {MARKETS[market][locale === 'ar' ? 'name_ar' : 'name_en']}</div>
             <div className="mt-3 text-3xl font-bold leading-tight">
               <span dir="ltr">{fmt(res.salary.min)} – {fmt(res.salary.max)}</span>
-              <span className="ms-2 text-base font-bold text-red-300">{cur}</span>
+              <span className="ms-2 text-base font-bold text-ink-mute">{cur}</span>
             </div>
-            <div className="text-sm text-slate-300">{t.per_month}</div>
+            <div className="text-sm text-ink-mute">{t.per_month}</div>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div className="rounded-sheet bg-white/10 p-3"><div className="text-xs text-slate-300">{t.exp}</div><div className="font-bold">{res.years} {t.years}</div></div>
-              <div className="rounded-sheet bg-white/10 p-3"><div className="text-xs text-slate-300">{t.level}</div><div className="font-bold">{LEVELS[res.level][locale]}</div></div>
+              <div className="rounded-sheet bg-paper p-3"><div className="text-xs text-ink-mute">{t.exp}</div><div className="font-bold">{res.years} {t.years}</div></div>
+              <div className="rounded-sheet bg-paper p-3"><div className="text-xs text-ink-mute">{t.level}</div><div className="font-bold">{LEVELS[res.level][locale]}</div></div>
             </div>
-            <p className="mt-3 text-[11px] leading-5 text-slate-400">{res.salary.source === 'model' ? t.salary_model.replace('{n}', String(res.salary.n)) : t.salary_note}</p>
+            <p className="mt-3 text-[11px] leading-5 text-ink-mute">{res.salary.source === 'model' ? t.salary_model.replace('{n}', String(res.salary.n)) : t.salary_note}</p>
           </div>
         </div>
       </div>
@@ -614,19 +613,19 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
             </div>
           </div>
           {(!res.discipline || ['mep', 'mech', 'civil', 'elec'].includes(res.discipline.id)) && (
-            <div className="card bg-brand-red p-6 text-white ring-0">
+            <div className="card border-[1.5px] border-ink p-6">
               <div className="font-bold">{t.cta_t}</div>
-              <a href={coursesHref} className="btn mt-3 bg-white text-brand-red hover:bg-red-50">{t.cta_b}</a>
+              <a href={coursesHref} className="btn-red mt-3">{t.cta_b}</a>
             </div>
           )}
         </div>
       </div>
 
-      {ocrUsed && <p className="rounded-sheet border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">📷 {t.ocr_note}</p>}
+      {ocrUsed && <p className="rounded-sheet border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{t.ocr_note}</p>}
 
       {res.alerts.length > 0 && (
         <div className="space-y-2">
-          {res.alerts.map((a) => <p key={a} className="rounded-sheet border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">⚠️ {(t as any)[`alert_${a}`]}</p>)}
+          {res.alerts.map((a) => <p key={a} className="rounded-sheet border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{(t as any)[`alert_${a}`]}</p>)}
         </div>
       )}
 
