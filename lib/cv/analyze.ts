@@ -150,7 +150,10 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const checks: Check[] = [];
   const add = (id: string, weight: number, status: CheckStatus, detail?: string) => checks.push({ id, weight, status, detail });
 
-  add('readable', 15, words >= 120 ? 'pass' : words >= 40 ? 'warn' : 'fail', `${words}`);
+  // pasted text, Word and .txt are machine-readable by definition (pages = 0): only a PDF or image can hide its text from the ATS.
+  // Words per page, so a short but clean PDF isn't told it is a scan.
+  const perPage = pages > 0 ? words / pages : Infinity;
+  add('readable', 15, pages === 0 || perPage >= 120 ? 'pass' : perPage >= 40 ? 'warn' : 'fail', `${words}`);
   add('email', 8, /[\w.+-]+@[\w-]+\.[\w.]{2,}/.test(text) ? 'pass' : 'fail');
   add('phone', 6, /(\+?\d[\d\s\-().]{7,}\d)/.test(text) && (text.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).some((x: string) => x.replace(/\D/g, '').length >= 9 && !/(19|20)\d{2}\s*[-–]\s*(19|20)\d{2}/.test(x)) ? 'pass' : 'fail');
   add('linkedin', 4, /linkedin\.com\/in\//i.test(text) || /linkedin/i.test(text) ? 'pass' : 'warn');

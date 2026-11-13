@@ -179,7 +179,7 @@ function looksLikeCv(text: string) {
   const x = text.toLowerCase();
   let s = 0;
   if (/[\w.+-]+@[\w-]+\.[\w.]{2,}/.test(x)) s++;
-  if ((x.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).some((p) => p.replace(/\D/g, '').length >= 9)) s++;
+  if (((x.match(/\+?\d[\d\s\-().]{7,}\d/g) || []) as string[]).some((p) => p.replace(/\D/g, '').length >= 9)) s++;
   if (/(experience|education|skills|summary|profile|qualification|employment|الخبر|التعليم|المؤهل|المهارات)/.test(x)) s++;
   if (/(19|20)\d{2}\s*[-–—]\s*((19|20)\d{2}|present|current|now|حتى الآن|الآن)/.test(x)) s++;
   if (/(engineer|engineering|مهندس|هندس|revit|autocad|hvac|mep|bim|university|جامع)/.test(x)) s++;
@@ -589,7 +589,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
               <div className="rounded-sheet bg-paper p-3"><div className="text-xs text-ink-mute">{t.exp}</div><div className="font-bold">{res.years} {t.years}</div></div>
               <div className="rounded-sheet bg-paper p-3"><div className="text-xs text-ink-mute">{t.level}</div><div className="font-bold">{LEVELS[res.level][locale]}</div></div>
             </div>
-            {!G && <p className="mt-3 text-[11px] leading-5 text-ink-mute">{res.salary.source === 'model' ? t.salary_model.replace('{n}', String(res.salary.n)) : t.salary_note}</p>}
+            {!G && !res.salary.unclear && <p className="mt-3 text-[11px] leading-5 text-ink-mute">{res.salary.source === 'model' ? t.salary_model.replace('{n}', String(res.salary.n)) : t.salary_note}</p>}
           </div>
         </div>
       </div>

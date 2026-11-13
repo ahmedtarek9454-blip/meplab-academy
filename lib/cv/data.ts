@@ -27,9 +27,9 @@ export const BANDS: Record<Market, Record<Level, [number, number]>> = {
 };
 
 export const LEVELS: Record<Level, { ar: string; en: string; min: number }> = {
-  junior: { ar: 'جونيور (0–2 سنة)', en: 'Junior (0–2 yrs)', min: 0 },
-  mid: { ar: 'متوسط الخبرة (3–5 سنين)', en: 'Mid-level (3–5 yrs)', min: 3 },
-  senior: { ar: 'سينيور (6–9 سنين)', en: 'Senior (6–9 yrs)', min: 6 },
+  junior: { ar: 'جونيور (أقل من 3 سنين)', en: 'Junior (under 3 yrs)', min: 0 },
+  mid: { ar: 'متوسط الخبرة (3 لـ 6 سنين)', en: 'Mid-level (3–6 yrs)', min: 3 },
+  senior: { ar: 'سينيور (6 لـ 10 سنين)', en: 'Senior (6–10 yrs)', min: 6 },
   lead: { ar: 'ليد / مدير (10+ سنين)', en: 'Lead / Manager (10+ yrs)', min: 10 }
 };
 
