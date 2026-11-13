@@ -17,7 +17,7 @@ export type CvResult = {
   roles: RoleMatch[];
   years: number;
   level: Level;
-  salary: { min: number; max: number; market: Market; source: 'model' | 'bands'; n?: number };
+  salary: { min: number; max: number; market: Market; source: 'model' | 'bands'; n?: number; unclear?: boolean };
   words: number;
   skills: Found[];
   ranges: Range[];
@@ -39,6 +39,12 @@ export function findSections(text: string) {
   let pos = 0;
   for (const raw of lines) {
     const line = raw.trim().toLowerCase().replace(/[:：\-–•|#*]+$/g, '').replace(/^[\s•\-–#*]+/, '').trim();
+    // a heading can also carry its content on the same line: "المؤهل: بكالوريوس…" / "Skills: Revit, …"
+    const lab = /[:：]/.test(line) ? line.split(/[:：]/)[0].trim() : '';
+    if (lab && lab.length <= 25 && Object.values(SECTIONS).some((names) => names.includes(lab))) {
+      const key = Object.entries(SECTIONS).find(([, names]) => names.includes(lab))![0];
+      found.push({ key, pos }); pos += raw.length + 1; continue;
+    }
     if (line && line.length <= 40) {
       for (const [key, names] of Object.entries(SECTIONS)) {
         if (names.some((n) => line === n || (line.startsWith(n) && line.length - n.length <= 12) || (line.endsWith(n) && line.length - n.length <= 14))) {
@@ -99,6 +105,8 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const salary = st && st.n >= 8
     ? { min: nice(st.p25 * LEVEL_F[level]), max: nice(st.p75 * LEVEL_F[level]), market, source: 'model' as const, n: st.n }
     : { min: nice(bmin * top.role.mult), max: nice(bmax * top.role.mult), market, source: 'bands' as const };
+  // a CV that doesn't show its discipline can't be priced honestly: say so instead of a number
+  (salary as CvResult['salary']).unclear = top.pct < 35;
 
   /* ---- ATS checks ---- */
   const checks: Check[] = [];

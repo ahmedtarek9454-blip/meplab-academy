@@ -520,11 +520,15 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         <div className="card relative overflow-hidden border-[1.5px] border-ink p-6">
           <div className="relative">
             <div className="text-sm font-bold text-ink-mute">{t.salary} — {MARKETS[market][locale === 'ar' ? 'name_ar' : 'name_en']}</div>
+            {res.salary.unclear ? (
+              <p className="mt-3 text-lg font-bold leading-8">{locale === 'ar' ? 'مش قادرين نقدّر مرتب للـ CV ده: تخصصك ووظيفتك مش واضحين فيه كفاية. وضّحهم في المسمى والخبرة وافحصه تاني.' : 'We can\'t estimate pay for this CV: your discipline and role aren\'t clear enough in it. Make them clear in your title and experience, then check again.'}</p>
+            ) : (<>
             <div className="mt-3 text-3xl font-bold leading-tight">
               <span dir="ltr">{fmt(res.salary.min)} – {fmt(res.salary.max)}</span>
               <span className="ms-2 text-base font-bold text-ink-mute">{cur}</span>
             </div>
             <div className="text-sm text-ink-mute">{t.per_month}</div>
+            </>)}
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
               <div className="rounded-sheet bg-paper p-3"><div className="text-xs text-ink-mute">{t.exp}</div><div className="font-bold">{res.years} {t.years}</div></div>
               <div className="rounded-sheet bg-paper p-3"><div className="text-xs text-ink-mute">{t.level}</div><div className="font-bold">{LEVELS[res.level][locale]}</div></div>

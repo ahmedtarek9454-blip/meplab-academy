@@ -14,7 +14,7 @@ const T = {
     desc: 'الأداة هتعيد بناء الـ CV بصيغة بتعدّي من أنظمة الـ ATS: عناوين قياسية، ترتيب صح، Summary، مهارات مجمّعة، نقاط خبرة بأفعال قوية، وتواريخ موحّدة. من غير ما تضيف أي معلومة مش موجودة في الـ CV الأصلي.',
     free: 'مجانًا مرتين لكل جهاز',
     left: 'باقيلك {n} من {t}',
-    btn: '✨ عدّل الـ CV دلوقتي',
+    btn: 'عدّل الـ CV دلوقتي',
     working: 'بنعيد بناء الـ CV...',
     done: 'الـ CV اتعدّل',
     before: 'قبل', after: 'بعد', ats: 'نتيجة ATS', pts: 'نقطة', cmp_t: 'شوف الفرق بعينك', cmp_sum: 'الملخص المهني', cmp_bul: 'نقط الخبرة', none: '(مكانش فيه ملخص)',
@@ -37,7 +37,7 @@ const T = {
     desc: 'The tool rebuilds your CV in an ATS-friendly format: standard headings, correct order, a summary, grouped skills, strong action-verb bullets and unified dates — without adding anything that is not already in your CV.',
     free: 'Free, 2 rewrites per device',
     left: '{n} of {t} left',
-    btn: '✨ Rewrite my CV now',
+    btn: 'Rewrite my CV now',
     working: 'Rebuilding your CV...',
     done: 'Your CV has been rewritten',
     before: 'Before', after: 'After', ats: 'ATS score', pts: 'pts', cmp_t: 'See the difference', cmp_sum: 'Professional summary', cmp_bul: 'Experience bullets', none: '(no summary)',
@@ -77,12 +77,16 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
   useEffect(() => { setUsed(rewritesUsed()); }, []);
   const left = Math.max(0, FREE_REWRITES - used);
 
+  const [noGain, setNoGain] = useState(false);
   async function go() {
     if (left <= 0) return;
     setBusy(true);
     await new Promise((r) => setTimeout(r, 600));
     const r = rebuildCv(text, market, res.roles[0].role.id, res.years, res.level);
     const after = analyzeCv(r.text, market, 0, model).score;
+    // never hand back a version that scores lower than what the person already has
+    if (after < res.score) { setNoGain(true); setOut(null); setBusy(false); return; }
+    setNoGain(false);
     markRewrite(); setUsed(rewritesUsed());
     setOut({ ...r, after });
     setBusy(false);
@@ -125,7 +129,14 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
           <div className="rounded-sheet bg-paper p-5 ring-1 ring-line">
             <div className="font-bold text-ink">{t.limit_t}</div>
             <p className="mt-1 text-sm text-ink-soft">{t.limit_d}</p>
-            {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" className="btn mt-3 bg-green-600 text-white hover:bg-green-700">💬 {t.wa}</a>}
+            {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" className="btn mt-3 bg-green-600 text-white hover:bg-green-700">{t.wa}</a>}
+          </div>
+        )}
+
+        {noGain && (
+          <div role="status" className="rounded-sheet border-[1.5px] border-ink p-5 leading-7">
+            <div className="font-bold text-ink">{locale === 'ar' ? 'الـ CV بتاعك أقوى من النسخة الأوتوماتيك' : 'Your CV already beats the automatic version'}</div>
+            <p className="mt-1 text-ink-soft">{locale === 'ar' ? 'جرّبنا نعيد ترتيبه، ونتيجته في الـ ATS كانت هتقل، فمش هنقترحها عليك ومحسبناش المحاولة. ركّز على التعديلات اللي فوق في التقرير.' : 'We tried rebuilding it and its ATS score would drop, so we are not suggesting it and this attempt was not counted. Focus on the fixes in the report above.'}</p>
           </div>
         )}
 

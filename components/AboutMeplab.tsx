@@ -77,7 +77,7 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
           </div>
           {courses.length ? (
             <div className="grid gap-4 sm:grid-cols-2">
-              {courses.slice(0, 4).map((c) => (
+              {courses.map((c) => (
                 <a key={c.slug} href={hrefs.course(c.slug)} className="group flex flex-col rounded-[3px] border-[1.5px] border-ink border-t-[5px] p-5 text-ink transition hover:bg-paper" style={{ borderTopColor: c.status === 'soon' ? '#C5CBD3' : COURSE_COLOR[artKey(c)] }}>
                   <div className="font-display text-lg font-bold group-hover:underline">{L(c, 'title')}</div>
                   <p className="mt-1 line-clamp-2 flex-1 text-sm leading-6 text-ink-soft">{L(c, 'desc')}</p>

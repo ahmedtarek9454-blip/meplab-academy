@@ -119,6 +119,20 @@ const arFold = (s: string) => s.replace(/[أإآ]/g, 'ا').replace(/ة(?=$|[\s،
 /* -------------------------------------------- Arabic → English phrase table */
 // Order matters: longer phrases first. Values are CV English.
 const AR_VERBS: [RegExp, string][] = [
+  // formal CV Arabic: lines that start with a verbal noun ("إعداد…", "متابعة…")
+  [/^(?:الاشراف|اشراف)\s+(?:الفني\s+)?عل[ىي]\s+/, 'Supervised '],
+  [/^(?:التنسيق|تنسيق)\s+(?:مع|بين)\s+/, 'Coordinated with '],
+  [/^(?:اعداد|إعداد)\s+(?=(?:ال)?(?:حصر|كميات|مقايسات))/, 'Prepared '],
+  [/^(?:اعداد|إعداد)\s+/, 'Prepared '],
+  [/^(?:متابعه|متابعة)\s+/, 'Followed up '],
+  [/^(?:مراجعه|مراجعة)\s+/, 'Reviewed '],
+  [/^حساب\s+(?=(?:ال)?احمال)/, 'Calculated '],
+  [/^(?:تركيب)\s+/, 'Installed '],
+  [/^(?:تنفيذ)\s+/, 'Executed '],
+  [/^(?:استلام)\s+/, 'Inspected and received '],
+  [/^(?:تشغيل)\s+/, 'Commissioned '],
+  [/^(?:اختيار)\s+/, 'Selected '],
+  [/^(?:عمل|عمل)\s+(?=(?:ال)?(?:موديل|نموذج))/, 'Built '],
   [/^(?:انا\s+)?(?:كنت\s+)?(?:شاركت|بشارك|اشتركت|ساهمت|بساهم)\s+(?:في|ف|فى)\s+/, 'Participated in '],
   [/^(?:انا\s+)?(?:كنت\s+)?(?:ساعدت|بساعد)\s+(?:في|ف|فى)\s+/, 'Assisted in '],
   [/^(?:انا\s+)?(?:اتدربت|تدربت|اخدت تدريب|خدت تدريب)\s+(?:عل[ىي]|في|فى)\s+/, 'Trained in '],
@@ -160,6 +174,12 @@ const AR_VERBS: [RegExp, string][] = [
 ];
 
 const AR_TERMS: [string, string][] = [
+  ['أنظمة التكييف المركزي', 'central air-conditioning systems'], ['انظمة التكييف المركزي', 'central air-conditioning systems'], ['أنظمة التكييف', 'HVAC systems'], ['انظمة التكييف', 'HVAC systems'],
+  ['التكييف المركزي', 'central air conditioning'], ['الأحمال الحرارية', 'cooling loads'], ['الاحمال الحراريه', 'cooling loads'], ['الأحمال', 'loads'], ['الاحمال', 'loads'],
+  ['اللوحات التنفيذية', 'shop drawings'], ['اللوحات التنفيذيه', 'shop drawings'], ['المخططات التنفيذية', 'shop drawings'], ['المخططات', 'drawings'], ['اللوحات', 'drawings'],
+  ['الاختبارات', 'testing'], ['الاختبار', 'testing'], ['التشغيل', 'commissioning'], ['والتشغيل', 'and commissioning'], ['مجاري الهواء', 'ductwork'], ['حصر الكميات', 'quantity take-off'],
+  ['باستخدام برنامج', 'using'], ['برنامج', ''], ['المقاولين', 'contractors'], ['المقاولين من الباطن', 'subcontractors'], ['الاستشاري', 'the consultant'], ['المالك', 'the client'],
+  ['التنسيق', 'coordination'], ['الاشراف', 'supervision'], ['الإشراف', 'supervision'],
   // work nouns ("مسؤول عن تنفيذ …")
   ['تنفيذ', 'execution of'], ['رسم', 'drafting'], ['الرسم', 'drafting'], ['عمل', 'preparing'], ['تصميم', 'design of'], ['تركيب', 'installation of'], ['توريد', 'supply of'], ['مراجعة', 'review of'], ['متابعة', 'follow-up of'],
   ['إعداد', 'preparation of'], ['اعداد', 'preparation of'], ['حساب', 'calculation of'], ['إدارة', 'management of'], ['ادارة', 'management of'], ['تشغيل', 'operation of'],
@@ -269,6 +289,8 @@ export function arabicToEnglish(sentence: string): Translation {
 const BUILDING_NOUN = '(?:office tower|residential tower|shopping mall|public hospital|private hospital|residential building|commercial building|office building|residential complex|commercial complex|data centre|hospital|tower|mall|hotel|airport|villa|compound|school|university|factory|plant)';
 /** English clean-up shared by spoken English and translated Arabic. */
 export function tidyEnglish(t: string) {
+  // the same words twice in a row ("shop drawings shop drawings", "Shop Drawings shop drawings")
+  t = t.replace(/\b([A-Za-z][\w-]*(?:\s+[A-Za-z][\w-]*){0,2})\s+\1\b/gi, '$1').replace(/quantity take-off quantities/gi, 'quantity take-off');
   let x = t.replace(/^(?:so\s+|and\s+)?(?:I|we)\s+(?:also\s+)?(?=[a-z])/i, '');
   x = x.replace(/(\b(?:a|an|the)\s+)?\b(\d+)[\s-]+floors?\s+(tower|building|hospital|hotel|office tower|residential tower)\b/gi, (_m, art, n, b) => `${art ? art.replace(/an/i, 'a') : 'a '}${n}-floor ${b}`);
   x = x.replace(/\bon (Revit|AutoCAD|Navisworks|HAP|ETABS|SAFE|Primavera P6|Excel|DIALux|MS Project)\b/g, 'using $1');

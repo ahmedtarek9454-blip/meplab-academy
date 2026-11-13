@@ -10,6 +10,8 @@ import { extractExperience, type Range } from '@/lib/ats/experience';
 import { findSkills } from '@/lib/ats/match';
 import { SKILL_BY_ID, type Cat } from '@/lib/ats/taxonomy';
 import { ROLES, LEVELS, type Market, type Level } from './data';
+import { arabicToEnglish } from './speech';
+import { suggestTitle, suggestCompany, suggestCity, transliterate } from './names';
 
 export type Entry = { title: string; company: string; location: string; dates: string; start: number; end: number; bullets: string[]; orig?: string[]; notes: string[] };
 export type CvModel = {
@@ -27,15 +29,16 @@ const fmtDate = (y: number, present: boolean) => {
 };
 
 const HEAD: Record<string, RegExp> = {
-  summary: /^(professional\s+)?(summary|profile|objective|career objective|about me|نبذة|الملخص|الهدف)\b/i,
-  experience: /^(work\s+|professional\s+|employment\s+)?(experience|history|career history|employment|الخبرات|الخبرة|الخبرات العملية)\b/i,
-  education: /^(education|academic|qualifications?|التعليم|المؤهل)/i,
-  skills: /^(technical\s+|core\s+|key\s+)?(skills|competencies|software|tools|expertise|المهارات)\b/i,
-  certifications: /^(certifications?|certificates?|courses?|training|licen[cs]es?|professional development|الشهادات|الدورات|التدريب)\b/i,
-  languages: /^(languages?|اللغات)\b/i,
+  summary: /^(professional\s+)?(summary|profile|objective|career objective|about me)\b|^(نبذة|الملخص|الهدف)/i,
+  experience: /^(work\s+|professional\s+|employment\s+)?(experience|history|career history|employment)\b|^(الخبرات|الخبرة|الوظائف السابقة|سجل العمل)/i,
+  education: /^(education|academic|qualifications?|التعليم|المؤهل|الدراسة)/i,
+  skills: /^(technical\s+|core\s+|key\s+)?(skills|competencies|software|tools|expertise)\b|^(المهارات|البرامج)/i,
+  certifications: /^(certifications?|certificates?|courses?|training|licen[cs]es?|professional development)\b|^(الشهادات|الدورات|التدريب)/i,
+  languages: /^(languages?)\b|^اللغات/i,
   projects: /^(key\s+|selected\s+|major\s+)?projects?\b|المشاريع/i,
   personal: /^(personal\s+(details|information|data)|البيانات الشخصية)/i,
   references: /^(references?|المراجع)/i,
+  contact: /^(contact|البيانات|الاسم|الهاتف|الموبايل|البريد|العنوان|الجنسية|تاريخ الميلاد|الحالة الاجتماعية|الديانة)/i,
   military: /^(military|الخدمة العسكرية|التجنيد)/i
 };
 const PERSONAL = /^(date of birth|dob|birth date|birthday|age|marital status|married|single|religion|nationality|gender|sex|military status|national id|passport|driving licen|الحالة الاجتماعية|الديانة|تاريخ الميلاد|الجنسية|النوع|موقف التجنيد|رقم قومي)\b/i;
@@ -119,13 +122,21 @@ export function parseCv(text: string): CvModel {
   const location = locLine ? locLine.split(/\s*[|•]\s*/).find((x) => /egypt|ksa|saudi|uae|qatar|cairo|riyadh|jeddah|dubai|القاهرة|الرياض|جدة|دبي/i.test(x)) || '' : '';
 
   // section map
+  // "المؤهل: بكالوريوس…" / "Skills: Revit, …": a heading with its content on the same line
+  const inline: Record<number, { key: string; value: string }> = {};
+  lines.forEach((raw, i) => {
+    const m = clean(raw).match(/^([^:：]{2,25})[:：]\s*(.+)$/);
+    if (!m) return;
+    for (const k in HEAD) if (HEAD[k].test(m[1].trim())) { inline[i] = { key: k, value: m[2].trim() }; break; }
+  });
   const sec: (string | null)[] = []; let cur: string | null = null;
-  lines.forEach((raw) => {
+  lines.forEach((raw, i) => {
     const l = clean(raw).replace(/[:：\-–\s]+$/, '');
-    if (l && l.length <= 45) for (const k in HEAD) if (HEAD[k].test(l)) { cur = k; break; }
+    if (inline[i]) cur = inline[i].key;
+    else if (l && l.length <= 45) for (const k in HEAD) if (HEAD[k].test(l)) { cur = k; break; }
     sec.push(cur);
   });
-  const headingLine = (i: number) => { const l = clean(lines[i]).replace(/[:：\-–\s]+$/, ''); return !!l && l.length <= 45 && Object.values(HEAD).some((re) => re.test(l)); };
+  const headingLine = (i: number) => { if (inline[i]) return true; const l = clean(lines[i]).replace(/[:：\-–\s]+$/, ''); return !!l && l.length <= 45 && Object.values(HEAD).some((re) => re.test(l)); };
 
   // experience entries anchored on work date lines
   const experience: Entry[] = [];
@@ -167,7 +178,13 @@ export function parseCv(text: string): CvModel {
     const h = splitHeader(headerLines);
     experience.push({
       title: h.title, company: h.company, location: h.location,
-      dates: `${fmtDate(r.start, false)} – ${r.end >= new Date().getFullYear() + (new Date().getMonth() + 1) / 12 - 0.05 ? 'Present' : fmtDate(r.end, false)}`,
+      // year-only ranges ("2019 – 2021") stay year-only: no invented months
+      dates: (() => {
+        const yo = !/[a-z]{3}|(?<!\d)\d{1,2}[\/.\-](?:19|20)?\d{2}\b|يناير|فبراير|مارس|ابريل|أبريل|إبريل|مايو|يونيو|يونيه|يوليو|يوليه|اغسطس|أغسطس|سبتمبر|اكتوبر|أكتوبر|نوفمبر|ديسمبر/i.test((r.raw || '').replace(/present|current|now/gi, ''));
+        const now = r.end >= new Date().getFullYear() + (new Date().getMonth() + 1) / 12 - 0.05;
+        const f = (y: number) => (yo ? String(Math.floor(y + 1e-6)) : fmtDate(y, false));
+        return `${f(r.start)} – ${now ? 'Present' : yo ? String(Math.abs(r.end - Math.round(r.end)) < 0.02 ? Math.round(r.end) - 1 : Math.floor(r.end)) : fmtDate(r.end, false)}`;
+      })(),
       start: r.start, end: r.end,
       bullets: bullets.map(polishBullet).filter(Boolean).slice(0, 8), orig: bullets.map(clean).filter(Boolean).slice(0, 8), notes
     });
@@ -175,7 +192,7 @@ export function parseCv(text: string): CvModel {
   experience.sort((a, b) => b.start - a.start);
 
   // other sections by heading
-  const grab = (key: string) => lines.map((l, i) => [l, i] as const).filter(([l, i]) => sec[i] === key && !headingLine(i) && l.trim() && !used.has(i)).map(([l]) => clean(l)).filter(Boolean);
+  const grab = (key: string) => lines.map((l, i) => [l, i] as const).filter(([l, i]) => sec[i] === key && (inline[i] || !headingLine(i)) && l.trim() && !used.has(i)).map(([l, i]) => (inline[i] ? inline[i].value : clean(l))).filter(Boolean);
   const summary = grab('summary').filter((l) => l.length > 20);
   const education = grab('education');
   const certifications = grab('certifications');
@@ -260,8 +277,59 @@ export function toText(m: CvModel, summary: string) {
 
 export type RebuildReport = { changes: string[]; removed: string[]; weakBullets: number; entries: number; pairs: { before: string; after: string }[] };
 
+/* ---------------- Arabic CVs → an English, ATS-readable CV ---------------- */
+const AR = /[\u0600-\u06FF]/;
+const DEGREE: [RegExp, string][] = [
+  [/بكالوري?وس\s+(?:ال)?هندس[ةه]\s+(?:ال)?ميكاني?ك[اي]?/, 'B.Sc. Mechanical Engineering'], [/بكالوري?وس\s+(?:ال)?هندس[ةه]\s+(?:ال)?كهرب(?:اء|ا|ائي[ةه]?)/, 'B.Sc. Electrical Engineering'],
+  [/بكالوري?وس\s+(?:ال)?هندس[ةه]\s+(?:ال)?مدني[ةه]?/, 'B.Sc. Civil Engineering'], [/بكالوري?وس\s+(?:ال)?هندس[ةه]\s+(?:ال)?معماري[ةه]?|(?:ال)?عمار[ةه]/, 'B.Sc. Architecture'],
+  [/بكالوري?وس\s+(?:ال)?هندس[ةه]\s+(?:ال)?(?:قوى|قوي)\s+(?:ال)?ميكاني?كي[ةه]?/, 'B.Sc. Mechanical Power Engineering'], [/بكالوري?وس\s+(?:ال)?هندس[ةه]/, 'B.Sc. Engineering'],
+  [/ماجستير/, 'M.Sc.'], [/دبلوم/, 'Diploma'], [/بكالوري?وس/, "Bachelor's degree"]
+];
+const LANG: [RegExp, string][] = [[/العربي[ةه]?/, 'Arabic'], [/الانجليزي[ةه]?|الإنجليزي[ةه]?/, 'English'], [/الفرنسي[ةه]?/, 'French'], [/الالماني[ةه]?|الألماني[ةه]?/, 'German']];
+const LEVEL_W: [RegExp, string][] = [[/(?:اللغ[ةه]\s+)?الام|الأم|اللغة الأم/, 'Native'], [/ممتاز/, 'Excellent'], [/جيد\s+جدا/, 'Very good'], [/جيد/, 'Good'], [/متوسط/, 'Intermediate'], [/مبتدئ/, 'Basic']];
+const val = (h: { value: string }, raw: string) => (h.value && !AR.test(h.value) ? h.value : raw);
+function enLine(x: string) {
+  if (!AR.test(x)) return x;
+  const t = arabicToEnglish(x).text.replace(/\b(systems)\s+(Chilled Water|VRF|VRV|DX)\b/i, '$1 ($2)');
+  return AR.test(t) ? t.replace(/[\u0600-\u06FF]+/g, '').replace(/\s+/g, ' ').trim() : t;
+}
+function enEducation(x: string) {
+  if (!AR.test(x)) return x;
+  const deg = DEGREE.find(([re]) => re.test(x))?.[1] || '';
+  const year = x.match(/(19|20)\d{2}/)?.[0] || '';
+  const uni = x.match(/(?:جامع[ةه]|كلي[ةه]|معهد|اكاديمي[ةه]|أكاديمي[ةه])\s*[^–\-|,،\d]+/)?.[0]?.trim() || '';
+  const school = uni ? val(suggestCompany(uni), '') : '';
+  return [deg, school, year].filter(Boolean).join(' – ') || enLine(x);
+}
+function enLanguage(x: string) {
+  if (!AR.test(x)) return x;
+  return x.split(/\s*[|،,\n]\s*/).map((p) => {
+    const l = LANG.find(([re]) => re.test(p))?.[1]; if (!l) return '';
+    const lv = LEVEL_W.find(([re]) => re.test(p))?.[1];
+    return lv ? `${l} (${lv})` : l;
+  }).filter(Boolean).join('  |  ');
+}
+export function englishize(m: CvModel): CvModel {
+  const n: CvModel = { ...m };
+  if (AR.test(n.name)) n.name = transliterate(n.name);
+  if (AR.test(n.headline)) n.headline = val(suggestTitle(n.headline), '');
+  if (AR.test(n.location)) n.location = val(suggestCity(n.location), '');
+  n.summary = n.summary.filter((x) => !AR.test(x));
+  n.experience = n.experience.map((e) => ({
+    ...e,
+    title: AR.test(e.title) ? val(suggestTitle(e.title), e.title) : e.title,
+    company: AR.test(e.company) ? val(suggestCompany(e.company), e.company) : e.company,
+    location: AR.test(e.location) ? val(suggestCity(e.location), '') : e.location,
+    bullets: e.bullets.map((b) => (AR.test(b) ? polishBullet(enLine(b)) : b)).filter((b) => b && b.length > 3)
+  }));
+  n.education = n.education.map(enEducation).filter(Boolean);
+  n.certifications = n.certifications.map(enLine).filter(Boolean);
+  n.languages = n.languages.map(enLanguage).filter(Boolean);
+  return n;
+}
+
 export function rebuildCv(text: string, market: Market, roleId: string, years: number, level: Level) {
-  const m = parseCv(text);
+  const m = englishize(parseCv(text));
   const summary = buildSummary(m, years, roleId, level, market);
   const changes: string[] = [];
   changes.push('headings');

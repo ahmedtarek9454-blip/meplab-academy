@@ -109,10 +109,10 @@ export function roleGroups(locale: 'ar' | 'en') {
 }
 
 export const SECTIONS: Record<string, string[]> = {
-  summary: ['summary', 'profile', 'professional summary', 'objective', 'career objective', 'about me', 'نبذة', 'الملخص', 'الهدف'],
-  experience: ['experience', 'work experience', 'professional experience', 'employment history', 'career history', 'work history', 'الخبرات', 'الخبرة', 'الخبرات العملية'],
-  education: ['education', 'academic', 'qualifications', 'التعليم', 'المؤهلات'],
-  skills: ['skills', 'technical skills', 'software', 'core competencies', 'competencies', 'tools', 'المهارات'],
-  certifications: ['certifications', 'certificates', 'courses', 'training', 'licenses', 'الشهادات', 'الدورات'],
+  summary: ['summary', 'profile', 'professional summary', 'objective', 'career objective', 'about me', 'نبذة', 'نبذة عني', 'نبذة مختصرة', 'الملخص', 'الملخص المهني', 'الهدف', 'الهدف الوظيفي'],
+  experience: ['experience', 'work experience', 'professional experience', 'employment history', 'career history', 'work history', 'الخبرات', 'الخبرة', 'الخبرات العملية', 'الخبرة العملية', 'الخبرة المهنية', 'الخبرات السابقة', 'الوظائف السابقة', 'سجل العمل'],
+  education: ['education', 'academic', 'qualifications', 'qualification', 'التعليم', 'المؤهلات', 'المؤهل', 'المؤهل الدراسي', 'المؤهلات العلمية', 'المؤهل العلمي', 'الدراسة', 'التعليم والمؤهلات'],
+  skills: ['skills', 'technical skills', 'software', 'core competencies', 'competencies', 'tools', 'المهارات', 'المهارات الفنية', 'المهارات التقنية', 'البرامج', 'المهارات والبرامج'],
+  certifications: ['certifications', 'certificates', 'courses', 'training', 'licenses', 'الشهادات', 'الدورات', 'الدورات التدريبية', 'الشهادات المهنية'],
   projects: ['projects', 'key projects', 'selected projects', 'المشاريع']
 };

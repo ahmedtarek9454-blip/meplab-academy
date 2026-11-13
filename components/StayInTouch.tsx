@@ -21,6 +21,8 @@ const DONE_KEY = 'meplab_optin_v1';
 export default function StayInTouch(p: Props) {
   const ar = p.locale === 'ar';
   const [hidden, setHidden] = useState(true);
+  // 'api' stores in the database; 'netlify' falls back to Netlify Forms when the database isn't connected
+  const [mode, setMode] = useState<'api' | 'netlify'>('api');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [agree, setAgree] = useState(false);
@@ -32,7 +34,7 @@ export default function StayInTouch(p: Props) {
     try { done = localStorage.getItem(DONE_KEY) === '1'; } catch {}
     if (done) return;
     // only offer the box when the site can actually store the opt-in
-    fetch('/api/leads/optin').then((r) => r.json()).then((j) => setHidden(!j?.enabled)).catch(() => setHidden(true));
+    fetch('/api/leads/optin').then((r) => r.json()).then((j) => { setMode(j?.enabled ? 'api' : 'netlify'); setHidden(false); }).catch(() => { setMode('netlify'); setHidden(false); });
   }, []);
   if (hidden && state !== 'done') return null;
 
@@ -41,6 +43,18 @@ export default function StayInTouch(p: Props) {
     if (!agree) { setErr(ar ? 'علّم على الموافقة الأول.' : 'Tick the consent box first.'); return; }
     setState('sending'); setErr('');
     const website = (new FormData(e.currentTarget).get('website') as string) || '';
+    if (mode === 'netlify') {
+      if (website) { setState('done'); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setState('error'); setErr(ar ? 'الإيميل مكتوب غلط.' : 'That email looks wrong.'); return; }
+      if (phone && phone.replace(/\D/g, '').length < 9) { setState('error'); setErr(ar ? 'رقم الواتساب مكتوب غلط. اكتبه زي 01001234567 أو ‎+966…' : 'That WhatsApp number looks wrong. Use the full number with country code.'); return; }
+      try {
+        const body = new URLSearchParams({ 'form-name': 'stay-in-touch', email: email.trim(), phone: phone.trim(), consent: 'yes', consent_text: CONSENT_TEXT[p.locale], locale: p.locale, role_id: p.roleId, discipline: p.discipline || '', market: p.market, score: String(p.score), years: String(p.years), level: p.level, website: '' });
+        const r = await fetch('/__forms.html', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
+        if (!r.ok) throw new Error(String(r.status));
+        setState('done'); try { localStorage.setItem(DONE_KEY, '1'); } catch {}
+      } catch { setState('error'); setErr(ar ? 'حصلت مشكلة. جرّب تاني.' : 'Something went wrong. Please try again.'); }
+      return;
+    }
     try {
       const r = await fetch('/api/leads/optin', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },

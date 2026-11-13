@@ -10,7 +10,7 @@ export const metadata = {
 export default async function CvCheckPage() {
   const locale = await getLocale();
   const ar = locale === 'ar';
-  const data = (await safeCourses()).slice(0, 4);
+  const data = (await safeCourses());
   return (
     <>
       <section className="relative overflow-hidden border-b-[1.5px] border-ink bg-sheet">
