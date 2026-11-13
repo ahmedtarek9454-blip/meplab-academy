@@ -95,7 +95,7 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
     if (link.trim() && !li) { setBoostMsg(locale === 'ar' ? 'لينك لينكدإن لازم يكون زي linkedin.com/in/your-name' : 'The LinkedIn link should look like linkedin.com/in/your-name'); return; }
     if (li) m.linkedin = li.replace(/^https?:\/\//, '').replace(/^www\./, '');
     const text2 = toText(m, out.summary);
-    const after2 = analyzeCv(text2, market, 0, model).score;
+    const after2 = analyzeCv(text2, market, 0, model, { general: res.general }).score;
     setOut({ ...out, model: m, text: text2, after: Math.max(after2, out.after) });
     setEdits({}); setLink('');
     setBoostMsg(after2 > out.after ? (locale === 'ar' ? `اتحدّث: النتيجة بقت ${after2}` : `Updated: score is now ${after2}`) : (locale === 'ar' ? 'اتحدّث. النتيجة زي ما هي، بس الـ CV بقى أوضح.' : 'Updated. The score is the same, but the CV reads better.'));
@@ -104,8 +104,8 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
     if (left <= 0) return;
     setBusy(true);
     await new Promise((r) => setTimeout(r, 600));
-    const r = rebuildCv(text, market, res.roles[0].role.id, res.years, res.level);
-    const after = analyzeCv(r.text, market, 0, model).score;
+    const r = rebuildCv(text, market, res.roles[0].role.id, res.years, res.level, res.general);
+    const after = analyzeCv(r.text, market, 0, model, { general: res.general }).score;
     // never hand back a version that scores lower than what the person already has
     if (after < res.score) { setNoGain(true); setOut(null); setBusy(false); return; }
     setNoGain(false);

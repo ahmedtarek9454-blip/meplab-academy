@@ -166,6 +166,7 @@ const CHECKS: Record<string, { ar: [string, string]; en: [string, string] }> = {
   language: { ar: ['مكتوب بالإنجليزي', 'أغلب أنظمة الـ ATS في الخليج بتتعامل أحسن مع CV إنجليزي.'], en: ['Written in English', 'Most ATS in the region work best with English CVs.'] },
   personal: { ar: ['من غير بيانات شخصية زيادة', 'شيل الديانة والحالة الاجتماعية و"References available".'], en: ['No unnecessary personal data', 'Remove religion, marital status and "References available".'] }
 };
+const KW_GENERAL = { ar: ['قايمة المهارات', 'اكتب من ٨ مهارات أو أكتر بأسمائها الحقيقية في قسم Skills (برامج، أدوات، مهارات شغل).'], en: ['Skills list', 'List 8 or more concrete skills by name in a Skills section (software, tools, job skills).'] };
 
 const ST: Record<CheckStatus, { icon: string; cls: string }> = {
   pass: { icon: '✓', cls: 'bg-green-100 text-green-700' },
@@ -346,7 +347,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
 
   // after analysis: load matching jobs for the detected role & market
   useEffect(() => {
-    if (!res || process.env.NEXT_PUBLIC_JOBS !== '1') { setJobs([]); return; }
+    if (!res || res.general || process.env.NEXT_PUBLIC_JOBS !== '1') { setJobs([]); return; }
     const role = res.roles[0].role.id;
     const mock = (window as any).__JOBS_MOCK__ as any[] | undefined;
     if (mock) { setJobs(mock.filter((j) => j.market === market && j.role_id === role).slice(0, 5)); return; }
@@ -482,7 +483,8 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
 
   /* ---------- result ---------- */
   const top = res.roles[0];
-  const pr = percentile(model, res.score, top.role.id, res.discipline?.id ?? null);
+  const G = !!res.general;
+  const pr = G ? null : percentile(model, res.score, top.role.id, res.discipline?.id ?? null);
   const prScope = pr ? (pr.scope === 'role' ? t.sc_role : pr.scope === 'disc' ? t.sc_disc : t.sc_all) : '';
   const others = res.roles.slice(1, 4).filter((r) => r.pct > 10);
   const col = res.score >= 75 ? '#16a34a' : res.score >= 50 ? '#f59e0b' : '#E53935';
@@ -510,6 +512,15 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         </div>
 
         {/* role */}
+        {G ? (
+          <div className="card p-6">
+            <div className="text-sm font-bold text-ink-mute">{locale === 'ar' ? 'تخصصك' : 'Your field'}</div>
+            <p className="mt-2 text-lg font-bold leading-8 text-ink">{locale === 'ar' ? 'الـ CV ده برّه تخصصات الهندسة.' : 'This CV is outside engineering.'}</p>
+            <p className="mt-2 text-sm leading-7 text-ink-soft">{locale === 'ar'
+              ? 'فحصناه على قواعد الـ ATS اللي بتنفع لأي وظيفة: بيانات التواصل، الأقسام، التواريخ، الأرقام في الخبرة، الأفعال، الطول، وقايمة المهارات. أقرب وظيفة وتقدير المرتب متاحين لتخصصات الهندسة بس.'
+              : 'We checked it against ATS rules that apply to any job: contact details, sections, dates, numbers in your experience, action verbs, length and your skills list. Closest-job matching and salary estimates cover engineering fields only.'}</p>
+          </div>
+        ) : (
         <div className="card p-6">
           <div className="flex items-center justify-between gap-2">
             <div className="text-sm font-bold text-ink-mute">{t.best_role}</div>
@@ -557,11 +568,15 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           )}
         </div>
 
+        )}
+
         {/* salary */}
         <div className="card relative overflow-hidden border-[1.5px] border-ink p-6">
           <div className="relative">
             <div className="text-sm font-bold text-ink-mute">{t.salary} — {MARKETS[market][locale === 'ar' ? 'name_ar' : 'name_en']}</div>
-            {res.salary.unclear ? (
+            {G ? (
+              <p className="mt-3 text-lg font-bold leading-8">{locale === 'ar' ? 'تقدير المرتب متاح دلوقتي لتخصصات الهندسة بس.' : 'Salary estimates currently cover engineering fields only.'}</p>
+            ) : res.salary.unclear ? (
               <p className="mt-3 text-lg font-bold leading-8">{locale === 'ar' ? 'مش قادرين نقدّر مرتب للـ CV ده: تخصصك ووظيفتك مش واضحين فيه كفاية. وضّحهم في المسمى والخبرة وافحصه تاني.' : 'We can\'t estimate pay for this CV: your discipline and role aren\'t clear enough in it. Make them clear in your title and experience, then check again.'}</p>
             ) : (<>
             <div className="mt-3 text-3xl font-bold leading-tight">
@@ -574,7 +589,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
               <div className="rounded-sheet bg-paper p-3"><div className="text-xs text-ink-mute">{t.exp}</div><div className="font-bold">{res.years} {t.years}</div></div>
               <div className="rounded-sheet bg-paper p-3"><div className="text-xs text-ink-mute">{t.level}</div><div className="font-bold">{LEVELS[res.level][locale]}</div></div>
             </div>
-            <p className="mt-3 text-[11px] leading-5 text-ink-mute">{res.salary.source === 'model' ? t.salary_model.replace('{n}', String(res.salary.n)) : t.salary_note}</p>
+            {!G && <p className="mt-3 text-[11px] leading-5 text-ink-mute">{res.salary.source === 'model' ? t.salary_model.replace('{n}', String(res.salary.n)) : t.salary_note}</p>}
           </div>
         </div>
       </div>
@@ -591,7 +606,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
             {fixes.length ? (
               <ol className="mt-4 divide-y divide-line">
                 {fixes.map(({ c, gain }, i) => {
-                  const [title, tip] = CHECKS[c.id][locale];
+                  const [title, tip] = (G && c.id === 'keywords' ? KW_GENERAL : CHECKS[c.id])[locale];
                   return (
                     <li key={c.id} className="flex items-start gap-4 py-3">
                       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-ink text-sm font-bold text-ink">{i + 1}</span>
@@ -613,16 +628,16 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         <StayInTouch locale={locale} roleId={top.role.id} discipline={res.discipline?.id ?? null} market={market} score={res.score} years={res.years} level={res.level} />
       )}
 
-      <ShareCard locale={locale} score={res.score} role={locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
+      <ShareCard locale={locale} score={res.score} role={G ? '' : locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
         better={pr ? { pct: pr.pct, scopeLabel: prScope } : null} siteUrl={process.env.NEXT_PUBLIC_SITE_URL} />
 
       <div className="grid gap-6 lg:grid-cols-5">
         {/* checks */}
-        <div className="card p-6 lg:col-span-3">
+        <div className={`card p-6 ${G ? 'lg:col-span-5' : 'lg:col-span-3'}`}>
           <h3 className="mb-4 text-lg font-bold text-ink">{t.checks}</h3>
           <ul className="space-y-3">
             {sorted.map((c) => {
-              const [title, tip] = CHECKS[c.id][locale];
+              const [title, tip] = (G && c.id === 'keywords' ? KW_GENERAL : CHECKS[c.id])[locale];
               return (
                 <li key={c.id} className="flex gap-3">
                   <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${ST[c.status].cls}`}>{ST[c.status].icon}</span>
@@ -637,14 +652,14 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         </div>
 
         {/* keywords */}
-        <div className="space-y-6 lg:col-span-2">
-          <div className="card p-6">
+        {!G && <div className="space-y-6 lg:col-span-2">
+          {!G && <div className="card p-6">
             <h3 className="mb-3 font-bold text-ink">{t.missing_kw}</h3>
             <div className="flex flex-wrap gap-2" dir="ltr">
               {top.missing.map((k) => <span key={k} className="rounded-lg border border-dashed border-red-300 bg-red-50 px-2.5 py-1 text-sm font-semibold text-red-700">+ {k}</span>)}
             </div>
-          </div>
-          <div className="card p-6">
+          </div>}
+          {!G && <div className="card p-6">
             <h3 className="mb-3 font-bold text-ink">{t.found_kw} ({res.skills.length})</h3>
             <div className="space-y-3">
               {Object.entries(res.skills.reduce((g: Record<string, typeof res.skills>, k) => ((g[k.cat] ||= []).push(k), g), {})).map(([cat, list]) => (
@@ -656,14 +671,14 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
                 </div>
               ))}
             </div>
-          </div>
-          {(!res.discipline || ['mep', 'mech', 'civil', 'elec'].includes(res.discipline.id)) && (
+          </div>}
+          {!G && (!res.discipline || ['mep', 'mech', 'civil', 'elec'].includes(res.discipline.id)) && (
             <div className="card border-[1.5px] border-ink p-6">
               <div className="font-bold">{t.cta_t}</div>
               <a href={coursesHref} className="btn-red mt-3">{t.cta_b}</a>
             </div>
           )}
-        </div>
+        </div>}
       </div>
 
       {ocrUsed && <p className="rounded-sheet border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{t.ocr_note}</p>}

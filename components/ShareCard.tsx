@@ -70,9 +70,9 @@ async function draw(cv: HTMLCanvasElement, p: Props) {
   ctx.font = `500 40px ${font}`; ctx.fillStyle = '#7F8DA9'; ctx.fillText('/100', cx, cy + 120); ctx.restore();
 
   // role
-  ctx.fillStyle = '#7F8DA9'; ctx.font = `500 36px ${font}`; ctx.fillText(t.role, X, 880);
+  if (p.role) { ctx.fillStyle = '#7F8DA9'; ctx.font = `500 36px ${font}`; ctx.fillText(t.role, X, 880); }
   ctx.fillStyle = '#fff'; ctx.font = `700 58px ${font}`;
-  const lines = wrap(ctx, p.role, W - 192).slice(0, 2);
+  const lines = p.role ? wrap(ctx, p.role, W - 192).slice(0, 2) : [];
   lines.forEach((l, i) => ctx.fillText(l, X, 960 + i * 72));
   let y = 960 + lines.length * 72 + 20;
   if (p.better) {

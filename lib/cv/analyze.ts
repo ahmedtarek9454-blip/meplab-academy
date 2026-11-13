@@ -18,6 +18,8 @@ export type CvResult = {
   years: number;
   level: Level;
   salary: { min: number; max: number; market: Market; source: 'model' | 'bands'; n?: number; unclear?: boolean };
+  /** the CV is outside the engineering fields the role model knows: scored on universal ATS rules only */
+  general?: boolean;
   words: number;
   skills: Found[];
   ranges: Range[];
@@ -75,7 +77,18 @@ export function levelFor(y: number): Level {
   return 'junior';
 }
 
-export function analyzeCv(rawText: string, market: Market, pages = 0, model: AtsModel = defaultModel()): CvResult {
+/** the person's own skills list, as written (stops at the next heading such as Languages / Certifications) */
+export function listedSkills(text: string): string[] {
+  const sections = findSections(text);
+  const st = sections.find((x) => x.key === 'skills');
+  if (!st) return [];
+  const nx = sections.filter((x) => x.pos > st.pos).sort((a, b) => a.pos - b.pos)[0]?.pos ?? text.length;
+  const lines = text.slice(st.pos, nx).split('\n').slice(1);
+  const stop = lines.findIndex((l) => /^\s*(languages?|اللغات|certifications?|courses|training|hobbies|interests|references|personal|الشهادات|الدورات|الهوايات)\b\s*:?\s*$/i.test(l) || /^\s*(languages?|اللغات)\s*[:：]/i.test(l));
+  return [...new Set((stop >= 0 ? lines.slice(0, stop) : lines).join('\n').split(/[,،|•·;\n]+|\s{2,}/).map((x) => x.replace(/^[\s\-–*▪●]+/, '').trim()).filter((x) => x.length > 1 && x.length < 40))];
+}
+
+export function analyzeCv(rawText: string, market: Market, pages = 0, model: AtsModel = defaultModel(), opts: { general?: boolean } = {}): CvResult {
   const text = rawText.replace(/\r/g, '').replace(/[ \t]+/g, ' ');
   const lower = text.toLowerCase();
   const words = (text.match(/[\p{L}\p{N}][\p{L}\p{N}'’.+#&-]*/gu) || []).length;
@@ -107,6 +120,13 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
     : { min: nice(bmin * top.role.mult), max: nice(bmax * top.role.mult), market, source: 'bands' as const };
   // a CV that doesn't show its discipline can't be priced honestly: say so instead of a number
   (salary as CvResult['salary']).unclear = top.pct < 35;
+  // outside engineering (accounting, sales, HR, software…): the MEP role model can't judge it, so score universal rules only
+  const ENG_DISC = ['mep', 'mech', 'civil', 'elec', 'arch', 'survey', 'process', 'petroleum', 'automation', 'telecom', 'biomedical'];
+  const engWords = /\b(hvac|mep|plumbing|fire\s*(?:fighting|protection|alarm)|revit|autocad|navisworks|site engineer|technical office|shop drawings?|civil|structural|electrical|mechanical)\b|مهندس|هندس[هة]|تكييف|حريق|صحي/i.test(text);
+  const textDisc = ds.best >= 3 ? ds.top : null; // from the CV itself, not from the closest MEP role
+  // opts.general keeps a rewritten CV in the same mode as the original it came from
+  const general = opts.general ?? (top.pct < 30 && !engWords && (!textDisc || !ENG_DISC.includes(textDisc)));
+  if (general) (salary as CvResult['salary']).unclear = true;
 
   /* ---- ATS checks ---- */
   const checks: Check[] = [];
@@ -127,7 +147,10 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
     `${words}${pages ? ` / ${pages}p` : ''}`);
   const metrics = (lower.match(/\d[\d,.]*\s*-?\s*(?:%|percent|projects?|buildings?|tr\b|tons?|cfm|m2|m²|m3|m³|sqm|sq\.?\s*m|million|mn|billion|bn|k\b|units|floors?|stor(?:ey|ies)|rooms?|keys|beds?|m\b|lm\b|meters?|metres?|gpm|l\/s|villas?|towers?|engineers|members|workers|operators|users|customers|clients|sites|wells|km|kv|mw|kw|bopd|mmscfd|hospitals|schools|lines|machines|stores|apps?|hours|days|weeks|months|egp|sar|aed|usd|\$)|(?:egp|sar|aed|usd|\$)\s*\d/g) || []).length;
   add('metrics', 7, metrics >= 3 ? 'pass' : metrics >= 1 ? 'warn' : 'fail', `${metrics}`);
-  add('keywords', 12, top.pct >= 60 ? 'pass' : top.pct >= 35 ? 'warn' : 'fail', `${top.matched.length}`);
+  // general CVs: the skills list itself (how many concrete skills are named) instead of role keywords
+  const skillItems = listedSkills(text);
+  if (general) add('keywords', 12, skillItems.length >= 8 ? 'pass' : skillItems.length >= 4 ? 'warn' : 'fail', `${skillItems.length}`);
+  else add('keywords', 12, top.pct >= 60 ? 'pass' : top.pct >= 35 ? 'warn' : 'fail', `${top.matched.length}`);
   // skills backed by experience: an ATS/recruiter discounts a long skills list that never appears in the experience bullets
   {
     const expStart = sections.find((x) => x.key === 'experience')?.pos ?? -1;
@@ -135,9 +158,16 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
     const expText = expStart >= 0 ? text.slice(expStart, nextAfterExp) : '';
     const inExp = expText ? findSkills(expText) : new Map();
     const nonCert = [...found.values()].filter((f) => SKILL_BY_ID.get(f.id)?.cat !== 'cert');
-    const evidenced = nonCert.filter((f) => inExp.has(f.id)).length;
-    const ratio = nonCert.length ? evidenced / nonCert.length : 1;
-    add('evidence', 10, !expText ? 'warn' : ratio >= 0.5 ? 'pass' : ratio >= 0.3 ? 'warn' : 'fail', `${evidenced}/${nonCert.length}`);
+    let evidenced = nonCert.filter((f) => inExp.has(f.id)).length, total = nonCert.length;
+    if (general) {
+      // the person's own listed skills that show up again in their experience
+      const el = expText.toLowerCase();
+      const items = skillItems.map((x) => x.toLowerCase());
+      total = items.length;
+      evidenced = items.filter((x) => el.includes(x) || x.split(/\s+/).filter((w) => w.length > 3).some((w) => el.includes(w))).length;
+    }
+    const ratio = total ? evidenced / total : 1;
+    add('evidence', 10, !expText ? 'warn' : ratio >= 0.5 ? 'pass' : ratio >= 0.3 ? 'warn' : 'fail', `${evidenced}/${total}`);
     // experience depth: how many bullets with real content
     const bullets = (expText.match(/^\s*[•\-–*▪●]\s*\S.{25,}/gm) || []).length;
     add('depth', 8, bullets >= 6 || (expText.length > 1200 && !/^\s*[•\-–*]/m.test(expText)) ? 'pass' : bullets >= 3 || expText.length > 600 ? 'warn' : 'fail', `${bullets}`);
@@ -157,15 +187,16 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const score = Math.round((100 * got) / totalW);
 
   const alerts: string[] = [];
-  if (market === 'sa' && !found.has('sce')) alerts.push('sce');
-  if (market === 'eg' && !found.has('syndicate')) alerts.push('syndicate');
-  if (!found.size || ![...found.values()].some((f) => SKILL_BY_ID.get(f.id)?.cat !== 'cert')) alerts.push('no_skills');
+  const engineer = !general && (textDisc !== 'it' || engWords);
+  if (engineer && market === 'sa' && !found.has('sce')) alerts.push('sce');
+  if (engineer && market === 'eg' && !found.has('syndicate')) alerts.push('syndicate');
+  if (!general && (!found.size || ![...found.values()].some((f) => SKILL_BY_ID.get(f.id)?.cat !== 'cert'))) alerts.push('no_skills');
 
   return {
     score, checks, roles, years, level, salary, words,
     skills: [...found.values()].sort((a, b) => b.hits - a.hits),
     ranges: exp.ranges,
-    alerts, discipline,
+    alerts, discipline, general,
     model: { version: model.version, jobs_used: model.jobs_used, trained_at: model.trained_at }
   };
 }
