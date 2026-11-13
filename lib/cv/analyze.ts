@@ -34,6 +34,21 @@ function kwRegex(k: string) {
   return /[a-z]/.test(k) ? new RegExp(`(^|[^a-z0-9])${body}(?=[^a-z0-9]|$)`, 'i') : new RegExp(body);
 }
 
+/** "— Skills —", "=== EXPERIENCE ===", "■ Education ■", "Skills ———" → plain heading text (decoration only, never bullets) */
+const DECO = '[—–\\-=_~*#•▪●■◆◇★☆»«>|/\\\\\\[\\](){}:：.]';
+const DECO_BOTH = new RegExp(`^\\s*(${DECO}+)\\s*(\\S.{0,38}?)\\s*(${DECO}+)\\s*$`);
+const DECO_TAIL = new RegExp(`^\\s*([^\\d\\s—–\\-=_~*#•▪●■].{0,38}?)\\s*[—–\\-=_~*#•▪●■◆★]{2,}\\s*$`);
+export function undecorate(text: string) {
+  return text.split('\n').map((l) => {
+    const b = l.match(DECO_BOTH);
+    // both sides decorated, and the tail is real decoration (not a sentence's full stop / colon / bracket)
+    const both = b && (!/^[.:：)\]]+$/.test(b[3]) || /[(\[]/.test(b[1])) && !(b[1].length === 1 && /[-•*▪●]/.test(b[1]) && b[3].length === 1 && b[2].split(/\s+/).length > 3) ? b[2] : null;
+    const t = !both ? l.match(DECO_TAIL)?.[1] : null;
+    const h = both || t;
+    return h && h.split(/\s+/).length <= 5 && !/\d{3,}|@/.test(h) ? h.trim() : l;
+  }).join('\n');
+}
+
 /** find section headings and their positions */
 export function findSections(text: string) {
   const lines = text.split(/\n/);
@@ -47,7 +62,7 @@ export function findSections(text: string) {
       const key = Object.entries(SECTIONS).find(([, names]) => names.includes(lab))![0];
       found.push({ key, pos }); pos += raw.length + 1; continue;
     }
-    if (line && line.length <= 40) {
+    if (line && line.length <= 40 && !/^\s*[•\-–—*▪●○◦>]\s*\S/.test(raw)) {
       for (const [key, names] of Object.entries(SECTIONS)) {
         if (names.some((n) => line === n || (line.startsWith(n) && line.length - n.length <= 12) || (line.endsWith(n) && line.length - n.length <= 14))) {
           found.push({ key, pos });
@@ -79,17 +94,18 @@ export function levelFor(y: number): Level {
 
 /** the person's own skills list, as written (stops at the next heading such as Languages / Certifications) */
 export function listedSkills(text: string): string[] {
+  text = undecorate(text);
   const sections = findSections(text);
   const st = sections.find((x) => x.key === 'skills');
   if (!st) return [];
   const nx = sections.filter((x) => x.pos > st.pos).sort((a, b) => a.pos - b.pos)[0]?.pos ?? text.length;
   const lines = text.slice(st.pos, nx).split('\n').slice(1);
-  const stop = lines.findIndex((l) => /^\s*(languages?|اللغات|certifications?|courses|training|hobbies|interests|references|personal|الشهادات|الدورات|الهوايات)\b\s*:?\s*$/i.test(l) || /^\s*(languages?|اللغات)\s*[:：]/i.test(l));
+  const stop = lines.findIndex((l) => /^\s*(languages?|اللغات|certifications?|courses|training|hobbies|interests|references|personal|الشهادات|الدورات|الهوايات)(?=\s|:|：|$)\s*[:：]?\s*$/i.test(l) || /^\s*(languages?|اللغات)\s*[:：]/i.test(l));
   return [...new Set((stop >= 0 ? lines.slice(0, stop) : lines).join('\n').split(/[,،|•·;\n]+|\s{2,}/).map((x) => x.replace(/^[\s\-–*▪●]+/, '').trim()).filter((x) => x.length > 1 && x.length < 40))];
 }
 
 export function analyzeCv(rawText: string, market: Market, pages = 0, model: AtsModel = defaultModel(), opts: { general?: boolean } = {}): CvResult {
-  const text = rawText.replace(/\r/g, '').replace(/[ \t]+/g, ' ');
+  const text = undecorate(rawText.replace(/\r/g, '').replace(/[ \t]+/g, ' '));
   const lower = text.toLowerCase();
   const words = (text.match(/[\p{L}\p{N}][\p{L}\p{N}'’.+#&-]*/gu) || []).length;
   const sections = findSections(text);
@@ -124,8 +140,10 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const ENG_DISC = ['mep', 'mech', 'civil', 'elec', 'arch', 'survey', 'process', 'petroleum', 'automation', 'telecom', 'biomedical'];
   const engWords = /\b(hvac|mep|plumbing|fire\s*(?:fighting|protection|alarm)|revit|autocad|navisworks|site engineer|technical office|shop drawings?|civil|structural|electrical|mechanical)\b|مهندس|هندس[هة]|تكييف|حريق|صحي/i.test(text);
   const textDisc = ds.best >= 3 ? ds.top : null; // from the CV itself, not from the closest MEP role
+  const engCue = engWords || /\bengineer(?:s|ing)?\b/i.test(text) || (!!textDisc && ENG_DISC.includes(textDisc));
+  const itCv = textDisc === 'it' || (top.role.disc === 'it' && top.pct >= 30);
   // opts.general keeps a rewritten CV in the same mode as the original it came from
-  const general = opts.general ?? (top.pct < 30 && !engWords && (!textDisc || !ENG_DISC.includes(textDisc)));
+  const general = opts.general ?? (!engCue && !itCv);
   if (general) (salary as CvResult['salary']).unclear = true;
 
   /* ---- ATS checks ---- */
@@ -187,7 +205,7 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const score = Math.round((100 * got) / totalW);
 
   const alerts: string[] = [];
-  const engineer = !general && (textDisc !== 'it' || engWords);
+  const engineer = !general && engCue && textDisc !== 'it';
   if (engineer && market === 'sa' && !found.has('sce')) alerts.push('sce');
   if (engineer && market === 'eg' && !found.has('syndicate')) alerts.push('syndicate');
   if (!general && (!found.size || ![...found.values()].some((f) => SKILL_BY_ID.get(f.id)?.cat !== 'cert'))) alerts.push('no_skills');

@@ -211,8 +211,28 @@ export function suggestCity(raw: string): NameHint {
   return null;
 }
 
+/** common job titles outside engineering, matched as whole phrases before the engineering title words */
+const GENERAL_TITLES: [string, string][] = [
+  ['محاسب اول', 'Senior Accountant'], ['محاسب أول', 'Senior Accountant'], ['محاسب تكاليف', 'Cost Accountant'], ['رئيس حسابات', 'Chief Accountant'], ['مدير مالي', 'Finance Manager'], ['مراجع حسابات', 'Auditor'], ['محلل مالي', 'Financial Analyst'], ['محاسب', 'Accountant'],
+  ['مدير مبيعات', 'Sales Manager'], ['مشرف مبيعات', 'Sales Supervisor'], ['مندوب مبيعات', 'Sales Representative'], ['مسؤول مبيعات', 'Sales Executive'], ['استشاري مبيعات', 'Sales Consultant'],
+  ['اخصائي موارد بشريه', 'HR Specialist'], ['أخصائي موارد بشرية', 'HR Specialist'], ['مدير موارد بشريه', 'HR Manager'], ['مسؤول توظيف', 'Recruiter'], ['موارد بشريه', 'HR Specialist'],
+  ['اخصائي تسويق', 'Marketing Specialist'], ['مدير تسويق', 'Marketing Manager'], ['تسويق رقمي', 'Digital Marketing Specialist'], ['مسوق', 'Marketing Specialist'],
+  ['مدرس لغه انجليزيه', 'English Teacher'], ['مدرس لغة إنجليزية', 'English Teacher'], ['مدرس رياضيات', 'Math Teacher'], ['مدرس', 'Teacher'], ['مدرسه', 'Teacher'], ['معلم', 'Teacher'], ['معلمه', 'Teacher'],
+  ['ممرضه', 'Nurse'], ['ممرض', 'Nurse'], ['صيدلي', 'Pharmacist'], ['طبيب ممارس عام', 'General Practitioner'], ['طبيب اسنان', 'Dentist'], ['طبيب', 'Doctor'], ['اخصائي علاج طبيعي', 'Physiotherapist'],
+  ['محامي', 'Lawyer'], ['مستشار قانوني', 'Legal Counsel'], ['صحفي', 'Journalist'], ['محرر', 'Editor'], ['مترجم', 'Translator'],
+  ['محلل بيانات', 'Data Analyst'], ['مبرمج', 'Software Developer'], ['مطور ويب', 'Web Developer'], ['مطور', 'Software Developer'], ['مصمم جرافيك', 'Graphic Designer'], ['مصمم', 'Designer'],
+  ['مشرف خدمه عملاء', 'Customer Service Supervisor'], ['خدمه عملاء', 'Customer Service Representative'], ['موظف استقبال', 'Receptionist'], ['سكرتير تنفيذي', 'Executive Assistant'], ['سكرتيره', 'Secretary'], ['سكرتير', 'Secretary'], ['مساعد اداري', 'Administrative Assistant'],
+  ['مسؤول مشتريات', 'Procurement Officer'], ['اخصائي مشتريات', 'Procurement Specialist'], ['منسق لوجستي', 'Logistics Coordinator'], ['امين مخزن', 'Storekeeper'], ['مخطط سلاسل امداد', 'Supply Chain Planner'],
+  ['شيف', 'Chef'], ['طباخ', 'Cook'], ['كاشير', 'Cashier'], ['مدير فرع', 'Branch Manager'], ['خدمه العملاء', 'Customer Service Representative']
+];
+
 export function suggestTitle(raw: string): NameHint {
   if (!hasAr(raw)) return null;
+  {
+    const g = fold(raw).trim();
+    const hit = [...GENERAL_TITLES].sort((a, b) => b[0].length - a[0].length).find(([ar]) => g === fold(ar) || g.startsWith(fold(ar) + ' ') || g.endsWith(' ' + fold(ar)) || g.includes(' ' + fold(ar) + ' '));
+    if (hit && !/مهندس|هندس/.test(g)) return { value: hit[1], known: true };
+  }
   let f = fold(raw);
   const words: string[] = [];
   let role = '';

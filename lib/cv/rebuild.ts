@@ -11,7 +11,7 @@ import { findSkills } from '@/lib/ats/match';
 import { SKILL_BY_ID, type Cat } from '@/lib/ats/taxonomy';
 import { ROLES, LEVELS, type Market, type Level } from './data';
 import { arabicToEnglish } from './speech';
-import { listedSkills } from './analyze';
+import { listedSkills, undecorate } from './analyze';
 import { analyzeCv } from './analyze';
 import { suggestTitle, suggestCompany, suggestCity, transliterate } from './names';
 
@@ -70,6 +70,8 @@ const WEAK_START: [RegExp, string][] = [
   [/^monitoring\s+/i, 'Monitored '], [/^updating\s+/i, 'Updated '], [/^running\s+/i, 'Ran '], [/^resolving\s+/i, 'Resolved ']
 ];
 
+/** a list item ("- Training", "• Software") is content, never a section heading */
+const BULLET = /^\s*[•\-–—*▪●○◦>]\s*\S/;
 const clean = (s: string) => s.replace(/^[\s•\-–—*▪●○◦>]+/, '').replace(/\s+/g, ' ').trim();
 const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
@@ -161,6 +163,7 @@ function splitHeader(lines: string[]): { title: string; company: string; locatio
 }
 
 export function parseCv(text: string): CvModel {
+  text = undecorate(text);
   const t = text.replace(/\r/g, '').replace(/[–—]/g, '–').replace(/ /g, ' ');
   const lines = t.split('\n').map((l) => l.replace(/\s+$/, ''));
   const exp = extractExperience(text);
@@ -203,10 +206,10 @@ export function parseCv(text: string): CvModel {
   lines.forEach((raw, i) => {
     const l = clean(raw).replace(/[:：\-–\s]+$/, '');
     if (inline[i]) cur = inline[i].key;
-    else if (l && l.length <= 45) for (const k in HEAD) if (HEAD[k].test(l)) { cur = k; break; }
+    else if (l && l.length <= 45 && !BULLET.test(raw)) for (const k in HEAD) if (HEAD[k].test(l)) { cur = k; break; }
     sec.push(cur);
   });
-  const headingLine = (i: number) => { if (inline[i]) return true; const l = clean(lines[i]).replace(/[:：\-–\s]+$/, ''); return !!l && l.length <= 45 && Object.values(HEAD).some((re) => re.test(l)); };
+  const headingLine = (i: number) => { if (inline[i]) return true; if (BULLET.test(lines[i])) return false; const l = clean(lines[i]).replace(/[:：\-–\s]+$/, ''); return !!l && l.length <= 45 && Object.values(HEAD).some((re) => re.test(l)); };
 
   // experience entries anchored on work date lines
   const experience: Entry[] = [];
@@ -371,7 +374,7 @@ export function buildSummary(m: CvModel, years: number, roleId: string, level: L
     ? leadsAny ? 'Experienced in leading and developing teams.' : 'Focused on accuracy, quality and on-time delivery.'
     : leads
     ? 'Experienced in leading and supervising engineering teams.'
-    : role?.disc === 'it' ? 'Focused on clean code, testing and on-time delivery.'
+    : role?.disc === 'it' && /develop|software|programm|front|back|full.?stack|devops/i.test(title) ? 'Focused on clean code, testing and on-time delivery.'
     : role?.disc === 'mep' ? 'Focused on coordinated, code-compliant work delivered on schedule.'
     : 'Focused on quality, coordination and on-time delivery.';
   // keep the candidate's own quantified achievement from the old summary (numbers are what recruiters scan for)
@@ -469,7 +472,16 @@ export function englishize(m: CvModel): CvModel {
 
 export function rebuildCv(text: string, market: Market, roleId: string, years: number, level: Level, general = false) {
   const m = englishize(parseCv(text));
-  if (general) { const own = listedSkills(text); if (own.length) m.skills = { other: own }; }
+  {
+    // the person's own skills must all survive, in their own words (a group label like "Programming languages" hides "TypeScript")
+    const own = listedSkills(text).filter((x) => !/[\u0600-\u06FF]/.test(x));
+    if (general) { if (own.length) m.skills = { other: own }; }
+    else {
+      const have = Object.values(m.skills).flat().join(' | ').toLowerCase();
+      const miss = own.filter((x) => !have.includes(x.toLowerCase()));
+      if (miss.length) m.skills = { ...m.skills, other: [...new Set([...(m.skills.other || []), ...miss])].slice(0, 16) };
+    }
+  }
   let summary = buildSummary(m, years, roleId, level, market, general);
   // the person's own summary often holds a hard fact ("managing MEP works for a 45-building community"): keep it
   const own = m.summary.join(' ').split(/(?<=[.!])\s+/).find((x) => /\d/.test(x) && !/[\u0600-\u06FF]/.test(x) && !/\b\d+\+?\s*years?\b/i.test(x) && x.length < 220);

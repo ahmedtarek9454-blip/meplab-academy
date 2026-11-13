@@ -157,8 +157,13 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
 
         {noGain && (
           <div role="status" className="rounded-sheet border-[1.5px] border-ink p-5 leading-7">
+            {res.general && /[\u0600-\u06FF]/.test(text) ? (<>
+            <div className="font-bold text-ink">{locale === 'ar' ? 'التعديل الأوتوماتيك للـ CV العربي متاح للمهندسين بس' : 'Automatic rewriting of Arabic CVs covers engineering only'}</div>
+            <p className="mt-1 text-ink-soft">{locale === 'ar' ? 'الترجمة الأوتوماتيك عندنا مبنية على مصطلحات الهندسة، فمش هتطلع نسخة إنجليزي كويسة لتخصصك. اكتب الـ CV بالإنجليزي وافحصه تاني، والتعديل هيشتغل عليه. ومحسبناش المحاولة.' : 'Our automatic translation is built on engineering terms, so it can\'t produce a good English version for your field. Write the CV in English and check it again to get the rewrite. This attempt was not counted.'}</p>
+            </>) : (<>
             <div className="font-bold text-ink">{locale === 'ar' ? 'الـ CV بتاعك أقوى من النسخة الأوتوماتيك' : 'Your CV already beats the automatic version'}</div>
             <p className="mt-1 text-ink-soft">{locale === 'ar' ? 'جرّبنا نعيد ترتيبه، ونتيجته في الـ ATS كانت هتقل، فمش هنقترحها عليك ومحسبناش المحاولة. ركّز على التعديلات اللي فوق في التقرير.' : 'We tried rebuilding it and its ATS score would drop, so we are not suggesting it and this attempt was not counted. Focus on the fixes in the report above.'}</p>
+            </>)}
           </div>
         )}
 

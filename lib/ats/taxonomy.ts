@@ -72,7 +72,7 @@ const MEP_SKILLS: Skill[] = [
   s('dynamo', 'Dynamo / scripting', 'software', ['dynamo', 'pyrevit', 'revit api', 'c#', 'python scripting', 'add-in', 'addin', 'plugin development'], { bim: 2 }),
   s('cde', 'BIM 360 / ACC / CDE', 'software', ['bim 360', 'bim360', 'acc', 'autodesk construction cloud', 'common data environment', 'cde', 'aconex', 'procore', 'projectwise'], { bim: 2, tech_office: 1 }),
   s('primavera', 'Primavera / MS Project', 'software', ['primavera', 'p6', 'ms project', 'microsoft project'], { pm: 3, site: 1 }),
-  s('excel', 'Advanced Excel', 'software', ['excel', 'advanced excel', 'spreadsheets', 'vba', 'power bi'], { estimation: 2, pm: 1 }),
+  s('excel', 'Excel', 'software', ['excel', 'advanced excel', 'spreadsheets', 'vba'], { estimation: 2, pm: 1 }),
   s('estimating_sw', 'Take-off software', 'software', ['planswift', 'bluebeam', 'cubit', 'candy', 'costx'], { estimation: 2 }),
   s('cmms', 'CMMS', 'software', ['cmms', 'maximo', 'sap pm', 'cafm', 'work order', 'work orders'], { fm: 3 }),
   s('crm', 'CRM', 'software', ['crm', 'salesforce', 'hubspot'], { sales: 2 }),
