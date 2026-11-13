@@ -14,8 +14,9 @@ export default async function Header() {
     { href: '/courses', label: t.nav_courses },
     { href: '/cv-check', label: t.nav_cv },
     { href: '/cv-builder', label: locale === 'ar' ? 'اعمل CV' : 'Build a CV' },
+    { href: '/at-tools', label: 'AT Tools' },
     ...(JOBS_ENABLED ? [{ href: '/jobs', label: t.nav_jobs }] : []),
-    ...(SUPABASE_READY ? [{ href: '/download', label: t.nav_download }, { href: '/tools', label: t.nav_tools }] : []),
+    ...(SUPABASE_READY ? [{ href: '/download', label: t.nav_download }] : []),
     { href: '/#about', label: t.about_tag },
     ...(user ? [{ href: '/profile', label: t.nav_profile }] : []),
     ...(isAdmin ? [{ href: '/admin', label: t.nav_admin, cls: 'text-brand-amber' }] : [])

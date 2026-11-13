@@ -6,7 +6,7 @@ export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
-  const pages = ['', '/courses', '/cv-check', '/cv-builder', ...(JOBS_ENABLED ? ['/jobs'] : [])].map((p) => ({
+  const pages = ['', '/courses', '/cv-check', '/cv-builder', '/at-tools', ...(JOBS_ENABLED ? ['/jobs'] : [])].map((p) => ({
     url: `${base}${p}`, changeFrequency: (p === '/jobs' ? 'daily' : 'weekly') as any, priority: p === '' ? 1 : 0.8
   }));
   // same source as the course pages (database, or the built-in catalog until it is connected)

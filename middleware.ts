@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from 'next/server';
  * Members-only areas (كل حاجة محتاجة حساب): a visitor without a session is sent to /login?next=…
  * Public: home, course list, each course page (free intro video, contact, waitlist), /cv-check and auth pages.
  */
-const MEMBERS_ONLY = [/^\/courses\/[^/]+\/tasks/, /^\/download/, /^\/jobs/, /^\/tools/, /^\/checkout/, /^\/dashboard/, /^\/profile/, /^\/admin/];
+const MEMBERS_ONLY = [/^\/courses\/[^/]+\/tasks/, /^\/download/, /^\/jobs/, /^\/checkout/, /^\/dashboard/, /^\/profile/, /^\/admin/];
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   if (!url || !key) {
     // accounts can't work without the database keys: send sign-in and member pages to the CV checker
     const p = request.nextUrl.pathname;
-    if (/^\/(login|signup|dashboard|profile|checkout|admin|download|tools|reset|auth)(\/|$)/.test(p) || MEMBERS_ONLY.some((re) => re.test(p))) {
+    if (/^\/(login|signup|dashboard|profile|checkout|admin|download|reset|auth)(\/|$)/.test(p) || MEMBERS_ONLY.some((re) => re.test(p))) {
       const to = request.nextUrl.clone(); to.pathname = '/cv-check'; to.search = '';
       return NextResponse.redirect(to);
     }
@@ -58,5 +58,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|logo.svg|ocr/|api/|__forms\.html|.*\\.(?:png|jpg|jpeg|svg|webp|wasm|gz|js)$).*)']
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|logo.svg|ocr/|api/|__forms\.html|.*\\.(?:png|jpg|jpeg|svg|webp|wasm|gz|js|exe|mp4)$).*)']
 };

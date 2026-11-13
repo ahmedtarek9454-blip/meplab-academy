@@ -10,9 +10,9 @@ export default async function Footer() {
   const wa = process.env.NEXT_PUBLIC_WHATSAPP;
   const fb = process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://facebook.com/MEPLAB.EGY';
   const links = [
-    ['/courses', t.nav_courses], ['/cv-check', t.nav_cv], ['/cv-builder', t.nav_courses === 'Courses' ? 'Build a CV' : 'اعمل CV'],
+    ['/courses', t.nav_courses], ['/cv-check', t.nav_cv], ['/cv-builder', t.nav_courses === 'Courses' ? 'Build a CV' : 'اعمل CV'], ['/at-tools', 'AT Tools'],
     ...(JOBS_ENABLED && SUPABASE_READY ? [['/jobs', t.nav_jobs]] : []),
-    ...(SUPABASE_READY ? [['/download', t.nav_download], ['/tools', t.nav_tools], ['/profile', t.nav_profile]] : []), ['/#about', t.about_tag]
+    ...(SUPABASE_READY ? [['/download', t.nav_download], ['/profile', t.nav_profile]] : []), ['/#about', t.about_tag]
   ];
   return (
     <footer className="border-t-[1.5px] border-ink bg-white text-ink-soft">
