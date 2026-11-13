@@ -97,7 +97,7 @@ const NOUN_VERB: [RegExp, string][] = [
   [/review/i, 'Reviewed'], [/modell?ing/i, 'Modelled'], [/drafting/i, 'Drafted'], [/pricing/i, 'Priced'], [/preparation/i, 'Prepared'],
   [/inspection/i, 'Inspected'], [/commissioning/i, 'Commissioned'], [/estimation/i, 'Estimated'], [/tracking/i, 'Tracked'], [/follow[\s-]*up/i, 'Tracked']
 ];
-const BASE_VERBS = 'prepare|calculate|coordinate|track|sell|visit|collect|fill|participate|perform|follow|manage|support|attend|issue|submit|review|update|design|supervise|check|select|size|model|draft|install|test|commission|inspect|approve|train|lead|handle|monitor|estimate|price|measure|maintain|operate|assist|develop|create|build|run|respond|upload|obtain|ensure|conduct|deliver|implement|organize|organise|plan|schedule|negotiate|present|propose|resolve|liaise|communicate|achieve|reduce|increase|improve|produce|execute|study|analyse|analyze|evaluate|verify|witness|receive|issue|raise|close|follow-up';
+const BASE_VERBS = 'control|lead|prepare|calculate|coordinate|track|sell|visit|collect|fill|participate|perform|follow|manage|support|attend|issue|submit|review|update|design|supervise|check|select|size|model|draft|install|test|commission|inspect|approve|train|lead|handle|monitor|estimate|price|measure|maintain|operate|assist|develop|create|build|run|respond|upload|obtain|ensure|conduct|deliver|implement|organize|organise|plan|schedule|negotiate|present|propose|resolve|liaise|communicate|achieve|reduce|increase|improve|produce|execute|study|analyse|analyze|evaluate|verify|witness|receive|issue|raise|close|follow-up';
 /** "Design of …", "Heat load calculation for …", "Prepare …" → a past-tense action verb first */
 function actionFirst(b: string) {
   let x = b.replace(/^(?:occasionally|also|daily|weekly|regularly|mainly|actively|directly)\s+/i, '').replace(/^am\s+/i, '');
@@ -106,7 +106,8 @@ function actionFirst(b: string) {
   if (new RegExp(`^(${BASE_VERBS})$`, 'i').test(first) && !/^\w+\s+(of|for)\b/i.test(x)) return pastOf(first) + x.slice(first.length);
   // a noun phrase whose head is an action noun within the first few words
   const m = x.match(/^((?:[\w/&+().'-]+\s+){0,4}?)(testing\s+(?:and|&)\s+commissioning|design|calculations?|selection|sizing|supervision|installation|execution|coordination|review|modell?ing|drafting|pricing|preparation|inspection|commissioning|estimation|tracking|follow[\s-]*up)\b(?:\s+(of|for|on))?\s*(.*)$/i);
-  if (m && !/^(as|i|we|the)\b/i.test(x)) {
+  const pastFirst = /^[a-z]+ed\b/i.test(x) || new RegExp(`^(${Object.values(IRREG).join('|')})\\b`, 'i').test(x);
+  if (m && !pastFirst && !/^(as|i|we|the)\b/i.test(x)) {
     const verb = NOUN_VERB.find(([re]) => re.test(m[2]))![1];
     const pre = m[1].trim().replace(/^(the|a|an)\s+/i, '');
     const prep = m[3] ? ` ${m[3]} ` : ' ';
@@ -118,7 +119,7 @@ function actionFirst(b: string) {
     return out.replace(/\s+/g, ' ').replace(/\s+([,;:])/g, '$1').trim();
   }
   // documents the person produced: "Quantity take-off of …", "Monthly payment applications …" → "Prepared …"
-  if (/^((?:[\w/&+()-]+\s+){0,3})(take-?offs?|boqs?|submissions?|submittals?|reports?|applications?|valuations?|drawings?|offers?|quotations?)\b/i.test(x) && !/^(as|i|we)\b/i.test(x))
+  if (!pastFirst && /^((?:[\w/&+()-]+\s+){0,3})(take-?offs?|boqs?|submissions?|submittals?|reports?|applications?|valuations?|drawings?|offers?|quotations?)\b/i.test(x) && !/^(as|i|we)\b/i.test(x))
     return 'Prepared ' + x[0].toLowerCase() + x.slice(1);
   return x;
 }
@@ -129,6 +130,9 @@ export function polishBullet(raw: string) {
   for (const [re, rep] of WEAK_START) { if (re.test(b)) { b = rep + b.replace(re, ''); break; } }
   b = b.replace(/\b(i|we)\s+(am|was|were|have|had)\b\s*/gi, '').replace(/^\s*(and|also|then)\s+/i, '');
   if (!WEAK_START.some(([re]) => re.test(clean(raw)))) b = actionFirst(b);
+  // keep the tense consistent inside the line: "Prepared X and monitor Y; prepare Z" → past throughout
+  if (/^[A-Z][a-z]+ed\b|^(Led|Built|Ran|Drew|Wrote|Sold|Made|Held|Kept|Met|Sent|Oversaw|Cut|Set)\b/.test(b))
+    b = b.replace(new RegExp(`(\\band|;|,)\\s+(${BASE_VERBS})\\b(?!\\s+(?:of|for)\\b)`, 'gi'), (_m, j, v) => `${j} ${pastOf(v).toLowerCase()}`);
   b = b.replace(/\bmy\b/gi, 'the').replace(/\bour\b/gi, 'the').replace(/\s+/g, ' ').trim();
   b = cap(b);
   // normalise common tokens
@@ -172,11 +176,17 @@ export function parseCv(text: string): CvModel {
   const firstParts = (top[0] || '').split(/\s*[–—|]\s*/);
   let name = labelled || (firstParts.length > 1 && firstParts[0].split(/\s+/).length <= 5 ? firstParts[0] : '') || top.find((l) => l.split(/\s+/).length <= 5 && !/engineer|manager|coordinator|مهندس|مدير|summary|profile|[:：]/i.test(l)) || '';
   name = name.replace(/^(eng\.?|م\.|الاسم\s*:)\s*/i, '').replace(/,?\s*(pmp|leed ap|cfps|p\.?e\.?)$/i, '').trim();
+  if (name && Object.values(HEAD).some((r) => r.test(name.toLowerCase()))) name = '';
+  // OCR often drops the big name line; fall back to the email ("mahmoud.adel@…" → "Mahmoud Adel")
+  if (!name && email) { const parts = email.split('@')[0].replace(/\d+/g, '').split(/[._-]+/).filter((x) => x.length > 1); if (parts.length >= 2 && parts.length <= 4) name = parts.map((x) => x[0].toUpperCase() + x.slice(1).toLowerCase()).join(' '); }
   if (!name) name = (top[0] || '').split(/\s*[–—|,]\s*/)[0].split(/\s+/).slice(0, 4).join(' ') || 'YOUR NAME';
   const labelledPos = t.match(/^\s*(?:position|title|job title|المسمى الوظيفي)\s*[:：]\s*(.+)$/im)?.[1]?.trim();
   const headline = labelledPos || (firstParts.length > 1 ? firstParts.find((x) => /engineer|coordinator|manager|مهندس/i.test(x)) : '') || top.find((l) => l !== name && /engineer|coordinator|manager|modeler|modeller|estimator|designer|specialist|مهندس|مدير|منسق/i.test(l) && l.length < 80 && !/[:：]/.test(l)) || '';
-  const locLine = lines.slice(0, 10).map(clean).find((l) => /^(cairo|giza|alexandria|riyadh|jeddah|dammam|dubai|abu dhabi|sharjah|doha|madinah|القاهرة|الرياض|جدة|دبي)/i.test(l) || /\b(egypt|ksa|saudi arabia|uae|qatar)\b/i.test(l) && l.length < 60 && !/@/.test(l));
-  const location = locLine ? locLine.split(/\s*[|•]\s*/).find((x) => /egypt|ksa|saudi|uae|qatar|cairo|riyadh|jeddah|dubai|القاهرة|الرياض|جدة|دبي/i.test(x)) || '' : '';
+  // location: any segment of the first lines that names a city or country ("Contact: … | 6th of October City, Giza")
+  const PLACE = /\b(cairo|new cairo|nasr city|maadi|heliopolis|giza|6th of october|october city|sheikh zayed|alexandria|mansoura|tanta|zagazig|ismailia|suez|port said|hurghada|aswan|luxor|asyut|assiut|minya|sohag|beni suef|fayoum|damietta|riyadh|jeddah|dammam|khobar|al khobar|jubail|yanbu|makkah|mecca|madinah|medina|tabuk|abha|neom|dubai|abu dhabi|sharjah|ajman|doha|muscat|kuwait|manama|amman|egypt|ksa|saudi arabia|uae|qatar|oman|bahrain|jordan)\b|القاهرة|الجيزة|الإسكندرية|الاسكندرية|الرياض|جدة|الدمام|دبي|أبوظبي|مصر|السعودية/i;
+  const location = lines.slice(0, 10).map(clean).flatMap((l) => l.split(/\s*[|•·]\s*/))
+    .map((x) => x.replace(/^(contact|address|location|العنوان|المدينة)\s*[:：]\s*/i, '').trim())
+    .find((x) => PLACE.test(x) && x.length < 60 && !/@|\d{6,}|linkedin|http/i.test(x) && !/(engineer|manager|مهندس)/i.test(x)) || '';
 
   // section map
   // "المؤهل: بكالوريوس…" / "Skills: Revit, …": a heading with its content on the same line
@@ -219,6 +229,8 @@ export function parseCv(text: string): CvModel {
       const x = lines[k].trim();
       if (!x) { stopAt = k; break; }
       if (/^[•\-–*▪●○◦>]/.test(x) || x.length > 90) break;
+      // only lines that read like a job header (title / company) move to the next entry; content lines stay here
+      if (!/(engineer|coordinator|manager|modell?er|designer|estimator|supervisor|specialist|technician|draftsman|director|intern|trainee|lead|head|officer|company|co\.|consult|contract|group|ltd|llc|inc|holding|مهندس|مدير|منسق|مشرف|رسام|فني|شركة|مكتب|مجموعة)/i.test(x) && !/\s[|–—-]\s/.test(x)) break;
       stopAt = k;
     }
     const bullets: string[] = [], notes: string[] = [];
@@ -403,15 +415,15 @@ const DEGREE: [RegExp, string][] = [
   [/بكالوري?وس\s+(?:ال)?هندس[ةه]\s+(?:ال)?(?:قوى|قوي)\s+(?:ال)?ميكاني?كي[ةه]?/, 'B.Sc. Mechanical Power Engineering'], [/بكالوري?وس\s+(?:ال)?هندس[ةه]/, 'B.Sc. Engineering'],
   [/ماجستير/, 'M.Sc.'], [/دبلوم/, 'Diploma'], [/بكالوري?وس/, "Bachelor's degree"]
 ];
-const LANG: [RegExp, string][] = [[/العربي[ةه]?/, 'Arabic'], [/الانجليزي[ةه]?|الإنجليزي[ةه]?/, 'English'], [/الفرنسي[ةه]?/, 'French'], [/الالماني[ةه]?|الألماني[ةه]?/, 'German']];
+const LANG: [RegExp, string][] = [[/(?:ال)?عربي/, 'Arabic'], [/(?:ال)?[اإأ]نجليزي|[اإ]نجلش|انكليزي/, 'English'], [/(?:ال)?فرنسي/, 'French'], [/(?:ال)?[اأ]لماني/, 'German'], [/(?:ال)?[اإ]يطالي/, 'Italian'], [/(?:ال)?[اإ]سباني/, 'Spanish']];
 const LEVEL_W: [RegExp, string][] = [[/(?:اللغ[ةه]\s+)?الام|الأم|اللغة الأم/, 'Native'], [/ممتاز/, 'Excellent'], [/جيد\s+جدا/, 'Very good'], [/جيد/, 'Good'], [/متوسط/, 'Intermediate'], [/مبتدئ/, 'Basic']];
 const val = (h: { value: string }, raw: string) => (h.value && !AR.test(h.value) ? h.value : raw);
-function enLine(x: string) {
+export function enLine(x: string) {
   if (!AR.test(x)) return x;
   const t = arabicToEnglish(x).text.replace(/\b(systems)\s+(Chilled Water|VRF|VRV|DX)\b/i, '$1 ($2)');
   return AR.test(t) ? t.replace(/[\u0600-\u06FF]+/g, '').replace(/\s+/g, ' ').trim() : t;
 }
-function enEducation(x: string) {
+export function enEducation(x: string) {
   if (!AR.test(x)) return x;
   const deg = DEGREE.find(([re]) => re.test(x))?.[1] || '';
   const year = x.match(/(19|20)\d{2}/)?.[0] || '';
@@ -419,9 +431,9 @@ function enEducation(x: string) {
   const school = uni ? val(suggestCompany(uni), '') : '';
   return [deg, school, year].filter(Boolean).join(' – ') || enLine(x);
 }
-function enLanguage(x: string) {
+export function enLanguage(x: string) {
   if (!AR.test(x)) return x;
-  return x.split(/\s*[|،,\n]\s*/).map((p) => {
+  return x.split(/\s*[|،,\n]\s*|\s+[-–]\s+/).map((p) => {
     const l = LANG.find(([re]) => re.test(p))?.[1]; if (!l) return '';
     const lv = LEVEL_W.find(([re]) => re.test(p))?.[1];
     return lv ? `${l} (${lv})` : l;
@@ -431,7 +443,8 @@ export function englishize(m: CvModel): CvModel {
   const n: CvModel = { ...m };
   if (AR.test(n.name)) n.name = transliterate(n.name);
   if (AR.test(n.headline)) n.headline = val(suggestTitle(n.headline), '');
-  if (AR.test(n.location)) n.location = val(suggestCity(n.location), '');
+  if (AR.test(n.location)) n.location = val(suggestCity(n.location.split(/\s*[|•]\s*|\s+(?=\+?\d{6,})|\s+(?=\S+@)/)[0]), '');
+  n.location = n.location.replace(/\s*\S+@\S+/g, '').replace(/,\s*Misr\b/i, '').trim();
   n.summary = n.summary.filter((x) => !AR.test(x));
   n.experience = n.experience.map((e) => ({
     ...e,
@@ -450,7 +463,10 @@ export function englishize(m: CvModel): CvModel {
 
 export function rebuildCv(text: string, market: Market, roleId: string, years: number, level: Level) {
   const m = englishize(parseCv(text));
-  const summary = buildSummary(m, years, roleId, level, market);
+  let summary = buildSummary(m, years, roleId, level, market);
+  // the person's own summary often holds a hard fact ("managing MEP works for a 45-building community"): keep it
+  const own = m.summary.join(' ').split(/(?<=[.!])\s+/).find((x) => /\d/.test(x) && !/[\u0600-\u06FF]/.test(x) && !/\b\d+\+?\s*years?\b/i.test(x) && x.length < 220);
+  if (own && !summary.includes(own)) summary = `${summary} ${own.replace(/^(currently|now)\s+/i, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase())}`.replace(/\s+/g, ' ').trim();
   const changes: string[] = [];
   changes.push('headings');
   if (m.summary.length === 0) changes.push('summary_added'); else changes.push('summary_rewritten');

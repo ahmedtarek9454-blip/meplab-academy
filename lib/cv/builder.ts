@@ -3,7 +3,8 @@
  * Same rules as the rewrite: only their own facts, sharper wording, ATS layout.
  */
 import { findSkills } from '@/lib/ats/match';
-import { polishBullet, buildSummary, toText, type CvModel, type Entry } from './rebuild';
+import { polishBullet, buildSummary, toText, enEducation, enLanguage, enLine, type CvModel, type Entry } from './rebuild';
+import { transliterate } from './names';
 import { levelFor } from './analyze';
 import { ROLES, type Market } from './data';
 import { interpretLine, normalizeSpeech } from './speech';
@@ -67,12 +68,26 @@ export function totalYears(jobs: Job[]) {
   return Math.round(total * 10) / 10;
 }
 
+const PAST = /^(?:\w+ed|ran|led|built|wrote|made|took|set|ran|drew|held|won|sold|taught|brought|kept|met|oversaw|undertook)$/i;
+export function splitActions(x: string) {
+  // split only where the next piece starts with a past-tense verb; otherwise keep the joiner as it was
+  const re = /(,\s+(?:and\s+)?|\s+and\s+)/;
+  const toks = x.replace(/\.$/, '').split(re);
+  const out: string[] = [toks[0]];
+  for (let k = 1; k < toks.length; k += 2) {
+    const sep = toks[k], piece = toks[k + 1] || '';
+    if (PAST.test(piece.split(/\s+/)[0])) out.push(piece); else out[out.length - 1] += sep + piece;
+  }
+  return out.length > 1 && out.every((o) => o.split(/\s+/).length >= 3) ? out.map((o) => o.trim().replace(/^(\w)/, (c) => c.toUpperCase())) : [x];
+}
+
 export function buildFromData(d: BuilderData, asProjects = false) {
   const role = ROLES.find((r) => r.id === d.roleId);
   const jobs = d.jobs.filter((j) => j.title || j.company);
   const experience: Entry[] = jobs
     .map((j) => {
-      const spoken = jobLines(j, d.roleId).map((l) => l.text);
+      // a long run-on sentence ("modeled …, ran clash detection …, resolved …") becomes one bullet per action
+      const spoken = jobLines(j, d.roleId).map((l) => l.text).flatMap((x) => (x.split(/\s+/).length >= 14 ? splitActions(x) : [x]));
       // the person's own lines with numbers first: recruiters scan for figures
       const own = spoken.map(polishBullet).filter(Boolean).sort((a, b) => Number(/\d/.test(b)) - Number(/\d/.test(a)));
       const bullets = [...own.filter((x) => /\d/.test(x)), ...j.picks.map(polishBullet), ...own.filter((x) => !/\d/.test(x))].filter(Boolean);
@@ -99,13 +114,13 @@ export function buildFromData(d: BuilderData, asProjects = false) {
   if (extra.length) skills.other = [...(skills.other || []), ...extra];
 
   const m: CvModel = {
-    name: d.name.trim(), headline: asProjects ? role?.en || 'Engineer' : (jobs[0] ? en(jobs[0].title, suggestTitle) : '') || role?.en || '',
+    name: hasArabic(d.name) ? transliterate(d.name.trim()) : d.name.trim(), headline: asProjects ? role?.en || 'Engineer' : (jobs[0] ? en(jobs[0].title, suggestTitle) : '') || role?.en || '',
     email: d.email.trim(), phone: d.phone.trim(), linkedin: d.linkedin.trim(), location: en(d.location, suggestCity),
     summary: [], experience: asProjects ? [] : experience, projects: asProjects ? experience : undefined,
-    education: d.edu.filter((e) => e.degree || e.school).map((e) => [e.degree, e.school && en(e.school, suggestCompany), e.year].filter(Boolean).join(' – ')),
-    certifications: d.certs.split(/\n+/).map((x) => x.trim()).filter(Boolean),
+    education: d.edu.filter((e) => e.degree || e.school).map((e) => [hasArabic(e.degree) ? enEducation(e.degree).split(' – ')[0] : e.degree.trim(), e.school && en(e.school, suggestCompany), e.year].filter(Boolean).join(' – ')),
+    certifications: d.certs.split(/\n+/).map((x) => enLine(x.trim())).filter(Boolean),
     skills,
-    languages: d.languages.split(/[,،|]+/).map((x) => x.trim()).filter(Boolean),
+    languages: d.languages.split(/[,،|]+|\s+و(?=\S)/).map((x) => enLanguage(x.trim())).filter(Boolean),
     removed: []
   };
   const years = asProjects ? 0 : totalYears(jobs);
@@ -114,7 +129,7 @@ export function buildFromData(d: BuilderData, asProjects = false) {
   if (asProjects) {
     // fresh graduate: say so plainly instead of an experience line
     const e0 = d.edu.find((e) => e.degree || e.school);
-    const deg = e0?.degree.trim() || 'engineering';
+    const deg = (e0 && hasArabic(e0.degree) ? enEducation(e0.degree).split(' – ')[0] : e0?.degree.trim()) || 'engineering';
     const when = [e0?.school && en(e0.school, suggestCompany), e0?.year].filter(Boolean).join(', ');
     const t = m.headline;
     const art = /^(?:[AEIOU]|HVAC|MEP|FM\b|SCADA)/i.test(t) ? 'an' : 'a';

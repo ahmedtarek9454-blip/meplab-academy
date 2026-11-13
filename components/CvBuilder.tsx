@@ -202,7 +202,7 @@ export default function CvBuilder({ locale }: { locale: Loc }) {
 
   useEffect(() => {
     setHasMic(speechSupported());
-    try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s?.d) { setD({ ...emptyData(), ...s.d }); setStep(s.step || 0); setNoExp(!!s.noExp); } } catch {}
+    try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s?.d) { const m = ['eg', 'sa', 'ae'].includes(s.d.market) ? s.d.market : 'eg'; setD({ ...emptyData(), ...s.d, market: m }); setStep(s.step || 0); setNoExp(!!s.noExp); } } catch {}
   }, []);
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify({ d, step, noExp })); } catch {} }, [d, step, noExp]);
 

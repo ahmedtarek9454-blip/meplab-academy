@@ -46,6 +46,8 @@ const COMPANIES: [string, ...string[]][] = [
   ['Shorouk Academy', 'اكاديميه الشروق', 'معهد الشروق'],
   ['Military Technical College', 'الفنيه العسكريه', 'الكليه الفنيه العسكريه'],
   // Egypt — contractors
+  ['Zamil', 'الزامل', 'شركه الزامل', 'شركة الزامل', 'zamil'], ['Nesma & Partners', 'نسما', 'نسما وشركاه', 'nesma'], ['El Seif Engineering', 'السيف', 'شركه السيف', 'el seif'],
+  ['Saudi Binladin Group', 'بن لادن', 'مجموعه بن لادن', 'binladin'], ['Al Habtoor', 'الحبتور', 'habtoor'], ['Arabtec', 'ارابتك', 'arabtec'],
   ['Orascom Construction', 'اوراسكوم', 'اوراسكوم للانشاءات', 'اوراسكوم كونستراكشن', 'orascom'],
   ['Hassan Allam Holding', 'حسن علام', 'حسن علام القابضه', 'hassan allam'],
   ['The Arab Contractors', 'المقاولون العرب', 'المقاولين العرب', 'عثمان احمد عثمان', 'arab contractors'],

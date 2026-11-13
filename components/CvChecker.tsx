@@ -42,6 +42,7 @@ const T = {
     err_read: 'مقدرناش نقرا الملف. جرّب PDF تاني أو الصق النص.',
     err_scan: 'مقدرناش نطلّع نص مقروء من الملف ده. لو صورة، جرّب صورة أوضح وأقرب، أو صدّر الـ CV كـ PDF من Word.',
     err_empty: 'ارفع ملف الـ CV الأول (أو الصق النص).',
+    err_notcv: 'الملف ده مش شبه CV: مفيهوش خبرة ولا تعليم ولا بيانات تواصل. ارفع الـ CV بتاعك.',
     err_type: 'الصيغة دي مش مدعومة. ارفع PDF أو DOCX أو صورة (لو الملف .doc قديم، احفظه DOCX من Word).',
     score: 'نتيجة الـ ATS',
     score_good: 'ممتاز — الـ CV ده جاهز للتقديم',
@@ -103,6 +104,7 @@ const T = {
     err_read: "We couldn't read this file. Try another PDF or paste the text.",
     err_scan: "We couldn't extract readable text from this file. If it is a photo, try a clearer, closer one, or export your CV to PDF from Word.",
     err_empty: 'Upload your CV first (or paste the text).',
+    err_notcv: "This file doesn't look like a CV: no experience, education or contact details. Upload your CV.",
     err_type: 'Unsupported format. Upload a PDF, DOCX or an image (save old .doc files as DOCX in Word).',
     score: 'ATS score',
     score_good: 'Great — this CV is ready to send',
@@ -171,6 +173,18 @@ const ST: Record<CheckStatus, { icon: string; cls: string }> = {
   fail: { icon: '✕', cls: 'bg-red-100 text-red-600' }
 };
 
+/** cheap sanity check before scoring: a CV has contact details, CV sections, job dates or engineering words */
+function looksLikeCv(text: string) {
+  const x = text.toLowerCase();
+  let s = 0;
+  if (/[\w.+-]+@[\w-]+\.[\w.]{2,}/.test(x)) s++;
+  if ((x.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).some((p) => p.replace(/\D/g, '').length >= 9)) s++;
+  if (/(experience|education|skills|summary|profile|qualification|employment|الخبر|التعليم|المؤهل|المهارات)/.test(x)) s++;
+  if (/(19|20)\d{2}\s*[-–—]\s*((19|20)\d{2}|present|current|now|حتى الآن|الآن)/.test(x)) s++;
+  if (/(engineer|engineering|مهندس|هندس|revit|autocad|hvac|mep|bim|university|جامع)/.test(x)) s++;
+  return s >= 2 && x.replace(/\s+/g, ' ').split(' ').length >= 25;
+}
+
 async function readPdf(buf: ArrayBuffer) {
   // Run pdf.js on the main thread (no Web Worker) — works in every browser,
   // sandboxed previews and file:// pages. CVs are small, so speed is fine.
@@ -196,9 +210,11 @@ async function readPdf(buf: ArrayBuffer) {
  * top-to-bottom so that sidebar lines never interleave with experience lines.
  */
 function layoutText(items: any[], pageWidth: number) {
-  type It = { str: string; x: number; y: number; w: number; h: number };
-  const its: It[] = items.filter((it) => it.str && it.str.trim()).map((it) => ({ str: it.str, x: it.transform[4], y: it.transform[5], w: it.width, h: Math.abs(it.transform[3]) || 10 }));
+  type It = { str: string; x: number; y: number; w: number; h: number; rtl: boolean };
+  // NFKC turns Arabic presentation forms (ﻲ ﻠ ﻋ…) that many PDFs store back into normal letters
+  const its: It[] = items.filter((it) => it.str && it.str.trim()).map((it) => { const str = String(it.str).normalize('NFKC'); return { str, x: it.transform[4], y: it.transform[5], w: it.width, h: Math.abs(it.transform[3]) || 10, rtl: /[\u0600-\u06FF]/.test(str) }; }); // digits and dashes join the Latin runs so "2019 – 2021" keeps its order
   if (!its.length) return '';
+  const pageRtl = its.filter((it) => it.rtl).length > its.length * 0.5;
 
   // find a column gap: a vertical band (>= 4% of width) crossed by almost no text
   const bins = 100, cover = new Array(bins).fill(0);
@@ -227,11 +243,33 @@ function layoutText(items: any[], pageWidth: number) {
       if (last && Math.abs(last[0].y - it.y) <= Math.max(3, last[0].h * 0.5)) last.push(it);
       else lines.push([it]);
     }
-    return lines.map((ln) => ln.sort((a, b) => a.x - b.x).map((it, i, arr) => {
-      if (i === 0) return it.str;
-      const prev = arr[i - 1], gap = it.x - (prev.x + prev.w);
-      return (gap > prev.h * 0.25 ? ' ' : '') + it.str; // glue split glyph runs, space real gaps
-    }).join('')).join('\n');
+    return lines.map((ln) => {
+      // a line with no letters at all ("2019 – 2021") follows the page: in an Arabic CV it reads right to left
+      const rtl = ln.filter((it) => it.rtl).length > ln.length / 2 || (pageRtl && !ln.some((it) => /[A-Za-z]/.test(it.str)));
+      if (!rtl) return ln.sort((a, b) => a.x - b.x).map((it, i, arr) => {
+        if (i === 0) return it.str;
+        const prev = arr[i - 1], gap = it.x - (prev.x + prev.w);
+        return (gap > prev.h * 0.25 ? ' ' : '') + it.str; // glue split glyph runs, space real gaps
+      }).join('');
+      // Arabic line: read right to left; keep runs of Latin words (Revit, Chilled Water) in their own order
+      const desc = [...ln].sort((a, b) => b.x - a.x);
+      // bidi: only Latin words (and digits/dashes sitting between two Latin words) form a left-to-right run;
+      // numbers on their own ("2019 – 2021") are ordered right to left like the Arabic around them
+      const isL = (it?: It) => !!it && /[A-Za-z]/.test(it.str);
+      const runs: It[][] = [];
+      desc.forEach((it, i) => {
+        const last = runs[runs.length - 1];
+        const joinsL = isL(it) || (!it.rtl && isL(desc[i - 1]) && isL(desc.slice(i + 1).find((x) => isL(x) || x.rtl)));
+        if (last && joinsL && isL(last[0])) last.push(it); else runs.push([it]);
+      });
+      const ordered = runs.flatMap((r) => (isL(r[0]) ? [...r].sort((a, b) => a.x - b.x) : r));
+      return ordered.map((it, i, arr) => {
+        if (i === 0) return it.str;
+        const prev = arr[i - 1];
+        const gap = prev.rtl && it.rtl ? prev.x - (it.x + it.w) : Math.abs(it.x - (prev.x + prev.w)) < Math.abs(prev.x - (it.x + it.w)) ? it.x - (prev.x + prev.w) : prev.x - (it.x + it.w);
+        return (gap > prev.h * 0.2 ? ' ' : '') + it.str;
+      }).join('');
+    }).join('\n');
   }).join('\n\n');
 }
 
@@ -346,6 +384,9 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         if (isImg) setOcrUsed(true);
       }
       if (!text || text.trim().length < 20) { setBusy(''); return setErr(t.err_scan); }
+      // a file that isn't a CV (recipe, invoice, empty template) gets a clear message instead of a fake score
+      try { (window as any).__lastCvText = text; } catch {} // lets support reproduce a reading problem
+      if (!looksLikeCv(text)) { setBusy(''); return setErr(t.err_notcv); }
       // no sign-up needed: the check runs for everyone; members also get it saved to their profile
       const u = user === undefined ? await currentUser().catch(() => null) : user;
       if (user === undefined) setUser(u);

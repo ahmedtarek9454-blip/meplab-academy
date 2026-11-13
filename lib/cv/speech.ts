@@ -138,7 +138,12 @@ const AR_VERBS: [RegExp, string][] = [
   [/^(?:انا\s+)?(?:اتدربت|تدربت|اخدت تدريب|خدت تدريب)\s+(?:عل[ىي]|في|فى)\s+/, 'Trained in '],
   [/^(?:انا\s+)?(?:كنت|اشتغلت)\s+(?=(?:مهندس|مدير|منسق|رسام|فني|مشرف|مساعد)\s)/, 'Worked as '],
   [/^(?:انا\s+)?(?:اشتغلت|كنت شغال|اشتغل)\s+(?=at\s)/, 'Worked '],
+  [/^(?:كنت|كان)\s+(?:مسؤول|مسئول|المسؤول|المسئول)\s+(?:عن|عل[ىي]|علي)\s+تصميم\s+/, 'Led the design of '],
   [/^(?:كنت|كان)\s+(?:مسؤول|مسئول|المسؤول|المسئول)\s+(?:عن|عل[ىي]|علي)\s+/, 'Responsible for '],
+  [/^(?:كنت\s+)?(?:بدير|بادير|ادرت|بدّير)\s+/, 'Managed '],
+  [/^(?:كنت\s+)?(?:بتابع|تابعت)\s+(?=\d+\s+(?:فني|فنيين|عامل|عمال|مهندس|مهندسين|رسام|رسامين))/, 'Supervised '],
+  [/^(?:كنت\s+)?(?:بسعر|بسعّر|سعرت|سعّرت)\s+/, 'Priced '],
+  [/^(?:كنت\s+)?(?:بستلم|استلمت)\s+(?:ال)?(?:اختبارات|تستات|تست)\s+مع\s+/, 'Witnessed testing with '],
   [/^(?:كنت\s+)?(?:ماسك|مسكت)\s+(?:فريق|تيم)\s+(?:من\s+)?/, 'Led a team of '],
   [/^(?:كنت\s+)?(?:بقود|قدت|قائد)\s+(?:فريق|تيم)\s+(?:من\s+)?/, 'Led a team of '],
   [/^(?:كنت\s+)?(?:ماسك|مسكت|استلمت)\s+(?:مشروع|المشروع)\s+/, 'Managed the project of '],
@@ -156,7 +161,7 @@ const AR_VERBS: [RegExp, string][] = [
   [/^(?:كنت\s+)?(?:بعمل|عملت)\s+الموديل\s*/, 'Built the BIM model '],
   [/^(?:كنت\s+)?(?:بعمل|عملت)\s+(?:موديل|موديلنج|مودلينج)\s+/, 'Modelled '],
   [/^(?:كنت\s+)?(?:بعمل|عملت)\s+(?:حصر(?:\s+(?:ال)?كميات)?|كميات)\s+/, 'Prepared quantity take-offs for '],
-  [/^(?:كنت\s+)?(?:بعمل|عملت)\s+(?:تست|تستات|اختبار|اختبارات)\s+(?:ال)?ضغط\s+/, 'Performed pressure tests '],
+  [/^(?:كنت\s+)?(?:بعمل|عملت)\s+(?:تست|تستات|اختبار|اختبارات)\s+(?:ال)?ضغط(?:\s+|$)/, 'Performed pressure tests '],
   [/^(?:كنت\s+)?(?:بعمل|عملت)\s+(?:تست|تستات|اختبار|اختبارات)\s+/, 'Performed tests '],
   [/^(?:كنت\s+)?(?:بجهز|جهزت|تجهيز|بحضر|حضرت|تحضير)\s+/, 'Prepared '],
   [/^(?:كنت\s+)?(?:بقدم|قدمت|تقديم)\s+/, 'Submitted '],
@@ -174,6 +179,8 @@ const AR_VERBS: [RegExp, string][] = [
 ];
 
 const AR_TERMS: [string, string][] = [
+  ['الدفاع المدني', 'Civil Defense'], ['الدفاع المدنى', 'Civil Defense'], ['طلمبات الحريق', 'fire pumps'], ['مضخات الحريق', 'fire pumps'], ['طلمبة الحريق', 'fire pump'],
+  ['السنه اللي فاتت', 'last year'], ['السنه الي فاتت', 'last year'], ['السنه الماضيه', 'last year'], ['كسبنا', 'won'], ['كسبت', 'won'], ['اختيار', 'selection of'], ['ميزانيه', 'budget'],
   ['أنظمة التكييف المركزي', 'central air-conditioning systems'], ['انظمة التكييف المركزي', 'central air-conditioning systems'], ['أنظمة التكييف', 'HVAC systems'], ['انظمة التكييف', 'HVAC systems'],
   ['التكييف المركزي', 'central air conditioning'], ['الأحمال الحرارية', 'cooling loads'], ['الاحمال الحراريه', 'cooling loads'], ['الأحمال', 'loads'], ['الاحمال', 'loads'],
   ['اللوحات التنفيذية', 'shop drawings'], ['اللوحات التنفيذيه', 'shop drawings'], ['المخططات التنفيذية', 'shop drawings'], ['المخططات', 'drawings'], ['اللوحات', 'drawings'],
@@ -271,6 +278,17 @@ export function arabicToEnglish(sentence: string): Translation {
   s = s.replace(/(^|\s)(و)?(ب|ل|في\s+)?(?:ال)?(مستشفي|برج|مبني|عماره|فندق|مول)(?:\s+(سكني|اداري|تجاري|حكومي|جامعي|طبي))?\s+(?:من\s+)?(\d+)\s+(?:دور|ادوار|طابق|طوابق)/g,
     (_m, pre, w, bl, b, adj, n) => `${pre}${w ? 'and ' : ''}${bl === 'ل' ? 'for ' : bl === 'ب' || (bl && bl.trim() === 'في') ? 'in ' : ''}a ${n}-floor ${adj ? ADJ[adj] + ' ' : ''}${BLD[b]}`);
   s = s.replace(/(\d+)\s+(مهندسين|فنيين|رسامين)\s+(?:جداد|جدد)/g, '$1 new $2');
+  // "كمبوند 60 فيلا" → "a 60-villa compound", "مستشفي 300 سرير" → "a 300-bed hospital", "فريق 15 مهندس" → "a team of 15 engineers"
+  s = s.replace(/(^|\s)(و)?(ب|ل)?(?:ال)?(كمبوند|مجمع)\s+(\d+)\s+(?:فيلا|فيلات|فيله)/g, (_m, pre, w, bl, _c, n) => `${pre}${w ? 'and ' : ''}${bl === 'ل' ? 'for ' : bl === 'ب' ? 'in ' : ''}a ${n}-villa compound`);
+  s = s.replace(/(^|\s)(و)?(ب|ل|في\s+)?(?:ال)?(?:مشروع\s+)?(مستشفي|فندق)\s+(\d+)\s+(?:سرير|غرفه|اوضه)/g, (_m, pre, w, bl, b, n) => `${pre}${w ? 'and ' : ''}${bl === 'ل' ? 'for ' : bl ? 'in ' : ''}a ${n}-${b === 'فندق' ? 'key hotel' : 'bed hospital'}`);
+  s = s.replace(/(?:ال)?(?:فريق|تيم)\s+(?:من\s+)?(\d+)\s+(مهندس|مهندسين|فني|فنيين|رسام|رسامين|عامل|عمال)/g, (_m, n, who) => `a team of ${n} ${/مهندس/.test(who) ? 'engineers' : /رسام/.test(who) ? 'draftsmen' : /عامل|عمال/.test(who) ? 'workers' : 'technicians'}`);
+  s = s.replace(/(^|\s)(و)?ب?ميزاني[هة]\s+(?:حوالي\s+)?(\d+)(?:\s*(مليون|الف))?(?:\s*(جنيه|ريال|درهم))?/g, (_m, pre, w, n, sc, cur) => {
+    let v = +n * (sc === 'مليون' ? 1e6 : sc === 'الف' ? 1e3 : 1);
+    const amt = v >= 1e6 ? `${+(v / 1e6).toFixed(1)} million` : v.toLocaleString('en-US');
+    return `${pre}${w ? 'and ' : ''}with a budget of ${amt}${cur ? ' ' + ({ جنيه: 'EGP', ريال: 'SAR', درهم: 'AED' } as Record<string, string>)[cur] : ''}`;
+  });
+  // a bare "ال" / "وال" before an English word ("حساب الـ fixture units"), and "و" glued to a number ("و3 خزانات")
+  s = s.replace(/(^|\s)(و)?ال\s+(?=[A-Za-z])/g, (_m, pre, w) => `${pre}${w ? 'and ' : ''}`).replace(/(^|\s)و(?=\d)/g, '$1and ');
   s = s.replace(/(\d[\d,.]*)\s*(?:الف|ألف|آلاف)?\s*متر\s*مربع/g, '$1 m²');
   let lead = '';
   // a sentence may start with "و" glued to the verb ("ورسمت", "وعملت"): drop it when the rest is a known verb
@@ -300,6 +318,10 @@ export function tidyEnglish(t: string) {
   x = x.replace(/^(Modelled|Designed|Drafted|Coordinated|Reviewed) for /, '$1 ');
   x = x.replace(/\b(a|A) (8\d*|11|18)(?=[-\s])/g, '$1n $2');
   x = x.replace(/\b(in|to|on) (design|execution|installation|supply|review|follow-up|preparation) of\b/g, '$1 the $2 of');
+  x = x.replace(/\b(\d+)\s+(key|bed|villa|room|floor|storey)\s+(hotel|hospital|compound|tower|building)\b/gi, '$1-$2 $3');
+  x = x.replace(/\bon (Elite Fire|Elite CHVAC|Pipenet|AutoSPRINK|Trace 700|TRACE|Carrier HAP|FireCAD)\b/g, 'using $1');
+  const DSC = '(?:HVAC|fire fighting|plumbing|electrical|MEP)';
+  x = x.replace(new RegExp(`\\b(tenders|works|systems|drawings|packages)\\s+(${DSC}(?:,? and ${DSC})?)\\b`, 'g'), '$2 $1');
   const TL = 'Revit|AutoCAD|Navisworks|HAP|ETABS|SAFE|Primavera P6|MS Project|Excel|DIALux|Dynamo';
   x = x.replace(new RegExp(`\\b(${TL})\\s+(?=(?:${TL})\\b)`, 'g'), '$1, ').replace(new RegExp(`, (${TL})(?!,)\\b(?![^.]*, (?:${TL})\\b)`), ' and $1');
   x = x.replace(new RegExp(`(${BUILDING_NOUN})\\s+about\\s+(\\d)`, 'gi'), '$1 of about $2');
