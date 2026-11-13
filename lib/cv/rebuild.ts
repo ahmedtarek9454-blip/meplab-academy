@@ -11,6 +11,7 @@ import { findSkills } from '@/lib/ats/match';
 import { SKILL_BY_ID, type Cat } from '@/lib/ats/taxonomy';
 import { ROLES, LEVELS, type Market, type Level } from './data';
 import { arabicToEnglish } from './speech';
+import { analyzeCv } from './analyze';
 import { suggestTitle, suggestCompany, suggestCity, transliterate } from './names';
 
 export type Entry = { title: string; company: string; location: string; dates: string; start: number; end: number; bullets: string[]; orig?: string[]; notes: string[] };
@@ -19,6 +20,8 @@ export type CvModel = {
   summary: string[]; experience: Entry[]; education: string[]; certifications: string[]; skills: Record<string, string[]>; languages: string[];
   removed: string[]; // personal-data lines dropped for ATS hygiene
   projects?: Entry[]; // academic projects & training (CV builder, fresh graduates)
+  keyProjects?: string[]; // the person's own "Projects" section, kept as written
+  additional?: string[]; // anything else worth keeping that has no standard section
 };
 
 const MONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -69,6 +72,24 @@ const WEAK_START: [RegExp, string][] = [
 const clean = (s: string) => s.replace(/^[\s•\-–—*▪●○◦>]+/, '').replace(/\s+/g, ' ').trim();
 const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
+const IRREG: Record<string, string> = { run: 'Ran', lead: 'Led', build: 'Built', do: 'Did', make: 'Made', write: 'Wrote', draw: 'Drew', take: 'Took', give: 'Gave', set: 'Set', cut: 'Cut', oversee: 'Oversaw', drive: 'Drove', teach: 'Taught', win: 'Won', hold: 'Held', keep: 'Kept', meet: 'Met', send: 'Sent' };
+function pastOf(v: string) {
+  const w = v.toLowerCase();
+  if (IRREG[w]) return IRREG[w];
+  const p = /e$/.test(w) ? w + 'd' : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + 'ied' : /^(plan|ship|stop|drop|map)$/.test(w) ? w + w.slice(-1) + 'ed' : w + 'ed';
+  return p[0].toUpperCase() + p.slice(1);
+}
+/** a long paragraph written as one block becomes separate CV lines ("… and I review …" → "Reviewed …") */
+export function splitParagraph(raw: string): string[] {
+  const x = clean(raw);
+  if (x.length < 140) return [x];
+  const COMMON = 'perform|select|prepare|coordinate|review|design|calculate|supervise|follow|manage|check|size|model|draft|install|test|commission|attend|issue|submit|estimate|lead|handle|support|update|monitor|inspect|approve|train|run|build|draw|write|create|develop|track';
+  return x.split(/(?<=[.;])\s+(?=[A-Z])|,?\s+(?:and\s+)?(?=(?:I|we)\s+also\s)|,?\s+and\s+(?=I\s)|\s+where\s+(?=I\s)|;\s+/)
+    .map((p) => p.trim().replace(/^(?:I|we)\s+(?:also\s+)?([a-z]+)\b/i, (_m, v) => (/^(am|was|were|have|had)$/i.test(v) ? v : pastOf(v)))
+      .replace(new RegExp(`\\b(and|,)\\s+(${COMMON})\\b`, 'gi'), (_m, j, v) => `${j} ${pastOf(v).toLowerCase()}`).trim())
+    .filter((p) => p.length > 12);
+}
+
 export function polishBullet(raw: string) {
   let b = clean(raw).replace(/\.+$/, '').replace(/\s+,/g, ',');
   if (!b) return '';
@@ -85,7 +106,9 @@ export function polishBullet(raw: string) {
 function splitHeader(lines: string[]): { title: string; company: string; location: string } {
   // typical: "Title – Company, City" | "Title | Company | City" | two lines: Title / Company – City
   const joined = lines.filter(Boolean).join(' | ');
-  const parts = joined.split(/\s*[|–—]\s*|\s+-\s+|\s+at\s+|\s+@\s+/i).map((x) => x.trim()).filter(Boolean);
+  let parts = joined.split(/\s*[|–—]\s*|\s+-\s+|\s+at\s+|\s+@\s+/i).map((x) => x.trim()).filter(Boolean);
+  // "Title, Company, City" on one line
+  if (parts.length === 1 && parts[0].split(/\s*,\s*/).length >= 2 && /(engineer|coordinator|manager|modell?er|designer|estimator|supervisor|specialist|technician|draftsman|مهندس)/i.test(parts[0].split(',')[0])) parts = parts[0].split(/\s*,\s*/);
   const isCompany = (x: string) => /(co\.|company|contracting|consultants?|consultancy|engineering|group|llc|ltd|inc|holding|developments?|services|systems|technologies|industries|office|bureau|شركة|مكتب|مجموعة)/i.test(x);
   const isTitle = (x: string) => /(engineer|coordinator|manager|modeler|modeller|designer|estimator|supervisor|lead|head|specialist|technician|draftsman|director|مهندس|مدير|منسق|مشرف)/i.test(x);
   const isPlace = (x: string) => /^(cairo|giza|alexandria|riyadh|jeddah|dammam|khobar|madinah|makkah|neom|dubai|abu dhabi|sharjah|doha|kuwait|muscat|egypt|ksa|saudi|uae|qatar|oman|bahrain|القاهرة|الرياض|جدة|دبي)/i.test(x) || /,\s*(egypt|ksa|saudi arabia|uae|qatar)$/i.test(x);
@@ -146,7 +169,7 @@ export function parseCv(text: string): CvModel {
     const nextLi = work[idx + 1]?.lineIdx ?? lines.length;
     // header: the date line (minus the date) + up to 3 non-empty lines above that are not bullets/headings/sidebar
     const headerLines: string[] = [];
-    const dateLineRest = clean(lines[li].replace(r.raw || '', '')).replace(/^[|–\-,:\s]+|[|–\-,:\s]+$/g, '');
+    const dateLineRest = clean(lines[li].replace(r.raw || '', '').replace(/\(\s*(?:[A-Za-z]{3,9}\.?\s+)?(?:19|20)\d{2}[^)]*\)/g, '')).replace(/[(\[]\s*[)\]]/g, '').replace(/^[|–\-,:\s]+|[|–\-,:\s]+$/g, '');
     if (dateLineRest) headerLines.push(dateLineRest);
     for (let k = li - 1, got = 0; k >= 0 && got < 3; k--) {
       const x = clean(lines[k]);
@@ -186,7 +209,8 @@ export function parseCv(text: string): CvModel {
         return `${f(r.start)} – ${now ? 'Present' : yo ? String(Math.abs(r.end - Math.round(r.end)) < 0.02 ? Math.round(r.end) - 1 : Math.floor(r.end)) : fmtDate(r.end, false)}`;
       })(),
       start: r.start, end: r.end,
-      bullets: bullets.map(polishBullet).filter(Boolean).slice(0, 8), orig: bullets.map(clean).filter(Boolean).slice(0, 8), notes
+      // short lines under an entry that read like content are bullets too; never drop the person's words
+      bullets: [...bullets, ...notes.filter((x) => x.length > 25)].flatMap(splitParagraph).map(polishBullet).filter(Boolean).slice(0, 12), orig: [...bullets, ...notes.filter((x) => x.length > 25)].flatMap(splitParagraph).filter(Boolean).slice(0, 12), notes
     });
   });
   experience.sort((a, b) => b.start - a.start);
@@ -211,7 +235,23 @@ export function parseCv(text: string): CvModel {
   const extra = skillLines.filter((x) => !findSkills(x).size && /^[A-Za-z][\w .+#-]{1,25}$/.test(x));
   if (extra.length) skills.other = [...new Set(extra)].slice(0, 12);
 
-  return { name, headline, email, phone, linkedin, location, summary, experience, education, certifications, skills, languages, removed };
+  // experience lines the entry parser didn't place (no dates nearby, odd layout): attach them to the entry above,
+  // or keep them as one entry when no dated entry was found, so nothing the person wrote is lost
+  const orphan = lines.map((l, i) => [clean(l), i] as const).filter(([l, i]) => sec[i] === 'experience' && l.length > 25 && !headingLine(i) && !used.has(i) && !PERSONAL.test(l));
+  if (orphan.length) {
+    if (!experience.length) {
+      experience.push({ title: headline || '', company: '', location: '', dates: '', start: 0, end: 0, bullets: orphan.map(([l]) => polishBullet(l)).filter(Boolean).slice(0, 12), orig: orphan.map(([l]) => l), notes: [] });
+    } else {
+      const byLine = work.map((r, idx) => ({ li: r.lineIdx!, e: experience.find((x) => x.start === r.start && x.end === r.end) })).filter((x) => x.e);
+      for (const [l, i] of orphan) {
+        const owner = [...byLine].reverse().find((x) => x.li < i)?.e || experience[experience.length - 1];
+        if (owner.bullets.length < 12 && !owner.orig?.includes(l)) { owner.bullets.push(polishBullet(l)); owner.orig?.push(l); }
+      }
+    }
+  }
+  const keyProjects = grab('projects').filter((l) => l.length > 3);
+  const additional = grab('military').filter((l) => l.length > 3);
+  return { name, headline, email, phone, linkedin, location, summary, experience, education, certifications, skills, languages, removed, keyProjects, additional };
 }
 
 /* ---------------- rebuilding ---------------- */
@@ -269,9 +309,11 @@ export function toText(m: CvModel, summary: string) {
       for (const b of e.bullets) L.push(`• ${b}`);
     }
   }
+  if (m.keyProjects?.length) L.push('', 'KEY PROJECTS', ...m.keyProjects.map((x) => `• ${x}`));
   if (m.education.length) L.push('', 'EDUCATION', ...m.education);
   if (m.certifications.length) L.push('', 'CERTIFICATIONS & TRAINING', ...m.certifications.map((c) => `• ${c}`));
   if (m.languages.length) L.push('', 'LANGUAGES', m.languages.join(' | '));
+  if (m.additional?.length) L.push('', 'ADDITIONAL INFORMATION', ...m.additional);
   return L.join('\n');
 }
 
@@ -325,6 +367,8 @@ export function englishize(m: CvModel): CvModel {
   n.education = n.education.map(enEducation).filter(Boolean);
   n.certifications = n.certifications.map(enLine).filter(Boolean);
   n.languages = n.languages.map(enLanguage).filter(Boolean);
+  n.keyProjects = n.keyProjects?.map(enLine).filter(Boolean);
+  n.additional = n.additional?.map(enLine).filter(Boolean);
   return n;
 }
 
@@ -349,5 +393,17 @@ export function rebuildCv(text: string, market: Market, roleId: string, years: n
     });
   }
   const report: RebuildReport = { changes, removed: m.removed, weakBullets: weak, entries: m.experience.length, pairs };
-  return { model: m, summary, text: toText(m, summary), report };
+  // pick the strongest honest version: if the polished rebuild scores below the original, try keeping the
+  // person's own bullet wording; the caller still refuses anything that scores below the original
+  let best = { model: m, text: toText(m, summary) };
+  try {
+    const before = analyzeCv(text, market).score;
+    let score = analyzeCv(best.text, market).score;
+    if (score < before) {
+      const m2: CvModel = { ...m, experience: m.experience.map((e) => ({ ...e, bullets: (e.orig?.length ? e.orig : e.bullets).map((b) => (/[.!]$/.test(b) ? b : b + '.')) })) };
+      const t2 = toText(m2, summary); const s2 = analyzeCv(t2, market).score;
+      if (s2 > score) { best = { model: m2, text: t2 }; score = s2; }
+    }
+  } catch { /* scoring is a safety net only */ }
+  return { model: best.model, summary, text: best.text, report };
 }

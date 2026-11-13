@@ -45,9 +45,11 @@ export async function buildDocx(m: CvModel, summary: string): Promise<Blob> {
       for (const b of e.bullets) kids.push(P(b, { bullet: true, after: 30 }));
     }
   }
+  if (m.keyProjects?.length) { kids.push(H('Key Projects')); for (const x of m.keyProjects) kids.push(P(x, { bullet: true, after: 30 })); }
   if (m.education.length) { kids.push(H('Education')); for (const x of m.education) kids.push(P(x)); }
   if (m.certifications.length) { kids.push(H('Certifications & Training')); for (const x of m.certifications) kids.push(P(x, { bullet: true, after: 30 })); }
   if (m.languages.length) { kids.push(H('Languages'), P(m.languages.join('  |  '))); }
+  if (m.additional?.length) { kids.push(H('Additional Information')); for (const x of m.additional) kids.push(P(x)); }
 
   const doc = new Document({
     styles: { default: { document: { run: { font, size: 21 } } } },
@@ -79,9 +81,11 @@ ul{margin:3px 0 0 16px;padding:0}li{margin:2px 0}.sk b{color:#0B1B3A}
 ${cats.length ? `<h2>Core Skills</h2><div class="sk">${cats.map((c) => `<div><b>${esc(CAT_LABEL[c] || c)}:</b> ${esc(m.skills[c].join(', '))}</div>`).join('')}</div>` : ''}
 ${m.experience.length ? `<h2>Professional Experience</h2>${m.experience.map((e) => `<div class="e"><div class="t"><span>${esc(e.title)}</span><span style="font-weight:400;color:#475569;font-size:9.5pt">${esc(e.dates)}</span></div><div class="c">${esc([e.company, e.location].filter(Boolean).join(', '))}</div><ul>${e.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></div>`).join('')}` : ''}
 ${m.projects?.length ? `<h2>Academic Projects &amp; Training</h2>${m.projects.map((e) => `<div class="e"><div class="t"><span>${esc(e.title)}</span><span style="font-weight:400;color:#475569;font-size:9.5pt">${esc(e.dates)}</span></div><div class="c">${esc([e.company, e.location].filter(Boolean).join(', '))}</div><ul>${e.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></div>`).join('')}` : ''}
+${m.keyProjects?.length ? `<h2>Key Projects</h2><ul>${m.keyProjects.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
 ${m.education.length ? `<h2>Education</h2>${m.education.map((x) => `<div>${esc(x)}</div>`).join('')}` : ''}
 ${m.certifications.length ? `<h2>Certifications &amp; Training</h2><ul>${m.certifications.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
 ${m.languages.length ? `<h2>Languages</h2><div>${esc(m.languages.join('  |  '))}</div>` : ''}
+${m.additional?.length ? `<h2>Additional Information</h2>${m.additional.map((x) => `<div>${esc(x)}</div>`).join('')}` : ''}
 </td></tr></tbody></table>
 </body></html>`;
 }
