@@ -125,7 +125,7 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   add('length', 8,
     words >= 350 && words <= 1100 && (!pages || pages <= 3) ? 'pass' : words >= 200 && words <= 1600 ? 'warn' : 'fail',
     `${words}${pages ? ` / ${pages}p` : ''}`);
-  const metrics = (lower.match(/\d[\d,.]*\s*(?:%|percent|projects?|buildings?|tr\b|tons?|cfm|m2|m²|m3|m³|sqm|sq\.?\s*m|million|mn|billion|bn|k\b|units|floors|villas|towers|engineers|members|workers|operators|users|customers|clients|sites|wells|km|kv|mw|kw|bopd|mmscfd|hospitals|schools|lines|machines|stores|apps?|hours|days|weeks|months|egp|sar|aed|usd|\$)|(?:egp|sar|aed|usd|\$)\s*\d/g) || []).length;
+  const metrics = (lower.match(/\d[\d,.]*\s*-?\s*(?:%|percent|projects?|buildings?|tr\b|tons?|cfm|m2|m²|m3|m³|sqm|sq\.?\s*m|million|mn|billion|bn|k\b|units|floors?|stor(?:ey|ies)|rooms?|keys|beds?|m\b|lm\b|meters?|metres?|gpm|l\/s|villas?|towers?|engineers|members|workers|operators|users|customers|clients|sites|wells|km|kv|mw|kw|bopd|mmscfd|hospitals|schools|lines|machines|stores|apps?|hours|days|weeks|months|egp|sar|aed|usd|\$)|(?:egp|sar|aed|usd|\$)\s*\d/g) || []).length;
   add('metrics', 7, metrics >= 3 ? 'pass' : metrics >= 1 ? 'warn' : 'fail', `${metrics}`);
   add('keywords', 12, top.pct >= 60 ? 'pass' : top.pct >= 35 ? 'warn' : 'fail', `${top.matched.length}`);
   // skills backed by experience: an ATS/recruiter discounts a long skills list that never appears in the experience bullets

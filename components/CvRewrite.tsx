@@ -1,8 +1,8 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { CvResult } from '@/lib/cv/analyze';
 import { analyzeCv } from '@/lib/cv/analyze';
-import { rebuildCv, type CvModel, type RebuildReport } from '@/lib/cv/rebuild';
+import { rebuildCv, toText, polishBullet, type CvModel, type RebuildReport } from '@/lib/cv/rebuild';
 import { buildDocx, buildPrintHtml, rewritesUsed, markRewrite, FREE_REWRITES } from '@/lib/cv/export';
 import type { Market } from '@/lib/cv/data';
 import type { AtsModel } from '@/lib/ats/model';
@@ -78,6 +78,28 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
   const left = Math.max(0, FREE_REWRITES - used);
 
   const [noGain, setNoGain] = useState(false);
+  // last step to the top score: the points left need facts only the person has (numbers, LinkedIn)
+  const [edits, setEdits] = useState<Record<string, string>>({});
+  const [link, setLink] = useState('');
+  const [boostMsg, setBoostMsg] = useState('');
+  const targets = useMemo(() => {
+    if (!out) return [] as { key: string; ei: number; bi: number; text: string }[];
+    const L: { key: string; ei: number; bi: number; text: string }[] = [];
+    out.model.experience.forEach((e: any, ei: number) => e.bullets.forEach((b: string, bi: number) => { if (!/\d/.test(b) && L.length < 5) L.push({ key: `${ei}-${bi}`, ei, bi, text: b }); }));
+    return L;
+  }, [out]);
+  function boost() {
+    if (!out) return;
+    const m: CvModel = { ...out.model, experience: out.model.experience.map((e: any, ei: number) => ({ ...e, bullets: e.bullets.map((b: string, bi: number) => { const v = (edits[`${ei}-${bi}`] ?? '').trim(); return v && v !== b ? polishBullet(v) : b; }) })) };
+    const li = link.trim().match(/(?:https?:\/\/)?(?:[\w-]+\.)?linkedin\.com\/in\/[\w\-%]+\/?/i)?.[0];
+    if (link.trim() && !li) { setBoostMsg(locale === 'ar' ? 'لينك لينكدإن لازم يكون زي linkedin.com/in/your-name' : 'The LinkedIn link should look like linkedin.com/in/your-name'); return; }
+    if (li) m.linkedin = li.replace(/^https?:\/\//, '').replace(/^www\./, '');
+    const text2 = toText(m, out.summary);
+    const after2 = analyzeCv(text2, market, 0, model).score;
+    setOut({ ...out, model: m, text: text2, after: Math.max(after2, out.after) });
+    setEdits({}); setLink('');
+    setBoostMsg(after2 > out.after ? (locale === 'ar' ? `اتحدّث: النتيجة بقت ${after2}` : `Updated: score is now ${after2}`) : (locale === 'ar' ? 'اتحدّث. النتيجة زي ما هي، بس الـ CV بقى أوضح.' : 'Updated. The score is the same, but the CV reads better.'));
+  }
   async function go() {
     if (left <= 0) return;
     setBusy(true);
@@ -150,6 +172,31 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
               </div>
               <div className="rounded-sheet bg-emerald-50 p-5 text-center ring-2 ring-emerald-400"><div className="text-xs font-bold text-emerald-700">{t.after} · {t.ats}</div><div className="mt-1 text-5xl font-bold text-emerald-700" aria-live="polite"><CountUp from={res.score} to={out.after} /></div></div>
             </div>
+
+            {(targets.length > 0 || !out.model.linkedin) && out.after < 100 && (
+              <div className="rounded-sheet border-[1.5px] border-ink p-5">
+                <h4 className="font-bold text-ink">{locale === 'ar' ? 'خطوة أخيرة لأعلى درجة' : 'One last step to the top score'}</h4>
+                <p className="mt-1 text-sm leading-6 text-ink-soft">{locale === 'ar' ? 'باقي النقط محتاجة معلومات انت بس اللي عارفها: أرقام حقيقية من شغلك (أدوار، مساحة، عدد، قيمة، نسبة) ولينك لينكدإن. زوّد الرقم جوه السطر وسيب باقي الكلام زي ما هو، واللي مالوش رقم سيبه.' : 'The remaining points need facts only you have: real numbers from your work (floors, area, count, value, %) and your LinkedIn link. Rewrite a line with the number; leave blank what you don\'t know.'}</p>
+                <div className="mt-4 space-y-3">
+                  {targets.map((x) => (
+                    <label key={x.key} className="block">
+                      <span className="block text-xs text-ink-mute">{locale === 'ar' ? 'زوّد الرقم في السطر ده:' : 'Add the number to this line:'}</span>
+                      <input className="input mt-1" dir="auto" value={edits[x.key] ?? x.text} onChange={(e) => setEdits({ ...edits, [x.key]: e.target.value })} placeholder={locale === 'ar' ? 'مثال: Designed HVAC for a 12-floor office building (8,000 m²)' : 'e.g. Designed HVAC for a 12-floor office building (8,000 m²)'} />
+                    </label>
+                  ))}
+                  {!out.model.linkedin && (
+                    <label className="block">
+                      <span className="block text-xs text-ink-mute">LinkedIn</span>
+                      <input className="input mt-1" dir="ltr" inputMode="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="linkedin.com/in/your-name" />
+                    </label>
+                  )}
+                </div>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <button type="button" onClick={boost} className="btn-red">{locale === 'ar' ? 'حدّث الـ CV' : 'Update my CV'}</button>
+                  {boostMsg && <span role="status" className="text-sm font-semibold text-ink">{boostMsg}</span>}
+                </div>
+              </div>
+            )}
 
             <div>
               <h4 className="mb-3 font-bold text-ink">{t.cmp_t}</h4>

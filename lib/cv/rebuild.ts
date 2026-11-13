@@ -44,7 +44,7 @@ const HEAD: Record<string, RegExp> = {
   contact: /^(contact|البيانات|الاسم|الهاتف|الموبايل|البريد|العنوان|الجنسية|تاريخ الميلاد|الحالة الاجتماعية|الديانة)/i,
   military: /^(military|الخدمة العسكرية|التجنيد)/i
 };
-const PERSONAL = /^(date of birth|dob|birth date|birthday|age|marital status|married|single|religion|nationality|gender|sex|military status|national id|passport|driving licen|الحالة الاجتماعية|الديانة|تاريخ الميلاد|الجنسية|النوع|موقف التجنيد|رقم قومي)\b/i;
+const PERSONAL = /^(date of birth|dob|birth date|birthday|age|marital status|married|single|religion|nationality|gender|sex|military status|national id|passport|driving licen|visa|iqama|residency|الحالة الاجتماعية|الديانة|تاريخ الميلاد|الجنسية|النوع|موقف التجنيد|رقم قومي)\b/i;
 
 const WEAK_START: [RegExp, string][] = [
   [/^(i\s+)?(was\s+)?responsible\s+for\s+(the\s+)?/i, 'Managed '],
@@ -60,7 +60,7 @@ const WEAK_START: [RegExp, string][] = [
   [/^(i\s+)?(have\s+)?(been\s+)?(working|work)\s+(on|in)\s+(the\s+)?/i, 'Delivered '],
   [/^(handling|handled)\s+(the\s+)?/i, 'Managed '],
   [/^(dealing|dealt)\s+with\s+(the\s+)?/i, 'Coordinated with '],
-  [/^(follow(?:ing)?[\s-]*up|followed up)\s+(on|with)?\s*(the\s+)?/i, 'Tracked '],
+  [/^(follow(?:ing)?[\s-]*up|followed up)\s+(on|with|of)?\s*(the\s+)?/i, 'Tracked '],
   [/^preparing\s+/i, 'Prepared '], [/^designing\s+/i, 'Designed '], [/^reviewing\s+/i, 'Reviewed '], [/^coordinating\s+/i, 'Coordinated '],
   [/^supervising\s+/i, 'Supervised '], [/^managing\s+/i, 'Managed '], [/^leading\s+/i, 'Led '], [/^performing\s+/i, 'Performed '],
   [/^conducting\s+/i, 'Conducted '], [/^developing\s+/i, 'Developed '], [/^creating\s+/i, 'Created '], [/^modeling\s+|^modelling\s+/i, 'Modelled '],
@@ -72,9 +72,10 @@ const WEAK_START: [RegExp, string][] = [
 const clean = (s: string) => s.replace(/^[\s•\-–—*▪●○◦>]+/, '').replace(/\s+/g, ' ').trim();
 const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
-const IRREG: Record<string, string> = { run: 'Ran', lead: 'Led', build: 'Built', do: 'Did', make: 'Made', write: 'Wrote', draw: 'Drew', take: 'Took', give: 'Gave', set: 'Set', cut: 'Cut', oversee: 'Oversaw', drive: 'Drove', teach: 'Taught', win: 'Won', hold: 'Held', keep: 'Kept', meet: 'Met', send: 'Sent' };
+const IRREG: Record<string, string> = { sell: 'Sold', buy: 'Bought', use: 'Used', run: 'Ran', lead: 'Led', build: 'Built', do: 'Did', make: 'Made', write: 'Wrote', draw: 'Drew', take: 'Took', give: 'Gave', set: 'Set', cut: 'Cut', oversee: 'Oversaw', drive: 'Drove', teach: 'Taught', win: 'Won', hold: 'Held', keep: 'Kept', meet: 'Met', send: 'Sent' };
 function pastOf(v: string) {
   const w = v.toLowerCase();
+  if (/ed$/.test(w) || Object.values(IRREG).some((x) => x.toLowerCase() === w)) return w[0].toUpperCase() + w.slice(1);
   if (IRREG[w]) return IRREG[w];
   const p = /e$/.test(w) ? w + 'd' : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + 'ied' : /^(plan|ship|stop|drop|map)$/.test(w) ? w + w.slice(-1) + 'ed' : w + 'ed';
   return p[0].toUpperCase() + p.slice(1);
@@ -90,11 +91,44 @@ export function splitParagraph(raw: string): string[] {
     .filter((p) => p.length > 12);
 }
 
+const NOUN_VERB: [RegExp, string][] = [
+  [/testing\s+(?:and|&)\s+commissioning/i, 'Tested and commissioned'], [/design/i, 'Designed'], [/calculations?/i, 'Calculated'], [/selection/i, 'Selected'],
+  [/sizing/i, 'Sized'], [/supervision/i, 'Supervised'], [/installation/i, 'Installed'], [/execution/i, 'Executed'], [/coordination/i, 'Coordinated'],
+  [/review/i, 'Reviewed'], [/modell?ing/i, 'Modelled'], [/drafting/i, 'Drafted'], [/pricing/i, 'Priced'], [/preparation/i, 'Prepared'],
+  [/inspection/i, 'Inspected'], [/commissioning/i, 'Commissioned'], [/estimation/i, 'Estimated'], [/tracking/i, 'Tracked'], [/follow[\s-]*up/i, 'Tracked']
+];
+const BASE_VERBS = 'prepare|calculate|coordinate|track|sell|visit|collect|fill|participate|perform|follow|manage|support|attend|issue|submit|review|update|design|supervise|check|select|size|model|draft|install|test|commission|inspect|approve|train|lead|handle|monitor|estimate|price|measure|maintain|operate|assist|develop|create|build|run|respond|upload|obtain|ensure|conduct|deliver|implement|organize|organise|plan|schedule|negotiate|present|propose|resolve|liaise|communicate|achieve|reduce|increase|improve|produce|execute|study|analyse|analyze|evaluate|verify|witness|receive|issue|raise|close|follow-up';
+/** "Design of …", "Heat load calculation for …", "Prepare …" → a past-tense action verb first */
+function actionFirst(b: string) {
+  let x = b.replace(/^(?:occasionally|also|daily|weekly|regularly|mainly|actively|directly)\s+/i, '').replace(/^am\s+/i, '');
+  const first = x.match(/^([a-z]+)\b/i)?.[1] || '';
+  if (/^using$/i.test(first)) return 'Used' + x.slice(first.length);
+  if (new RegExp(`^(${BASE_VERBS})$`, 'i').test(first) && !/^\w+\s+(of|for)\b/i.test(x)) return pastOf(first) + x.slice(first.length);
+  // a noun phrase whose head is an action noun within the first few words
+  const m = x.match(/^((?:[\w/&+().'-]+\s+){0,4}?)(testing\s+(?:and|&)\s+commissioning|design|calculations?|selection|sizing|supervision|installation|execution|coordination|review|modell?ing|drafting|pricing|preparation|inspection|commissioning|estimation|tracking|follow[\s-]*up)\b(?:\s+(of|for|on))?\s*(.*)$/i);
+  if (m && !/^(as|i|we|the)\b/i.test(x)) {
+    const verb = NOUN_VERB.find(([re]) => re.test(m[2]))![1];
+    const pre = m[1].trim().replace(/^(the|a|an)\s+/i, '');
+    const prep = m[3] ? ` ${m[3]} ` : ' ';
+    const rest = m[4] || '';
+    // "Design of X" → "Designed X"; "Heat load calculation for X" → "Calculated heat load for X"
+    const joinRest = (r: string) => (/^[,;:)]/.test(r) ? r : ' ' + r);
+    const out = /^(site|on-site|field)$/i.test(pre) ? `${verb} ${rest} on site`
+      : pre ? `${verb} ${pre[0].toLowerCase() + pre.slice(1)}${rest ? (m[3] ? prep + rest : joinRest(rest)) : ''}` : `${verb} ${rest}`;
+    return out.replace(/\s+/g, ' ').replace(/\s+([,;:])/g, '$1').trim();
+  }
+  // documents the person produced: "Quantity take-off of …", "Monthly payment applications …" → "Prepared …"
+  if (/^((?:[\w/&+()-]+\s+){0,3})(take-?offs?|boqs?|submissions?|submittals?|reports?|applications?|valuations?|drawings?|offers?|quotations?)\b/i.test(x) && !/^(as|i|we)\b/i.test(x))
+    return 'Prepared ' + x[0].toLowerCase() + x.slice(1);
+  return x;
+}
+
 export function polishBullet(raw: string) {
   let b = clean(raw).replace(/\.+$/, '').replace(/\s+,/g, ',');
   if (!b) return '';
   for (const [re, rep] of WEAK_START) { if (re.test(b)) { b = rep + b.replace(re, ''); break; } }
   b = b.replace(/\b(i|we)\s+(am|was|were|have|had)\b\s*/gi, '').replace(/^\s*(and|also|then)\s+/i, '');
+  if (!WEAK_START.some(([re]) => re.test(clean(raw)))) b = actionFirst(b);
   b = b.replace(/\bmy\b/gi, 'the').replace(/\bour\b/gi, 'the').replace(/\s+/g, ' ').trim();
   b = cap(b);
   // normalise common tokens
@@ -246,6 +280,48 @@ export function parseCv(text: string): CvModel {
       for (const [l, i] of orphan) {
         const owner = [...byLine].reverse().find((x) => x.li < i)?.e || experience[experience.length - 1];
         if (owner.bullets.length < 12 && !owner.orig?.includes(l)) { owner.bullets.push(polishBullet(l)); owner.orig?.push(l); }
+      }
+    }
+  }
+  // a degree line that ended up among the experience bullets belongs in Education
+  const DEG = /^(b\.?\s?sc|bsc|b\.?\s?eng|bachelor|m\.?\s?sc|msc|master|diploma\s+(?:in|of))\b.*(universit|institute|faculty|college|academy|\b(19|20)\d{2}\b)/i;
+  const DEG_BARE = /^(b\.?\s?sc|bsc|b\.?\s?eng|bachelor|m\.?\s?sc|msc|master)\.?(?:'s)?\s+(?:of\s+|in\s+)?[\w ()&-]*(engineering|architecture|science)\.?$/i;
+  const UNI = /(universit|institute|faculty|college|academy|جامع)/i;
+  // a degree split over two lines ("B.Sc. Mechanical Engineering" / "Pharos University …, 2016 – 2021")
+  const degreeAt = (i: number) => {
+    const l = clean(lines[i] || '');
+    if (DEG.test(l)) return l;
+    if (!DEG_BARE.test(l)) return '';
+    for (let k = i + 1; k < Math.min(lines.length, i + 4); k++) { const n = clean(lines[k]); if (!n) continue; if (UNI.test(n)) return `${l.replace(/\.$/, '')} – ${n}`; }
+    for (let k = i - 1; k >= Math.max(0, i - 3); k--) { const n = clean(lines[k]); if (!n) continue; if (UNI.test(n)) return `${l.replace(/\.$/, '')} – ${n}`; }
+    return l;
+  };
+  for (const e of experience) {
+    const keep: string[] = [], keepO: string[] = [];
+    e.bullets.forEach((b, i) => {
+      const o = e.orig?.[i] ?? b;
+      if (DEG.test(o) || DEG_BARE.test(o) || (UNI.test(o) && /\b(19|20)\d{2}\b/.test(o) && o.length < 90 && !/\b(project|hospital|campus|building)\b/i.test(o))) {
+        const idx = lines.findIndex((l) => clean(l) === clean(o));
+        const d = idx >= 0 ? degreeAt(idx) : o;
+        if (d && !education.some((x) => x.includes(clean(o)) || clean(o).includes(x))) education.push(d.replace(/\.$/, ''));
+      } else { keep.push(b); keepO.push(o); }
+    });
+    e.bullets = keep; e.orig = keepO;
+  }
+  // no Education section at all: take the degree from wherever the CV mentions it (summary paragraph, header line)
+  if (!education.length) {
+    const i = lines.findIndex((l) => (DEG.test(clean(l)) || DEG_BARE.test(clean(l))) && clean(l).length < 140);
+    const line = i >= 0 ? degreeAt(i) : '';
+    if (line) education.push(line.replace(/\.$/, ''));
+    else {
+      const uni = t.match(/\b((?:[A-Z][\w'-]+\s+){1,4}University(?:\s+(?:of|in)\s+[A-Z][\w-]+)?|University\s+of\s+[A-Z][\w-]+(?:\s+[A-Z][\w-]+)?)\b/);
+      if (uni && /graduat|degree|bachelor|b\.?sc/i.test(t)) {
+        const near = t.slice(Math.max(0, (uni.index || 0) - 120), (uni.index || 0) + 160);
+        const year = near.match(/\b(19[89]\d|20[0-4]\d)\b/)?.[0] || '';
+        const deg = near.match(/\b(B\.?\s?Sc\.?|Bachelor(?:'s)?(?:\s+(?:of|in)\s+[A-Z][\w ]+?Engineering)?)\b/)?.[0] || '';
+        const field = near.match(/\(([A-Z][\w ]{3,30})\)/)?.[1] || near.match(/\b(mechanical|electrical|civil|architectural)\s+(?:power\s+)?engineer/i)?.[0] || '';
+        const degree = deg || (field ? `B.Sc. ${field.replace(/\s+engineer$/i, '').replace(/^\w/, (c) => c.toUpperCase())} Engineering` : "Bachelor's degree");
+        education.push([degree.replace(/\s+Engineering\s+Engineering/, ' Engineering'), uni[1].trim(), year].filter(Boolean).join(' – '));
       }
     }
   }
