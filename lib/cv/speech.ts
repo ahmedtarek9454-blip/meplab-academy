@@ -253,6 +253,8 @@ export function arabicToEnglish(sentence: string): Translation {
   s = s.replace(/(\d+)\s+(مهندسين|فنيين|رسامين)\s+(?:جداد|جدد)/g, '$1 new $2');
   s = s.replace(/(\d[\d,.]*)\s*(?:الف|ألف|آلاف)?\s*متر\s*مربع/g, '$1 m²');
   let lead = '';
+  // a sentence may start with "و" glued to the verb ("ورسمت", "وعملت"): drop it when the rest is a known verb
+  if (/^و\S{3,}/.test(s) && !AR_VERBS.some(([re]) => re.test(s)) && AR_VERBS.some(([re]) => re.test(s.slice(1)))) s = s.slice(1);
   for (const [re, en] of AR_VERBS) { if (re.test(s)) { lead = en; s = s.replace(re, ''); break; } }
   for (const [re, en] of AR_TERM_RES) s = s.replace(re, (_m, pre, w, bl) => `${pre}${w && en !== 'and' ? 'and ' : ''}${bl === 'ل' && /^(the consultant|consultant|the client|contractor|subcontractors?|suppliers|management|engineers)$/.test(en) ? 'to ' : bl === 'ل' && en && !/^(for|to|in|on|with|from|and)$/.test(en) ? 'for ' : bl === 'ب' && !/^(with|using|in)\b/.test(en) ? 'with ' : ''}${en}`);
   // strip leftover Arabic article/prefixes on known English words, then collect unknown Arabic words

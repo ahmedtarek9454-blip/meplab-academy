@@ -61,16 +61,18 @@ export function buildPrintHtml(m: CvModel, summary: string) {
   const cats = Object.keys(m.skills);
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(m.name)} - CV</title>
 <style>
-@page{size:A4;margin:16mm 15mm}body{font-family:Calibri,Arial,Helvetica,sans-serif;color:#1e293b;font-size:10.5pt;line-height:1.35;margin:0}
+@page{size:A4;margin:0}body{font-family:Calibri,Arial,Helvetica,sans-serif;color:#1e293b;font-size:10.5pt;line-height:1.35;margin:0}
+.pg{width:100%;border-collapse:collapse}.pg td{padding:0}.pad{height:16mm}.cv{padding:0 15mm!important;vertical-align:top}h2{break-after:avoid}.e .t,.e .c{break-after:avoid}li{break-inside:avoid}
 h1{font-size:20pt;margin:0;text-align:center;color:#0B1B3A;letter-spacing:.5px}.hl{text-align:center;color:#1E5BD6;font-size:12pt;margin:2px 0}.ct{text-align:center;color:#475569;font-size:9.5pt;margin-bottom:10px}
 h2{font-size:11pt;color:#0B1B3A;text-transform:uppercase;border-bottom:1.5px solid #1E5BD6;padding-bottom:2px;margin:14px 0 6px}
 .e{margin:8px 0 4px}.e .t{display:flex;justify-content:space-between;font-weight:700;font-size:11pt}.e .c{color:#1E5BD6;font-size:10pt}
 ul{margin:3px 0 0 16px;padding:0}li{margin:2px 0}.sk b{color:#0B1B3A}
 .bar{position:fixed;top:0;left:0;right:0;background:#0B1B3A;color:#fff;padding:8px 14px;font-size:12px;display:flex;justify-content:space-between;align-items:center}
-.bar button{background:#E53935;color:#fff;border:0;border-radius:8px;padding:6px 14px;font-weight:700;cursor:pointer}@media print{.bar{display:none}}
+.bar button{background:#E53935;color:#fff;border:0;border-radius:8px;padding:6px 14px;font-weight:700;cursor:pointer}@media print{.bar,.sp{display:none}}
 </style></head><body>
 <div class="bar"><span>MEP LAB — Save as PDF: Ctrl+P / ⌘P → Destination: Save as PDF</span><button onclick="window.print()">Save as PDF</button></div>
 <div style="height:38px" class="sp"></div>
+<table class="pg"><thead><tr><td><div class="pad"></div></td></tr></thead><tfoot><tr><td><div class="pad"></div></td></tr></tfoot><tbody><tr><td class="cv">
 <h1>${esc(m.name.toUpperCase())}</h1>${m.headline ? `<div class="hl">${esc(m.headline)}</div>` : ''}
 <div class="ct">${[m.location, m.phone, m.email, m.linkedin].filter(Boolean).map(esc).join(' &nbsp;|&nbsp; ')}</div>
 <h2>Professional Summary</h2><p>${esc(summary)}</p>
@@ -80,7 +82,7 @@ ${m.projects?.length ? `<h2>Academic Projects &amp; Training</h2>${m.projects.ma
 ${m.education.length ? `<h2>Education</h2>${m.education.map((x) => `<div>${esc(x)}</div>`).join('')}` : ''}
 ${m.certifications.length ? `<h2>Certifications &amp; Training</h2><ul>${m.certifications.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
 ${m.languages.length ? `<h2>Languages</h2><div>${esc(m.languages.join('  |  '))}</div>` : ''}
-<style>@media print{.sp{display:none}}</style>
+</td></tr></tbody></table>
 </body></html>`;
 }
 
