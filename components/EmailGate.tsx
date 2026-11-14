@@ -207,7 +207,7 @@ export default function EmailGate({ locale, onDone, nextPath = '/cv-check?resume
 
           {step === 'code' && (
             <div className="mt-5 space-y-3">
-              <p className="rounded-sheet bg-green-50 p-3 text-sm text-green-800">✉️ {t.code_sent.replace('{e}', email.trim())}</p>
+              <p className="rounded-sheet bg-green-50 p-3 text-sm text-green-800">{t.code_sent.replace('{e}', email.trim())}</p>
               <div><label className="label">{t.code}</label><input ref={codeRef} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} onKeyDown={(e) => e.key === 'Enter' && verify()} className="input text-center font-mono text-2xl tracking-[0.5em]" dir="ltr" inputMode="numeric" autoComplete="one-time-code" placeholder="••••••" /></div>
               <button onClick={verify} disabled={busy} className="btn-red w-full py-3">{busy ? t.verifying : verifyLabel}</button>
               <div className="flex justify-between text-sm">
@@ -223,8 +223,8 @@ export default function EmailGate({ locale, onDone, nextPath = '/cv-check?resume
               <a href={`${login ? '/signup' : '/login'}?next=${encodeURIComponent(nextPath)}`} className="font-bold text-brand-blue">{login ? t.go_signup : t.go_login}</a></p>
           )}
 
-          {err && <p role="alert" className="mt-3 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {err}</p>}
-          {mode === 'cv' && <p className="mt-4 text-xs leading-5 text-ink-mute">🔒 {t.privacy}</p>}
+          {err && <p role="alert" className="mt-3 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{err}</p>}
+          {mode === 'cv' && <p className="mt-4 text-xs leading-5 text-ink-mute">{t.privacy}</p>}
         </div>
 
         <div className="relative hidden bg-ink p-6 text-white md:block">

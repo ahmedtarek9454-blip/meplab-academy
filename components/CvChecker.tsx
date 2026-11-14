@@ -24,8 +24,8 @@ const T = {
   ar: {
     title: 'فحص الـ CV بنظام ATS',
     sub: 'ارفع الـ CV بتاعك وفي ثواني تعرف: نسبة توافقه مع أنظمة الـ ATS، أقرب وظيفة ليه في تخصصك الهندسي، والمرتب التقريبي في السوق.',
-    free: 'مجاني 100%',
-    privacy: '🔒 الـ CV بيتحلل جوه متصفحك ومش بيترفع على أي سيرفر. علشان الأداة تتعلم بنحفظ بس المهارات اللي اتعرفت والنتيجة، من غير اسم أو إيميل أو تليفون.',
+    free: 'مجاني',
+    privacy: 'الـ CV بيتحلل جوه متصفحك ومش بيترفع على أي سيرفر. علشان الأداة تتعلم بنحفظ بس المهارات اللي اتعرفت والنتيجة، من غير اسم أو إيميل أو تليفون.',
     better: (p: number, n: number, sc: string) => `أحسن من ${p}% من ${sc} (${n.toLocaleString('en-US')} CV)`, sc_role: 'الـ CVs اللي اتفحصت لنفس الوظيفة', sc_disc: 'الـ CVs اللي اتفحصت في نفس التخصص', sc_all: 'كل الـ CVs اللي اتفحصت على MEP LAB',
     fb_q: 'الوظيفة دي مظبوطة؟', fb_yes: 'أيوه', fb_no: 'لأ', fb_pick: 'اختار وظيفتك الصح', fb_send: 'ابعت', fb_thanks: 'شكرًا! الأداة هتتعلم من ردك وتبقى أدق للي بعدك.',
     drop: 'اسحب الـ CV هنا أو اضغط للاختيار', dropTouch: 'اضغط هنا واختار الـ CV',
@@ -86,8 +86,8 @@ const T = {
   en: {
     title: 'ATS CV Checker',
     sub: 'Upload your CV and in seconds see its ATS score, the closest job title in your engineering discipline, and an estimated market salary.',
-    free: '100% free',
-    privacy: '🔒 Your CV is analysed inside your browser and never uploaded. To keep improving, we store only the skills found and the score — no name, e-mail or phone.',
+    free: 'Free',
+    privacy: 'Your CV is analysed inside your browser and never uploaded. To keep improving, we store only the skills found and the score — no name, e-mail or phone.',
     better: (p: number, n: number, sc: string) => `Better than ${p}% of ${sc} (${n.toLocaleString('en-US')} CVs)`, sc_role: 'CVs checked for the same role', sc_disc: 'CVs checked in the same discipline', sc_all: 'all CVs checked on MEP LAB',
     fb_q: 'Is this the right job title?', fb_yes: 'Yes', fb_no: 'No', fb_pick: 'Pick your actual role', fb_send: 'Send', fb_thanks: 'Thanks! The engine learns from your answer and gets more accurate for the next person.',
     drop: 'Drop your CV here or click to choose', dropTouch: 'Tap here to choose your CV',
@@ -169,8 +169,8 @@ const CHECKS: Record<string, { ar: [string, string]; en: [string, string] }> = {
 const KW_GENERAL = { ar: ['قايمة المهارات', 'اكتب من ٨ مهارات أو أكتر بأسمائها الحقيقية في قسم Skills (برامج، أدوات، مهارات شغل).'], en: ['Skills list', 'List 8 or more concrete skills by name in a Skills section (software, tools, job skills).'] };
 
 const ST: Record<CheckStatus, { icon: string; cls: string }> = {
-  pass: { icon: '✓', cls: 'bg-green-100 text-green-700' },
-  warn: { icon: '!', cls: 'bg-amber-100 text-amber-700' },
+  pass: { icon: '✓', cls: 'border border-line text-ink-mute' },
+  warn: { icon: '!', cls: 'border border-amber-600 text-amber-700' },
   fail: { icon: '✕', cls: 'bg-red-100 text-red-600' }
 };
 
@@ -448,7 +448,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
           onDragLeave={() => setDrag(false)}
           onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files?.[0]; if (f) setFile(f); }}
-          className={`flex cursor-pointer flex-col items-center justify-center rounded-sheet border-2 border-dashed p-10 text-center transition ${drag ? 'border-brand-red bg-red-50' : needFile ? 'animate-pulse border-red-400 bg-red-50' : file ? 'border-green-400 bg-green-50' : 'border-line hover:border-brand-blue hover:bg-paper'}`}
+          className={`flex cursor-pointer flex-col items-center justify-center rounded-sheet border-2 border-dashed p-10 text-center transition ${drag ? 'border-brand-red bg-red-50' : needFile ? 'border-red-400 bg-red-50' : file ? 'border-green-400 bg-green-50' : 'border-line hover:border-brand-blue hover:bg-paper'}`}
         >
           <input ref={inp} type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
           <div className="flex h-14 w-14 items-center justify-center rounded-sheet border-[1.5px] border-ink text-2xl text-ink"><svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{file ? <path d="M5 12l5 5l9 -10" /> : <path d="M12 19V5M6 11l6 -6l6 6" />}</svg></div>
@@ -473,7 +473,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           </div>
         </div>
 
-        {err && <p role="alert" className="mt-4 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {err}</p>}
+        {err && <p role="alert" className="mt-4 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{err}</p>}
         <button onClick={() => run()} disabled={!!busy} className="btn-red mt-6 w-full py-3 text-lg">
           {busy ? <><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> {busy}</> : t.analyze}
         </button>
@@ -487,7 +487,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
   const pr = G ? null : percentile(model, res.score, top.role.id, res.discipline?.id ?? null);
   const prScope = pr ? (pr.scope === 'role' ? t.sc_role : pr.scope === 'disc' ? t.sc_disc : t.sc_all) : '';
   const others = res.roles.slice(1, 4).filter((r) => r.pct > 10);
-  const col = res.score >= 75 ? '#16a34a' : res.score >= 50 ? '#f59e0b' : '#E53935';
+  const col = res.score >= 75 ? '#1D2329' : res.score >= 50 ? '#B45309' : '#D7263D'; // ink when good; amber / red only when it needs work
   const verdict = res.score >= 75 ? t.score_good : res.score >= 50 ? t.score_ok : t.score_bad;
   const R = 54, C = 2 * Math.PI * R;
   const sorted = [...res.checks].sort((a, b) => ({ fail: 0, warn: 1, pass: 2 }[a.status] - { fail: 0, warn: 1, pass: 2 }[b.status]));
@@ -499,15 +499,15 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         <div className="card flex flex-col items-center p-6 text-center">
           <div className="text-sm font-bold text-ink-mute">{t.score}</div>
           <svg viewBox="0 0 128 128" className="my-3 h-40 w-40 -rotate-90">
-            <circle cx="64" cy="64" r={R} fill="none" stroke="#e2e8f0" strokeWidth="12" />
-            <circle cx="64" cy="64" r={R} fill="none" stroke={col} strokeWidth="12" strokeLinecap="round"
+            <circle cx="64" cy="64" r={R} fill="none" stroke="#E5E7EB" strokeWidth="8" />
+            <circle cx="64" cy="64" r={R} fill="none" stroke="#1D2329" strokeWidth="8" strokeLinecap="butt"
               strokeDasharray={C} strokeDashoffset={C * (1 - res.score / 100)} style={{ transition: 'stroke-dashoffset 1s ease' }} />
-            <text x="64" y="64" transform="rotate(90 64 64)" textAnchor="middle" dominantBaseline="central" fontSize="34" fontWeight="900" fill="#0B1B3A">{res.score}</text>
+            <text x="64" y="66" transform="rotate(90 64 64)" textAnchor="middle" dominantBaseline="central" fontSize="44" fill="#D7263D" style={{ fontFamily: '"Aref Ruqaa", serif' }}>{res.score}</text>
           </svg>
           <div className="font-bold" style={{ color: col }}>{verdict}</div>
           <div className="mt-1 text-xs text-ink-mute">{fmt(res.words)} {t.words}</div>
-          <div className="mt-3 rounded-lg bg-paper px-3 py-1.5 text-[11px] text-ink-mute">
-            🧠 {t.engine} <span dir="ltr">v{res.model.version}</span> · {res.model.jobs_used ? t.model_trained.replace('{n}', fmt(res.model.jobs_used)) : t.model_prior}
+          <div className="mt-3 rounded-sheet bg-paper px-3 py-1.5 text-[11px] text-ink-mute">
+            {t.engine} <span dir="ltr">v{res.model.version}</span> · {res.model.jobs_used ? t.model_trained.replace('{n}', fmt(res.model.jobs_used)) : t.model_prior}
           </div>
         </div>
 
@@ -526,12 +526,12 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
             <div className="text-sm font-bold text-ink-mute">{t.best_role}</div>
             {res.discipline && <span className="badge bg-paper text-ink-soft ring-1 ring-line">{t.discipline}: {locale === 'ar' ? res.discipline.ar : res.discipline.en}</span>}
           </div>
-          <div className="mt-2 text-xl font-extrabold leading-snug text-ink">{locale === 'ar' ? top.role.ar : top.role.en}</div>
+          <div className="mt-2 text-xl font-bold leading-snug text-ink">{locale === 'ar' ? top.role.ar : top.role.en}</div>
           <div className="mt-3 flex items-center gap-3">
-            <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-brand-blue" style={{ width: `${top.pct}%` }} /></div>
+            <div className="h-1.5 flex-1 overflow-hidden bg-line"><div className="h-full bg-brand-blue" style={{ width: `${top.pct}%` }} /></div>
             <span className="text-sm font-bold text-brand-blue">{top.pct}%</span>
           </div>
-          {pr && <p className="mt-3 text-sm font-semibold text-sys-plumb">{t.better(pr.pct, pr.n, prScope)}</p>}
+          {pr && <p className="mt-3 text-sm text-ink-soft">{t.better(pr.pct, pr.n, prScope)}</p>}
           {others.length > 0 && (
             <>
               <div className="mt-5 text-xs font-bold text-ink-mute">{t.other_roles}</div>
@@ -563,7 +563,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
                   <button disabled={!fbRole} onClick={() => { setFb('done'); sendFb(fbRole); }} className="btn-blue btn-sm">{t.fb_send}</button>
                 </div>
               )}
-              {fb === 'done' && <p className="text-sys-plumb">{t.fb_thanks}</p>}
+              {fb === 'done' && <p className="text-ink-soft">{t.fb_thanks}</p>}
             </div>
           )}
         </div>
@@ -614,7 +614,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
                         <div className="font-semibold text-ink">{title}</div>
                         <div className="mt-0.5 text-sm leading-6 text-ink-soft">{tip}</div>
                       </div>
-                      <span className="badge shrink-0 bg-sys-plumb/10 text-sys-plumb" dir="ltr">{t.fixes_pts.replace('{n}', String(gain))}</span>
+                      <span className="shrink-0 text-sm tabular-nums text-ink-mute" dir="ltr">{t.fixes_pts.replace('{n}', String(gain))}</span>
                     </li>
                   );
                 })}
@@ -656,7 +656,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           {!G && <div className="card p-6">
             <h3 className="mb-3 font-bold text-ink">{t.missing_kw}</h3>
             <div className="flex flex-wrap gap-2" dir="ltr">
-              {top.missing.map((k) => <span key={k} className="rounded-lg border border-dashed border-red-300 bg-red-50 px-2.5 py-1 text-sm font-semibold text-red-700">+ {k}</span>)}
+              {top.missing.map((k) => <span key={k} className="rounded-sheet border border-dashed border-brand-red/60 px-2.5 py-1 text-sm text-ink">+ {k}</span>)}
             </div>
           </div>}
           {!G && <div className="card p-6">
@@ -666,7 +666,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
                 <div key={cat}>
                   <div className="mb-1 text-xs font-bold text-slate-400">{t.cats[cat as Cat]}</div>
                   <div className="flex flex-wrap gap-1.5" dir="ltr">
-                    {list.map((k) => <span key={k.id} title={k.evidence} className="cursor-help rounded-lg bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">✓ {k.label}</span>)}
+                    {list.map((k) => <span key={k.id} title={k.evidence} className="cursor-help rounded-sheet border border-line px-2 py-0.5 text-xs text-ink-soft">✓ {k.label}</span>)}
                   </div>
                 </div>
               ))}
@@ -699,7 +699,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       {jobs.length > 0 && (
         <div>
           <div className="mb-3 flex items-end justify-between">
-            <h3 className="text-xl font-extrabold text-ink">💼 {t.jobs_t}</h3>
+            <h3 className="text-xl font-bold text-ink">{t.jobs_t}</h3>
             <a href={`${jobsHref}?market=${market}&role=${top.role.id}`} className="text-sm font-bold text-brand-blue">{t.jobs_all} {locale === 'ar' ? '←' : '→'}</a>
           </div>
           <div className="space-y-3">

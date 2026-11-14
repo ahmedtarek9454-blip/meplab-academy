@@ -45,7 +45,7 @@ async function draw(cv: HTMLCanvasElement, p: Props) {
   const X = rtl ? W - 96 : 96; ctx.textAlign = rtl ? 'right' : 'left';
 
   // background
-  const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#0B1B3A'); g.addColorStop(1, '#13264F');
+  const g = '#1D2329'; // solid ink, like the site
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   ctx.strokeStyle = 'rgba(255,255,255,.05)'; ctx.lineWidth = 1;
   for (let x = 0; x < W; x += 54) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
@@ -54,14 +54,14 @@ async function draw(cv: HTMLCanvasElement, p: Props) {
   // brand
   ctx.fillStyle = '#fff'; ctx.font = `700 46px ${font}`;
   ctx.save(); ctx.direction = 'ltr'; ctx.textAlign = 'left';
-  ctx.fillText('MEP', 96, 140); const mw = ctx.measureText('MEP ').width; ctx.fillStyle = '#FF5A4F'; ctx.fillText('LAB', 96 + mw, 140); ctx.restore();
+  ctx.fillText('MEP', 96, 140); const mw = ctx.measureText('MEP ').width; ctx.fillStyle = '#D7263D'; ctx.fillText('LAB', 96 + mw, 140); ctx.restore();
 
   // heading
   ctx.fillStyle = '#A9B6CF'; ctx.font = `500 44px ${font}`; ctx.fillText(t.head, X, 280);
 
   // score ring
   const cx = W / 2, cy = 560, r = 190;
-  const col = p.score >= 75 ? '#38D39F' : p.score >= 50 ? '#F5A524' : '#FF5A4F';
+  const col = '#FFFFFF';
   ctx.lineWidth = 34; ctx.lineCap = 'round';
   ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
   ctx.strokeStyle = col; ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * p.score) / 100); ctx.stroke();
@@ -76,12 +76,12 @@ async function draw(cv: HTMLCanvasElement, p: Props) {
   lines.forEach((l, i) => ctx.fillText(l, X, 960 + i * 72));
   let y = 960 + lines.length * 72 + 20;
   if (p.better) {
-    ctx.fillStyle = '#38D39F'; ctx.font = `600 40px ${font}`;
+    ctx.fillStyle = '#A9B6CF'; ctx.font = `600 40px ${font}`;
     wrap(ctx, t.better(p.better.pct, p.better.scopeLabel), W - 192).slice(0, 2).forEach((l, i) => ctx.fillText(l, X, y + i * 52));
   }
 
   // footer
-  ctx.fillStyle = '#E53935'; ctx.fillRect(0, H - 150, W, 150);
+  ctx.fillStyle = '#D7263D'; ctx.fillRect(0, H - 150, W, 150);
   ctx.fillStyle = '#fff'; ctx.font = `700 44px ${font}`; ctx.fillText(t.cta, X, H - 82);
   ctx.save(); ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'left' : 'right'; ctx.font = `500 34px ${font}`; ctx.fillStyle = '#FFE1DF';
   ctx.fillText((p.siteUrl || location.host).replace(/^https?:\/\//, ''), rtl ? 96 : W - 96, H - 82); ctx.restore();
@@ -114,7 +114,7 @@ export default function ShareCard(p: Props) {
 
   return (
     <div className="card grid gap-6 p-6 md:grid-cols-[minmax(0,260px),1fr] md:items-center">
-      <canvas ref={ref} width={W} height={H} className="w-full max-w-[260px] rounded-lg shadow-sm" aria-label={`${t.head}: ${p.score}/100`} />
+      <canvas ref={ref} width={W} height={H} className="w-full max-w-[260px] rounded-sheet" aria-label={`${t.head}: ${p.score}/100`} />
       <div>
         <h3 className="text-lg font-bold text-ink">{t.title}</h3>
         <p className="mt-1 text-sm leading-6 text-ink-soft">{t.desc}</p>
@@ -124,7 +124,7 @@ export default function ShareCard(p: Props) {
           <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}`} target="_blank" rel="noopener" onClick={copyLink} className="btn-ghost btn-sm">{t.li}</a>
           <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`} target="_blank" rel="noopener" className="btn-ghost btn-sm">{t.fb}</a>
         </div>
-        {msg && <p className="mt-2 text-xs text-sys-plumb">{msg}</p>}
+        {msg && <p className="mt-2 text-xs text-ink-soft">{msg}</p>}
       </div>
     </div>
   );

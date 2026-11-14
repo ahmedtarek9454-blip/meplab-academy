@@ -57,7 +57,7 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
         </div>
         <div className="text-sm font-semibold text-ink-soft">{done} {t.tasks_done} {t.tasks_total} {list.length}</div>
       </div>
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full bg-green-500 transition-all" style={{ width: `${list.length ? (done / list.length) * 100 : 0}%` }} /></div>
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full bg-green-500 transition-colors" style={{ width: `${list.length ? (done / list.length) * 100 : 0}%` }} /></div>
 
       {sp.sent && <p className="mt-4 rounded-sheet bg-green-50 p-3 font-semibold text-green-800">{t.task_sent}</p>}
       {sp.error && <p className="mt-4 rounded-sheet bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {errMsg[sp.error] || sp.error}</p>}

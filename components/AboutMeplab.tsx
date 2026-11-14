@@ -1,6 +1,5 @@
 import { SHOW_PRICES } from '@/lib/features';
 import { SUPABASE_READY } from '@/lib/supabase/env';
-import { artKey, COURSE_COLOR, COURSE_DEEP } from '@/lib/ui/courseArt';
 import { Mark } from './Logo';
 
 type Loc = 'ar' | 'en';
@@ -78,7 +77,7 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
           {courses.length ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {courses.map((c) => (
-                <a key={c.slug} href={hrefs.course(c.slug)} className="group flex flex-col rounded-[3px] border-[1.5px] border-ink border-t-[5px] p-5 text-ink transition hover:bg-paper" style={{ borderTopColor: c.status === 'soon' ? '#C5CBD3' : COURSE_COLOR[artKey(c)] }}>
+                <a key={c.slug} href={hrefs.course(c.slug)} className="group flex flex-col rounded-[3px] border-[1.5px] border-ink p-5 text-ink transition-colors hover:bg-paper">
                   <div className="font-display text-lg font-bold group-hover:underline">{L(c, 'title')}</div>
                   <p className="mt-1 line-clamp-2 flex-1 text-sm leading-6 text-ink-soft">{L(c, 'desc')}</p>
                   <div className="mt-3 flex items-center justify-between text-sm">
@@ -95,7 +94,7 @@ export default function AboutMeplab({ locale, courses, playerUrl, playerVersion,
 
         {(SUPABASE_READY || playerUrl) && <div className="card flex flex-col overflow-hidden">
           <div className="border-b border-line p-5">
-            <div className="mt-2 text-lg font-extrabold" dir="ltr" style={{ textAlign: 'inherit' }}>{t.player_t}</div>
+            <div className="mt-2 text-lg font-bold" dir="ltr" style={{ textAlign: 'inherit' }}>{t.player_t}</div>
             <p className="mt-1 text-sm leading-6 text-ink-soft">{t.player_d}</p>
             {playerVersion && <div className="mt-2 text-xs text-ink-mute">{t.player_ver} {playerVersion}</div>}
           </div>

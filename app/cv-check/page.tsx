@@ -15,15 +15,14 @@ export default async function CvCheckPage() {
     <>
       <section className="relative overflow-hidden border-b-[1.5px] border-ink bg-sheet">
         <div className="container-x relative pb-16 pt-12 text-center md:pb-20 md:pt-14">
-          <span className="badge rounded-[3px] border border-brand-blue px-2.5 py-1 text-sm text-brand-blue">{ar ? 'مجاني ومن غير تسجيل' : 'Free, no sign-up needed'}</span>
-          <h1 className="display mt-5 text-[2.6rem] leading-tight md:text-[3.6rem]">{ar ? 'فحص الـ CV بنظام ATS' : 'ATS CV Checker'}</h1>
+          <h1 className="display text-[2.6rem] leading-tight md:text-[3.6rem]">{ar ? 'فحص الـ CV بنظام ATS' : 'ATS CV Checker'}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-ink-soft">
             {ar
               ? 'ارفع الـ CV وفي ثواني تعرف نسبة توافقه مع أنظمة الـ ATS، وأقرب وظيفة ليه في تخصصك الهندسي، والمرتب التقريبي في مصر والسعودية والإمارات.'
               : 'Upload your CV and in seconds see its ATS score, the closest job title in your engineering discipline and an estimated salary in Egypt, KSA and UAE.'}
           </p>
           <p className="mt-3 text-sm text-ink-soft">
-            {ar ? 'مش عندك CV؟ ' : 'No CV yet? '}
+            {ar ? 'مجاني ومن غير تسجيل. مش عندك CV؟ ' : 'Free, no sign-up. No CV yet? '}
             <a href="/cv-builder" className="font-bold text-brand-blue underline underline-offset-4">{ar ? 'اعمله بصوتك في دقايق' : 'Build one by voice in minutes'}</a>
           </p>
         </div>

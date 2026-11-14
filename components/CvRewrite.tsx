@@ -129,21 +129,21 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
 
   return (
     <div className="card overflow-hidden">
-      <div className="relative bg-sys-plumb p-6 text-white md:p-8">
+      <div className="relative bg-ink p-6 text-white md:p-8">
         <div className="bg-grid absolute inset-0 opacity-30" />
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl">
             <span className="badge bg-white/15 text-white">{t.free}</span>
             <h3 className="mt-2 text-2xl font-extrabold">{t.title}</h3>
-            <p className="mt-2 leading-7 text-emerald-50">{t.desc}</p>
+            <p className="mt-2 leading-7 text-white/80">{t.desc}</p>
           </div>
-          <span className="badge bg-white text-emerald-800">{t.left.replace('{n}', String(left)).replace('{t}', String(FREE_REWRITES))}</span>
+          <span className="badge bg-white text-ink">{t.left.replace('{n}', String(left)).replace('{t}', String(FREE_REWRITES))}</span>
         </div>
       </div>
 
       <div className="p-6 md:p-8">
         {!out && left > 0 && (
-          <button onClick={go} disabled={busy} className="btn w-full bg-emerald-600 py-3 text-lg text-white hover:bg-emerald-700">
+          <button onClick={go} disabled={busy} className="btn w-full bg-ink py-3 text-lg text-white hover:bg-ink-soft">
             {busy ? <><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> {t.working}</> : t.btn}
           </button>
         )}
@@ -172,10 +172,10 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
             <div className="grid gap-4 sm:grid-cols-[1fr,auto,1fr] sm:items-center">
               <div className="rounded-sheet bg-paper p-5 text-center ring-1 ring-line"><div className="text-xs font-bold text-ink-mute">{t.before} · {t.ats}</div><div className="mt-1 text-5xl font-bold text-ink-mute">{res.score}</div></div>
               <div className="text-center">
-                <div className="text-3xl text-emerald-600" aria-hidden>{locale === 'ar' ? '←' : '→'}</div>
-                {out.after > res.score && <div className="badge mt-1 bg-emerald-100 text-emerald-800" dir="ltr">+{out.after - res.score} {t.pts}</div>}
+                <div className="text-3xl text-ink" aria-hidden>{locale === 'ar' ? '←' : '→'}</div>
+                {out.after > res.score && <div className="mt-1 text-sm tabular-nums text-ink-mute" dir="ltr">+{out.after - res.score} {t.pts}</div>}
               </div>
-              <div className="rounded-sheet bg-emerald-50 p-5 text-center ring-2 ring-emerald-400"><div className="text-xs font-bold text-emerald-700">{t.after} · {t.ats}</div><div className="mt-1 text-5xl font-bold text-emerald-700" aria-live="polite"><CountUp from={res.score} to={out.after} /></div></div>
+              <div className="rounded-sheet bg-white p-5 text-center ring-[1.5px] ring-ink"><div className="text-xs font-bold text-ink">{t.after} · {t.ats}</div><div className="mt-1 text-5xl font-bold text-ink" aria-live="polite"><CountUp from={res.score} to={out.after} /></div></div>
             </div>
 
             {(targets.length > 0 || !out.model.linkedin) && out.after < 100 && (
@@ -209,24 +209,24 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
                 <div className="text-xs font-bold text-ink-mute">{t.cmp_sum}</div>
                 <div className="grid gap-3 md:grid-cols-2">
                   <div className="rounded-sheet border border-red-200 bg-red-50/60 p-4 text-sm leading-6 text-ink-soft"><span className="mb-1 block text-xs font-bold text-red-600">{t.before}</span><span dir="auto" className="block">{out.model.summary.join(' ') || t.none}</span></div>
-                  <div className="rounded-sheet border border-emerald-200 bg-emerald-50/70 p-4 text-sm leading-6 text-ink"><span className="mb-1 block text-xs font-bold text-emerald-700">{t.after}</span><span dir="ltr" className="block text-start">{out.summary}</span></div>
+                  <div className="rounded-sheet border border-ink/30 bg-white p-4 text-sm leading-6 text-ink"><span className="mb-1 block text-xs font-bold text-ink">{t.after}</span><span dir="ltr" className="block text-start">{out.summary}</span></div>
                 </div>
                 {out.report.pairs.length > 0 && <>
                   <div className="pt-2 text-xs font-bold text-ink-mute">{t.cmp_bul}</div>
                   {out.report.pairs.map((p, i) => (
                     <div key={i} className="grid gap-3 md:grid-cols-2">
                       <div className="rounded-sheet border border-red-200 bg-red-50/60 p-3 text-sm leading-6 text-ink-soft line-through decoration-red-300/70" dir="auto">{p.before}</div>
-                      <div className="rounded-sheet border border-emerald-200 bg-emerald-50/70 p-3 text-sm leading-6 text-ink" dir="ltr">{p.after}</div>
+                      <div className="rounded-sheet border border-ink/30 bg-white p-3 text-sm leading-6 text-ink" dir="ltr">{p.after}</div>
                     </div>
                   ))}
                 </>}
               </div>
             </div>
-            {out.report.entries === 0 && <p className="rounded-sheet bg-amber-50 p-4 text-sm font-semibold text-amber-900">⚠️ {t.nojobs}</p>}
+            {out.report.entries === 0 && <p className="rounded-sheet bg-amber-50 p-4 text-sm font-semibold text-amber-900">{t.nojobs}</p>}
 
             <div>
-              <h4 className="mb-2 font-bold text-ink">✓ {t.changes}</h4>
-              <ul className="grid gap-2 sm:grid-cols-2">{out.report.changes.map((k) => <li key={k} className="rounded-sheet bg-emerald-50 p-3 text-sm text-ink-soft">✓ {ch(k)}</li>)}</ul>
+              <h4 className="mb-2 font-bold text-ink">{t.changes}</h4>
+              <ul className="grid gap-2 sm:grid-cols-2">{out.report.changes.map((k) => <li key={k} className="rounded-sheet border border-line bg-white p-3 text-sm text-ink-soft">✓ {ch(k)}</li>)}</ul>
               {out.report.removed.length > 0 && <details className="mt-2 text-xs text-ink-mute"><summary className="cursor-pointer">{t.removed}</summary><ul className="mt-1 list-disc ps-5">{out.report.removed.map((x, i) => <li key={i} dir="auto">{x}</li>)}</ul></details>}
             </div>
 
@@ -235,7 +235,7 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
               <button onClick={printPdf} className="btn-ghost px-6 py-3">{t.pdf}</button>
               <span className="self-center text-xs text-ink-mute">{t.pdf_hint}</span>
             </div>
-            <p className="text-sm text-ink-soft">✏️ {t.edit_hint}</p>
+            <p className="text-sm text-ink-soft">{t.edit_hint}</p>
 
             <details open={showText} onToggle={(e) => setShowText((e.target as HTMLDetailsElement).open)} className="rounded-sheet bg-paper ring-1 ring-line">
               <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-ink">{t.preview}</summary>

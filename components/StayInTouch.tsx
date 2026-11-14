@@ -78,7 +78,7 @@ export default function StayInTouch(p: Props) {
 
   if (state === 'done') {
     return (
-      <div className="card border-sys-plumb/40 bg-sys-plumb/5 p-6">
+      <div className="card border-line bg-white p-6">
         <h3 className="text-lg font-bold text-ink">{ar ? 'تمام، اتسجّلت' : "You're in"}</h3>
         <p className="mt-1 text-ink-soft">{ar ? 'هنبعتلك نصايح للـ CV ووظايف وكورسات في تخصصك. وتقدر تلغي من أي رسالة.' : "We'll send CV tips, jobs and courses in your field. You can unsubscribe from any message."}</p>
       </div>

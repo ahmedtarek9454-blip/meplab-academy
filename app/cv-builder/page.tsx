@@ -14,8 +14,7 @@ export default async function CvBuilderPage() {
     <>
       <section className="border-b-[1.5px] border-ink bg-sheet">
         <div className="container-x pb-16 pt-12 text-center md:pb-20 md:pt-14">
-          <span className="badge rounded-[3px] border border-brand-blue px-2.5 py-1 text-sm text-brand-blue">{ar ? 'مجاني ومن غير تسجيل' : 'Free, no sign-up'}</span>
-          <h1 className="display mt-5 text-[2.4rem] leading-tight md:text-[3.6rem]">{ar ? 'مش عندك CV؟ احكيلنا' : 'No CV yet? Just tell us'}</h1>
+          <h1 className="display text-[2.4rem] leading-tight md:text-[3.6rem]">{ar ? 'مش عندك CV؟ احكيلنا' : 'No CV yet? Just tell us'}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-ink-soft">
             {ar
               ? 'اتكلم عن شغلك بصوتك أو اكتبه، وعلّم على المهام اللي عملتها من قايمة جاهزة لتخصصك. هنرتّبهم في CV إنجليزي متوافق مع ATS، وتنزّله Word أو PDF.'

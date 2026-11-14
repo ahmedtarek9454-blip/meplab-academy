@@ -58,13 +58,13 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
   return (
     <div className="card overflow-hidden">
       <div className="border-b border-line p-6 md:p-8">
-        <h3 className="text-xl font-extrabold text-ink">🎯 {t.title}</h3>
+        <h3 className="text-xl font-bold text-ink">{t.title}</h3>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-ink-soft">{t.desc}</p>
         <textarea value={jd} onChange={(e) => { setJd(e.target.value); setR(null); }} rows={5} placeholder={t.ph} className="input mt-4 text-sm" dir="auto" />
-        {err && <p role="alert" className="mt-3 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {err}</p>}
+        {err && <p role="alert" className="mt-3 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{err}</p>}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <button onClick={run} className="btn-blue px-6">{t.btn}</button>
-          <span className="text-xs text-ink-mute">🔒 {t.engine}</span>
+          <span className="text-xs text-ink-mute">{t.engine}</span>
         </div>
       </div>
 
@@ -80,7 +80,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
               {(['must', 'nice', 'literal', 'title'] as const).map((k) => (
                 <div key={k}>
                   <div className="flex justify-between text-xs font-semibold text-ink-mute"><span>{t.parts[k]}</span><span>{Math.round(r.parts[k] * 100)}%</span></div>
-                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-brand-blue" style={{ width: `${Math.round(r.parts[k] * 100)}%` }} /></div>
+                  <div className="mt-1 h-1.5 overflow-hidden bg-line"><div className="h-full bg-brand-blue" style={{ width: `${Math.round(r.parts[k] * 100)}%` }} /></div>
                 </div>
               ))}
             </div>
@@ -106,7 +106,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
               {r.must.length ? (
                 <div className="flex flex-wrap gap-2" dir="ltr">
                   {r.must.map((m) => (
-                    <span key={m.id} title={m.evidence || ''} className={`rounded-lg px-2.5 py-1 text-sm font-semibold ${m.ok ? 'bg-green-50 text-green-700' : 'border border-dashed border-red-300 bg-red-50 text-red-700'}`}>{m.ok ? '✓' : '✕'} {m.label}</span>
+                    <span key={m.id} title={m.evidence || ''} className={`rounded-sheet px-2.5 py-1 text-sm font-semibold ${m.ok ? 'bg-green-50 text-green-700' : 'border border-dashed border-red-300 bg-red-50 text-red-700'}`}>{m.ok ? '✓' : '✕'} {m.label}</span>
                   ))}
                 </div>
               ) : <p className="text-sm text-ink-mute">{t.none}</p>}
@@ -116,7 +116,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
               <div>
                 <h4 className="mb-2 font-bold text-ink">{t.nice}</h4>
                 <div className="flex flex-wrap gap-2" dir="ltr">
-                  {r.nice.map((m) => <span key={m.id} className={`rounded-lg px-2.5 py-1 text-sm font-semibold ${m.ok ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-ink-mute'}`}>{m.ok ? '✓' : '○'} {m.label}</span>)}
+                  {r.nice.map((m) => <span key={m.id} className={`rounded-sheet px-2.5 py-1 text-sm font-semibold ${m.ok ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-ink-mute'}`}>{m.ok ? '✓' : '○'} {m.label}</span>)}
                 </div>
               </div>
             )}
@@ -125,7 +125,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
               <h4 className="mb-1 font-bold text-ink">{t.literal}</h4>
               <p className="mb-2 text-xs text-ink-mute">{t.lit_tip}</p>
               <div className="flex flex-wrap gap-2" dir="ltr">
-                {r.literal.map((l) => <span key={l.kw} className={`rounded-md px-2 py-0.5 text-xs font-semibold ${l.ok ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-800'}`}>{l.ok ? '✓' : '+'} {l.kw}</span>)}
+                {r.literal.map((l) => <span key={l.kw} className={`rounded-sheet px-2 py-0.5 text-xs font-semibold ${l.ok ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-800'}`}>{l.ok ? '✓' : '+'} {l.kw}</span>)}
               </div>
             </div>
           </div>

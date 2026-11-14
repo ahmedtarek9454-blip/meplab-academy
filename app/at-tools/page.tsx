@@ -61,8 +61,7 @@ export default async function AtToolsPage() {
       <section className="border-b-[1.5px] border-ink bg-sheet">
         <div className="container-x grid items-center gap-10 pb-14 pt-12 md:grid-cols-[1fr,1.15fr] md:pb-16 md:pt-14">
           <div>
-            <span className="badge rounded-[3px] border border-brand-blue px-2.5 py-1 text-sm text-brand-blue">{ar ? 'مجانية لأي مهندس محتاجها' : 'Free for any engineer who needs it'}</span>
-            <h1 className="display mt-5 text-[2.4rem] leading-tight md:text-[3.4rem]" dir="ltr" style={{ textAlign: ar ? 'right' : 'left' }}>AT Tools for Revit</h1>
+            <h1 className="display text-[2.4rem] leading-tight md:text-[3.4rem]" dir="ltr" style={{ textAlign: ar ? 'right' : 'left' }}>AT Tools for Revit</h1>
             <p className="mt-4 max-w-xl text-lg leading-8 text-ink-soft">
               {ar
                 ? 'إضافة لـ Revit فيها أدوات الـ MEP والـ BIM اللي بتاخد وقت كل يوم: فلاتر الأنظمة، الـ Views والشيتات، فحص التوصيلات، تصدير Navisworks، الحصر، الـ Sleeves، الميول، التاجات، العزل والـ Supports.'
@@ -72,7 +71,7 @@ export default async function AtToolsPage() {
               <a href={SETUP} download className="btn-red px-6 py-3.5 text-base">{ar ? `نزّل AT Tools ${VERSION}` : `Download AT Tools ${VERSION}`}</a>
               <a href="#video" className="btn-ghost px-6 py-3.5 text-base">{ar ? 'اتفرج على الشرح' : 'Watch the walkthrough'}</a>
             </div>
-            <p className="mt-4 text-sm text-ink-mute" dir="ltr" style={{ textAlign: ar ? 'right' : 'left' }}>Revit 2024 · 2025 · 2026 · 2027 · Windows · 11 MB</p>
+            <p className="mt-4 text-sm text-ink-mute" dir="ltr" style={{ textAlign: ar ? 'right' : 'left' }}>{ar ? 'مجانية لأي مهندس محتاجها. ' : 'Free for any engineer who needs it. '}<span dir="ltr">Revit 2024–2027, Windows, 11 MB</span></p>
           </div>
           <div id="video" className="scroll-mt-24">
             <div className="overflow-hidden rounded-[3px] border-[1.5px] border-ink bg-ink">

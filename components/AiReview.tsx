@@ -15,7 +15,7 @@ const T = {
     jd_label: 'عندك إعلان وظيفة معيّنة؟ الصقه هنا (اختياري)',
     jd_used: 'هيستخدم إعلان الوظيفة اللي لصقته فوق ويكتبلك Summary مفصّل عليه.',
     jd_ph: 'الصق وصف الوظيفة من LinkedIn أو Bayt...',
-    btn: '✨ قيّم الـ CV بالتفصيل',
+    btn: 'قيّم الـ CV بالتفصيل',
     loading: ['بنقرا الـ CV...', 'بنقارنه بمتطلبات الوظيفة والسوق...', 'بنكتب التقييم والتعديلات...'],
     privacy: 'قبل الإرسال بنشيل اسمك وإيميلك وتليفونك واللينكات. باقي نص الـ CV بيتبعت لخدمة Google Gemini علشان يتحلل، ومش بنخزّنه عندنا.',
     login_t: 'المستشار الذكي للأعضاء (مجاني)',
@@ -57,7 +57,7 @@ const T = {
     jd_label: 'Applying for a specific job? Paste the job post (optional)',
     jd_used: 'Will use the job post you pasted above and write a summary tailored to it.',
     jd_ph: 'Paste the job description from LinkedIn or Bayt...',
-    btn: '✨ Review my CV in detail',
+    btn: 'Review my CV in detail',
     loading: ['Reading your CV...', 'Comparing it with the role and market...', 'Writing the review and rewrites...'],
     privacy: 'Before sending, we remove your name, email, phone and links. The rest of the CV text is sent to Google Gemini for analysis; we do not store it.',
     login_t: 'The smart advisor is for members (free)',
@@ -159,12 +159,12 @@ export default function AiReview({ locale, text, res, market, jd = '', loginHref
       <div className="card overflow-hidden">
         <Header>
           <div className="flex items-center gap-2 text-sm font-bold text-indigo-200" dir="ltr" style={{ justifyContent: locale === 'ar' ? 'flex-end' : 'flex-start' }}>
-            <span className="rounded-md bg-white/15 px-2 py-0.5">✨ {t.brand}</span>
+            <span className="rounded-md bg-white/15 px-2 py-0.5">{t.brand}</span>
           </div>
           <div className="mt-2 text-2xl font-extrabold">{t.title}</div>
           <p className="mt-2 max-w-3xl leading-7 text-indigo-100">{t.desc}</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {t.feats.map((f) => <span key={f} className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">✓ {f}</span>)}
+            {t.feats.map((f) => <span key={f} className="rounded-sheet bg-white/10 px-3 py-1 text-xs font-semibold">✓ {f}</span>)}
           </div>
         </Header>
 
@@ -176,14 +176,14 @@ export default function AiReview({ locale, text, res, market, jd = '', loginHref
             </div>
           ) : (
             <>
-              {jd.trim() && <p className="rounded-sheet bg-indigo-50 p-3 text-sm text-indigo-800">📋 {t.jd_used}</p>}
+              {jd.trim() && <p className="rounded-sheet bg-indigo-50 p-3 text-sm text-indigo-800">{t.jd_used}</p>}
               <button onClick={go} disabled={state === 'loading'} className="btn w-full bg-ink hover:bg-[#16295A] py-3 text-lg text-white hover:opacity-95">
                 {state === 'loading' ? <><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> {t.loading[step]}</> : t.btn}
               </button>
             </>
           )}
-          {state === 'error' && <p role="alert" className="rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {err}</p>}
-          <p className="text-xs leading-5 text-ink-mute">🔒 {t.privacy}</p>
+          {state === 'error' && <p role="alert" className="rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{err}</p>}
+          <p className="text-xs leading-5 text-ink-mute">{t.privacy}</p>
         </div>
       </div>
     );
@@ -197,7 +197,7 @@ export default function AiReview({ locale, text, res, market, jd = '', loginHref
             <span className="text-4xl font-bold leading-none">{rv.rating}</span><span className="text-xs font-bold text-slate-400">/10 · {t.rating}</span>
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-bold text-indigo-200">✨ {t.brand} · {t.title}</div>
+            <div className="text-sm font-bold text-indigo-200">{t.brand} · {t.title}</div>
             <p className="mt-1 text-lg font-semibold leading-8" dir="auto">{rv.verdict}</p>
           </div>
           {left !== null && <span className="badge bg-white/15 text-white">{t.left.replace('{n}', String(left))}</span>}
@@ -217,7 +217,7 @@ export default function AiReview({ locale, text, res, market, jd = '', loginHref
       <div className="grid gap-8 p-6 md:grid-cols-2 md:p-8">
         {rv.target_titles?.length > 0 && (
           <div className="md:col-span-2">
-            <h4 className="mb-3 font-bold text-ink">🎯 {t.titles}</h4>
+            <h4 className="mb-3 font-bold text-ink">{t.titles}</h4>
             <div className="flex flex-wrap gap-2">{rv.target_titles.map((x: string) => <span key={x} className="rounded-sheet bg-ink px-4 py-2 text-sm font-bold text-white" dir="ltr">{x}</span>)}</div>
           </div>
         )}
@@ -225,7 +225,7 @@ export default function AiReview({ locale, text, res, market, jd = '', loginHref
         {rv.jd_match && (
           <div className="rounded-sheet bg-paper p-5 ring-1 ring-line md:col-span-2">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h4 className="font-bold text-ink">📋 {t.jd_t}</h4>
+              <h4 className="font-bold text-ink">{t.jd_t}</h4>
               <span className="text-2xl font-bold" style={{ color: color(rv.jd_match.match_pct, 100) }}>{rv.jd_match.match_pct}%</span>
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full" style={{ width: `${rv.jd_match.match_pct}%`, background: color(rv.jd_match.match_pct, 100) }} /></div>
@@ -291,7 +291,7 @@ export default function AiReview({ locale, text, res, market, jd = '', loginHref
 
         {rv.interview_questions?.length > 0 && (
           <div className="md:col-span-2">
-            <h4 className="mb-3 font-bold text-ink">🎤 {t.interview}</h4>
+            <h4 className="mb-3 font-bold text-ink">{t.interview}</h4>
             <div className="space-y-2">
               {rv.interview_questions.map((q: any, i: number) => (
                 <details key={i} className="group rounded-sheet bg-paper p-4 ring-1 ring-line [&_summary::-webkit-details-marker]:hidden">

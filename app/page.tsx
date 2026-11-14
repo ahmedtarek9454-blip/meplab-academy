@@ -26,7 +26,7 @@ export default async function Home() {
         <div className="container-x grid items-center gap-10 py-12 md:py-16 lg:grid-cols-[.95fr,1.05fr] lg:gap-14">
           <div>
             <h1 className="display text-[2.35rem] leading-[1.3] sm:text-[3rem] lg:text-[3.6rem]">
-              {ar ? 'اتعلّم التصميم زي ما بيتراجع في المشاريع الحقيقية.' : 'Learn design the way real projects review it.'}
+              {ar ? 'اتعلّم التصميم زي ما بيتراجع في المشاريع الحقيقية' : 'Learn design the way real projects review it'}
             </h1>
             <p className="mt-5 max-w-[34rem] text-lg leading-8 text-ink-soft">
               {ar
