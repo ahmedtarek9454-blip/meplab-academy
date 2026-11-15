@@ -118,7 +118,9 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const ds = detectDisciplines(text, found);
   const roles = rankRoles(found, model, market, text, firstWork, ds);
   const top = roles[0];
-  const discId = top.role.disc !== 'any' ? top.role.disc : ds.best >= 3 ? ds.top : null;
+  // shown discipline: the department in the degree first (mechanical / electrical / civil…), then the best role's, then the CV's skills
+  const degDisc = ds.degree.length ? (ds.degree.includes(top.role.disc) ? top.role.disc : ds.degree.find((d) => d !== 'mech') || ds.degree[0]) : null;
+  const discId = degDisc || (top.role.disc !== 'any' ? top.role.disc : ds.best >= 3 ? ds.top : null);
   const discipline = discId && DISCIPLINES[discId] ? { id: discId, ar: DISCIPLINES[discId].ar, en: DISCIPLINES[discId].en } : null;
 
   /* ---- experience & salary ---- */

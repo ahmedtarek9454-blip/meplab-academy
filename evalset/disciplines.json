@@ -1,0 +1,191 @@
+[
+ {
+  "id": "elec_mep_site",
+  "disc": "elec",
+  "roles": [
+   "elec_site",
+   "elec_design",
+   "elv"
+  ],
+  "notech": true,
+  "text": "Ahmed Samir\nMEP Electrical Engineer\nCairo, Egypt | +20 100 123 4567 | ahmed.samir@email.com\nEXPERIENCE\nElectrical Site Engineer - Hassan Allam Construction, New Capital\nJan 2021 - Present\n- Supervised installation of LV panels, cable trays and lighting for a 20-floor tower\n- Reviewed shop drawings and coordinated with mechanical and plumbing teams\n- Tested and commissioned MDBs, SMDBs and fire alarm system\nMEP Engineer - Petrojet\nJul 2018 - Dec 2020\n- Followed up electrical works and MEP coordination on site\nEDUCATION\nB.Sc. Electrical Power and Machines Engineering - Cairo University - 2018\nSKILLS\nAutoCAD, Revit MEP, DIALux, ETAP, Excel"
+ },
+ {
+  "id": "elec_design",
+  "disc": "elec",
+  "roles": [
+   "elec_design",
+   "elec_site",
+   "power",
+   "elv"
+  ],
+  "notech": true,
+  "text": "Mona Adel\nElectrical Design Engineer\nGiza, Egypt | +20 101 222 3333 | mona.adel@email.com\nSUMMARY\nElectrical design engineer with 6 years in consultancy for residential and healthcare projects.\nEXPERIENCE\nElectrical Design Engineer - Dar Al-Handasah, Cairo\n2020 - Present\n- Designed lighting, power and earthing for 3 hospitals using DIALux and ETAP\n- Prepared load schedules, single line diagrams and cable sizing\n- Coordinated electrical services in Revit with HVAC and plumbing\nEDUCATION\nB.Sc. Electrical Engineering (Power) - Ain Shams University - 2019\nSKILLS\nDIALux, ETAP, AutoCAD, Revit, Load calculation, Cable sizing"
+ },
+ {
+  "id": "civil_site",
+  "disc": "civil",
+  "roles": [
+   "civil_site",
+   "structural",
+   "infra",
+   "quality",
+   "planning"
+  ],
+  "notech": true,
+  "text": "Omar Fathy\nSite Engineer\nAlexandria, Egypt | 01223344556 | omar.fathy@email.com\nEXPERIENCE\nSite Engineer - Orascom Construction\n2019 - Present\n- Supervised concrete works, formwork and reinforcement for a 12-floor residential building\n- Prepared shop drawings for slabs and columns\n- Followed up subcontractors and daily reports\nEDUCATION\nB.Sc. Civil Engineering - Alexandria University - 2019\nSKILLS\nAutoCAD, ETABS, SAFE, Primavera, Excel"
+ },
+ {
+  "id": "mech_hvac_site",
+  "disc": "mep",
+  "roles": [
+   "site",
+   "hvac_design",
+   "fm"
+  ],
+  "notech": true,
+  "text": "Karim Hassan\nMechanical Site Engineer\nCairo, Egypt | +20 100 555 0101 | karim.hassan@email.com\nEXPERIENCE\nMechanical Site Engineer - Rowad Modern Engineering\nMar 2021 - Present\n- Supervised installation of ducts, chillers and AHUs for a 400-bed hospital\n- Followed up with HVAC and fire fighting subcontractors\n- Prepared material submittals and inspection requests\nEDUCATION\nB.Sc. Mechanical Power Engineering - Helwan University - 2019\nSKILLS\nAutoCAD, Revit, HAP, Excel"
+ },
+ {
+  "id": "mech_plumb_design",
+  "disc": "mep",
+  "roles": [
+   "plumbing",
+   "hvac_design",
+   "fire"
+  ],
+  "notech": true,
+  "text": "Youssef Ali\nMechanical Design Engineer\nCairo | +20 111 000 2222 | youssef.ali@email.com\nEXPERIENCE\nPlumbing Design Engineer - ECG Engineering Consultants\n2020 - Present\n- Designed water supply and drainage networks for a 60-villa compound\n- Calculated fixture units and selected booster pumps and tanks\n- Coordinated plumbing services in Revit\nEDUCATION\nB.Sc. Mechanical Engineering - Mansoura University - 2019\nSKILLS\nRevit MEP, AutoCAD, Plumbing design, IPC, Excel"
+ },
+ {
+  "id": "arch",
+  "disc": "arch",
+  "roles": [
+   "architect",
+   "interior",
+   "tech_office"
+  ],
+  "notech": false,
+  "text": "Laila Kamal\nArchitect\nCairo, Egypt | 01001112223 | laila.kamal@email.com\nEXPERIENCE\nArchitect - Sabbour Consulting\n2021 - Present\n- Designed residential and commercial buildings from concept to construction drawings\n- Prepared shop drawings and details for facades\n- Produced 3D renders in Lumion\nEDUCATION\nB.Sc. Architecture Engineering - Cairo University - 2020\nSKILLS\nRevit, AutoCAD, SketchUp, Lumion, Photoshop"
+ },
+ {
+  "id": "elec_ar",
+  "disc": "elec",
+  "roles": [
+   "elec_site",
+   "elec_design",
+   "power",
+   "elv"
+  ],
+  "notech": true,
+  "text": "محمد إبراهيم\nمهندس كهرباء\nالقاهرة | 01001234567 | mohamed.ibrahim@email.com\nالخبرة العملية\nمهندس كهرباء موقع - شركة السويدي - 2020 حتى الآن\n- الإشراف على تركيب لوحات التوزيع والكابلات والإنارة\n- مراجعة اللوحات التنفيذية واستلام الأعمال\nالمؤهل الدراسي\nبكالوريوس هندسة كهرباء قوى وآلات - جامعة حلوان - 2019\nالمهارات\nAutoCAD, DIALux, ETAP"
+ },
+ {
+  "id": "elec_no_title",
+  "disc": "elec",
+  "roles": [
+   "elec_site",
+   "elec_design",
+   "elv",
+   "power",
+   "quality"
+  ],
+  "notech": true,
+  "text": "Hany Mostafa\nCairo, Egypt | +20 102 333 4444 | hany.mostafa@email.com\nEXPERIENCE\nEngineer - Elsewedy Electric\n2021 - Present\n- Installed and tested medium voltage switchgear and transformers\n- Prepared cable schedules and as-built drawings\nEDUCATION\nB.Sc. in Electrical Engineering - Zagazig University - 2020\nSKILLS\nAutoCAD, ETAP, Excel"
+ },
+ {
+  "id": "civil_qs",
+  "disc": "civil",
+  "roles": [
+   "estimation",
+   "civil_site",
+   "structural",
+   "planning"
+  ],
+  "notech": true,
+  "text": "Nour Hassan\nQuantity Surveyor\nRiyadh, KSA | +966 55 111 2222 | nour.hassan@email.com\nEXPERIENCE\nQuantity Surveyor - Nesma & Partners\n2020 - Present\n- Prepared BOQs and quantity take-off for concrete and finishing works\n- Evaluated subcontractor invoices and variation orders\nEDUCATION\nB.Sc. Civil Engineering - Ain Shams University - 2018\nSKILLS\nCostX, Excel, AutoCAD, Primavera"
+ },
+ {
+  "id": "mech_bim",
+  "disc": "mep",
+  "roles": [
+   "bim",
+   "hvac_design",
+   "tech_office"
+  ],
+  "notech": false,
+  "text": "Ahmed Tarek\nBIM Mechanical Engineer\nCairo, Egypt | +20 100 404 0000 | ahmed@email.com\nEXPERIENCE\nBIM Mechanical Engineer - SHADE Corporation\n2022 - Present\n- Modeled HVAC, fire fighting and plumbing in Revit for airport packages\n- Ran clash detection in Navisworks and resolved 1,200 clashes\nEDUCATION\nB.Sc. Mechanical Power Engineering - Helwan University - 2020\nSKILLS\nRevit MEP, Navisworks, Dynamo, AutoCAD"
+ },
+ {
+  "id": "fire_mech",
+  "disc": "mep",
+  "roles": [
+   "fire",
+   "hvac_design",
+   "plumbing",
+   "site"
+  ],
+  "notech": true,
+  "text": "Sara Mahmoud\nFire Fighting Engineer\nJeddah, KSA | +966 50 999 8888 | sara@email.com\nEXPERIENCE\nFire Protection Design Engineer - Saudi Binladin Group\n2019 - Present\n- Designed sprinkler and standpipe systems per NFPA 13 and 14\n- Performed hydraulic calculations using Elite Fire\nEDUCATION\nB.Sc. Mechanical Engineering - Assiut University - 2018\nSKILLS\nNFPA, AutoCAD, Revit, Elite Fire"
+ },
+ {
+  "id": "elv",
+  "disc": "telecom",
+  "roles": [
+   "elv",
+   "elec_site",
+   "elec_design"
+  ],
+  "notech": true,
+  "text": "Mostafa Ibrahim\nELV Engineer\nDubai, UAE | +971 50 222 3333 | mostafa@email.com\nEXPERIENCE\nELV Engineer - Emirates Transport Systems\n2020 - Present\n- Installed CCTV, access control and fire alarm systems for 3 towers\n- Prepared ELV shop drawings and testing reports\nEDUCATION\nB.Sc. Communications and Electronics Engineering - Benha University - 2019\nSKILLS\nAutoCAD, Revit, Genetec, Milestone"
+ },
+ {
+  "id": "elec_mep_nobsc",
+  "disc": "elec",
+  "roles": [
+   "elec_site",
+   "elec_design",
+   "elv"
+  ],
+  "notech": true,
+  "text": "Khaled Nabil\nMEP Engineer\nCairo | 01112223334 | khaled@email.com\nEXPERIENCE\nMEP Engineer - Redcon Construction\n2020 - Present\n- Followed up MEP works on site including lighting, power, fire alarm and HVAC coordination\n- Reviewed shop drawings and material submittals\n- Attended meetings with the consultant\nEDUCATION\nElectrical Engineering, Cairo University, 2019\nSKILLS\nAutoCAD, Revit, Excel"
+ },
+ {
+  "id": "elec_faculty_dept",
+  "disc": "elec",
+  "roles": [
+   "elec_site",
+   "elec_design",
+   "elv",
+   "power"
+  ],
+  "notech": true,
+  "text": "Walid Hamdy\nSite Engineer\nGiza | 01009998887 | walid@email.com\nEXPERIENCE\nSite Engineer - Arab Contractors\n2019 - Present\n- Supervised MEP installation works for a mall project\n- Coordinated with subcontractors and prepared daily reports\nEDUCATION\nFaculty of Engineering, Ain Shams University\nElectrical Power Department - Graduated 2018\nSKILLS\nAutoCAD, MS Project"
+ },
+ {
+  "id": "civil_noBsc",
+  "disc": "civil",
+  "roles": [
+   "civil_site",
+   "structural",
+   "infra",
+   "quality",
+   "planning"
+  ],
+  "notech": true,
+  "text": "Tamer Saad\nSite Engineer\nMansoura | 01205556667 | tamer@email.com\nEXPERIENCE\nSite Engineer - Al Ahly for Development\n2020 - Present\n- Supervised finishing works and MEP coordination for residential buildings\n- Prepared shop drawings and quantity surveys\nEDUCATION\nCivil Engineering - Mansoura University (2019)\nSKILLS\nAutoCAD, Excel"
+ },
+ {
+  "id": "mech_generic",
+  "disc": "mep",
+  "roles": [
+   "site",
+   "hvac_design",
+   "fm",
+   "tech_office",
+   "estimation"
+  ],
+  "notech": false,
+  "text": "Mahmoud Ali\nMechanical Engineer\nCairo | 01000001111 | mahmoud@email.com\nEXPERIENCE\nMechanical Engineer - Petrojet\n2021 - Present\n- Followed up installation of chillers and pumps\n- Prepared reports\nEDUCATION\nMechanical Engineering - Helwan University - 2020\nSKILLS\nAutoCAD, Excel"
+ }
+]

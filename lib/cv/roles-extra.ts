@@ -57,7 +57,7 @@ export const DISCIPLINES: Record<string, { ar: string; en: string; re: RegExp }>
   petroleum: { ar: 'بترول', en: 'Petroleum', re: /(petroleum|oil\s*(?:and|&)\s*gas\s*engineering|mining|بترول|تعدين)/i },
   automation: { ar: 'تحكم وأوتوميشن', en: 'Automation & Control', re: /(mechatronic|automation|control\s*(?:systems?\s*)?engineering|instrumentation|ميكاترونكس|ميكاترونيكس|تحكم)/i },
   it: { ar: 'حاسبات وبرمجيات', en: 'Computer & Software', re: /(computer|software|information\s*technology|computer\s*science|\bcse\b|حاسبات|برمجيات|علوم\s*الحاسب)/i },
-  telecom: { ar: 'اتصالات وإلكترونيات', en: 'Communications & Electronics', re: /(communication|telecommunication|electronics|اتصالات|إلكترونيات|الكترونيات)/i },
+  telecom: { ar: 'اتصالات وإلكترونيات', en: 'Communications & Electronics', re: /(communications?\s*(?:and|&)\s*electronics|electronics\s*(?:and|&)\s*communications?|telecommunications?|communications?\s*engineering|electronics|اتصالات|إلكترونيات|الكترونيات)/i },
   biomedical: { ar: 'هندسة طبية', en: 'Biomedical', re: /(biomedical|bio-?medical|medical\s*engineering|systems\s*and\s*biomedical|طبية|الطبية)/i }
 };
 

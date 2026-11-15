@@ -26,6 +26,15 @@ export type RoleScore = { role: Role; pct: number; skillPct: number; titleBoost:
 export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Market, text = '', firstWorkLine?: string, ds?: DisciplineScores): RoleScore[] {
   const ev: TitleEvidence | null = text ? titleEvidence(text, firstWorkLine) : null;
   const disc = ds || detectDisciplines(text, found);
+  // a generic title ("Site Engineer", "MEP Engineer", "Execution Engineer") means site work in the engineer's own department
+  const SITE_OF: Record<string, string> = { elec: 'elec_site', telecom: 'elv', civil: 'civil_site', survey: 'civil_site', arch: 'architect' };
+  const degSite = disc.degree?.map((d) => SITE_OF[d]).find(Boolean);
+  if (ev && degSite) {
+    const generic = /(^|[\s|,–-])(site\s*engineer|mep\s*engineer|execution\s*engineer|construction\s*engineer|project\s*engineer|engineer)\b/i;
+    if (generic.test(ev.headline + ' | ' + ev.recent)) ev.hits[degSite] = Math.max(ev.hits[degSite] || 0, ev.hits.site || 0, 3);
+  }
+  // non-mechanical graduates: a small lift for their own department's roles (MEP roles here are the mechanical ones)
+  const ownBoost = (d: string) => (disc.degree?.length && !disc.degree.some((x) => x === 'mep' || x === 'mech') && disciplinePenalty(d, disc) === 0 && d !== 'any' ? 8 : 0);
   const scored = ROLES.map((role) => {
     const w = weightsFor(model, role.id, market);
     const entries = Object.entries(w).sort((a, b) => b[1] - a[1]);
@@ -48,7 +57,12 @@ export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Ma
       if (role.id === 'pm') titleBoost += Math.min(10, ev.leadership * 2);
       if (h === 0 && Object.values(ev.hits).some((v) => v >= 2)) titleBoost -= 8; // the CV clearly names another role in its headline/latest job
     }
-    const pct = Math.max(0, Math.min(98, Math.round(skillPct * 0.75 + titleBoost - disciplinePenalty(role.disc, disc))));
+    // what they call themselves can override the degree (an electrical graduate who works as "HVAC Design Engineer")
+    let pen = disciplinePenalty(role.disc, disc);
+    if (pen && ev && (ev.hits[role.id] || 0) >= 2 && role.id !== 'site') pen = Math.round(pen / 3);
+    // technical office is a job title, not a skill set: shop drawings and submittals are everyone's daily work
+    if (role.id === 'tech_office' && !(ev && (ev.hits.tech_office || 0) > 0)) pen += 22;
+    const pct = Math.max(0, Math.min(98, Math.round(skillPct * 0.75 + titleBoost - pen + ownBoost(role.disc))));
     return { role, pct, skillPct, titleBoost, matched, missing: missing.slice(0, 8), missingIds: missingIds.slice(0, 8) };
   });
   return scored.sort((a, b) => b.pct - a.pct);
