@@ -121,7 +121,7 @@ const MEP_SKILLS: Skill[] = [
   s('application', 'Product application', 'commercial', ['application engineer', 'product selection', 'technical proposal', 'technical proposals', 'techno-commercial', 'techno commercial', 'technical offer', 'technical offers', 'commercial offer', 'selection software', 'product application'], { sales: 3 }),
 
   /* ---------------- Management ---------------- */
-  s('planning', 'Planning & scheduling', 'management', ['planning', 'scheduling', 'schedule', 'programme', 'baseline', 'look ahead'], { pm: 3, site: 1 }),
+  s('planning', 'Planning & scheduling', 'management', ['planning', 'scheduling', 'project schedule', 'time schedule', 'master schedule', 'baseline schedule', 'schedule update', 'programme', 'baseline', 'look ahead'], { pm: 3, site: 1 }),
   s('team_lead', 'Team leadership', 'management', ['team lead', 'team leader', 'team leadership', 'led a team', 'lead a team', 'leading a team', 'managed a team', 'manage a team', 'lead team of', 'led team of', 'team of', 'supervised engineers', 'supervise engineers', 'mentoring', 'mentored', 'line manager'], { pm: 2, bim: 1, hvac_design: 1, site: 1 }),
   s('stakeholders', 'Client & consultant management', 'management', ['stakeholder', 'stakeholders', 'client meetings', 'consultant meetings', 'client management'], { pm: 2, sales: 1 }),
   s('risk', 'Risk management', 'management', ['risk management', 'risk register', 'risk assessment'], { pm: 2 }),

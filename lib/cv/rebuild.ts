@@ -162,6 +162,25 @@ function splitHeader(lines: string[]): { title: string; company: string; locatio
   return { title: cap(title), company, location };
 }
 
+/** "ETAP / Ecodial / Amtech" → only the names this CV actually mentions ("ETAP"); never claim a tool the person didn't write */
+function honestLabel(label: string, text: string) {
+  const t = text.toLowerCase();
+  const has = (p: string) => t.includes(p.toLowerCase().trim());
+  // "Lighting design (DIALux / Relux)" → keep only the named tools inside the brackets
+  const br = label.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+  if (br && /\//.test(br[2])) { const inside = br[2].split(/\s*\/\s*/).filter(has); return inside.length ? `${br[1]} (${inside.join(' / ')})` : br[1]; }
+  if (br) return label;
+  // "ETAP / Ecodial / Amtech" → "ETAP"
+  if (/\s\/\s/.test(label)) { const parts = label.split(/\s+\/\s+/); const seen = parts.filter(has); return seen.length ? seen.join(' / ') : parts[0]; }
+  // "Clash detection & coordination" when the CV only says coordination → "Coordination"
+  if (/\s&\s/.test(label)) {
+    const parts = label.split(/\s+&\s+/); const seen = parts.filter(has);
+    // only when what is left still reads as a skill ("Coordination"), not a bare noun ("Subcontractor")
+    if (seen.length && seen.length < parts.length && seen.every((x) => /\s|(tion|ing|ment)$/i.test(x.trim()))) return seen.join(' & ').replace(/^./, (c) => c.toUpperCase());
+  }
+  return label;
+}
+
 export function parseCv(text: string): CvModel {
   text = undecorate(text);
   const t = text.replace(/\r/g, '').replace(/[–—]/g, '–').replace(/ /g, ' ');
@@ -280,7 +299,7 @@ export function parseCv(text: string): CvModel {
   const skills: Record<string, string[]> = {};
   for (const f of found.values()) {
     const sk = SKILL_BY_ID.get(f.id); if (!sk || sk.cat === 'cert') continue;
-    (skills[sk.cat] ||= []).push(sk.label);
+    (skills[sk.cat] ||= []).push(honestLabel(sk.label, text));
   }
   // keep literal software names the user wrote (e.g. "PIPENET") that the taxonomy may not label
   const skillLines = grab('skills').join(', ').split(/[,•|/]|\s{2,}/).map((x) => x.trim()).filter((x) => x && x.length < 30);
@@ -349,11 +368,13 @@ export function parseCv(text: string): CvModel {
 }
 
 /* ---------------- rebuilding ---------------- */
-const CAT_LABEL: Record<string, string> = { civil: 'Civil Works', structural: 'Structural Design', survey: 'Surveying & GIS', arch: 'Architecture & Interior', electrical: 'Electrical', mech: 'Mechanical & Manufacturing', process: 'Process Engineering', petroleum: 'Petroleum', automation: 'Automation & Control', it: 'Software & IT', telecom: 'Telecom & Electronics', biomed: 'Biomedical', cert: 'Certifications', learned: 'Other Skills', design: 'HVAC Design', systems: 'HVAC Systems', fire: 'Fire Protection', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & Standards', execution: 'Execution & BIM', office: 'Technical Office', commercial: 'Commercial', management: 'Management', other: 'Other Tools' };
+const CAT_LABEL: Record<string, string> = { civil: 'Civil Works', structural: 'Structural', survey: 'Surveying & GIS', arch: 'Architecture & Interior', electrical: 'Electrical', mech: 'Mechanical & Manufacturing', process: 'Process Engineering', petroleum: 'Petroleum', automation: 'Automation & Control', it: 'Software & IT', telecom: 'Telecom & Electronics', biomed: 'Biomedical', cert: 'Certifications', learned: 'Other Skills', design: 'HVAC Design', design_g: 'Design', systems: 'HVAC Systems', fire: 'Fire Protection', plumbing: 'Plumbing', software: 'Software', codes: 'Codes & Standards', execution: 'Execution & BIM', office: 'Technical Office', commercial: 'Commercial', management: 'Management', other: 'Other Tools' };
 
 export function buildSummary(m: CvModel, years: number, roleId: string, level: Level, market: Market, general = false) {
   const role = general ? undefined : ROLES.find((r) => r.id === roleId);
-  const title = m.headline || role?.en || (general ? 'Professional' : 'Engineer');
+  // a bare "Engineer" / "Site Engineer" / "MEP Engineer" headline says less than the role we found from the degree and job history
+  const genericHead = /^(?:(?:site|mep|project|execution|construction|field)\s+)?engineer$/i.test((m.headline || '').trim());
+  const title = (genericHead && role ? role.en : m.headline) || role?.en || (general ? 'Professional' : 'Engineer');
   const yrs = years >= 1 ? `${Math.floor(years)}+ years` : 'early-career';
   const topSkills = Object.entries(m.skills).filter(([c]) => (general || c !== 'other') && c !== 'software').flatMap(([, v]) => v).slice(0, 4);
   const tools = (m.skills.software || []).slice(0, 4);
@@ -480,6 +501,22 @@ export function rebuildCv(text: string, market: Market, roleId: string, years: n
       const have = Object.values(m.skills).flat().join(' | ').toLowerCase();
       const miss = own.filter((x) => !have.includes(x.toLowerCase()));
       if (miss.length) m.skills = { ...m.skills, other: [...new Set([...(m.skills.other || []), ...miss])].slice(0, 16) };
+    }
+  }
+  // no tool twice: drop "Other" items another group already names ("SAFE" next to "ETABS / SAFE")
+  if (m.skills.other) {
+    const named = Object.entries(m.skills).filter(([k]) => k !== 'other').flatMap(([, v]) => v).join(' | ').toLowerCase();
+    m.skills.other = m.skills.other.filter((x) => !named.includes(x.toLowerCase()));
+    if (!m.skills.other.length) delete m.skills.other;
+  }
+  // HVAC / fire / plumbing skill groups belong to mechanical MEP work: an electrical or civil CV only keeps the ones it names itself
+  {
+    const roleDisc = ROLES.find((r) => r.id === roleId)?.disc;
+    if (!general && roleDisc && roleDisc !== 'mep' && roleDisc !== 'any') for (const c of ['design', 'systems', 'fire', 'plumbing']) {
+      if (!m.skills[c]) continue;
+      const keep = m.skills[c].filter((x) => text.toLowerCase().includes(x.toLowerCase().split(/\s*[/(&]/)[0].trim()));
+      if (keep.length && c === 'design') { m.skills.design_g = keep; delete m.skills.design; } // "Design", not "HVAC Design"
+      else if (keep.length) m.skills[c] = keep; else delete m.skills[c];
     }
   }
   let summary = buildSummary(m, years, roleId, level, market, general);
