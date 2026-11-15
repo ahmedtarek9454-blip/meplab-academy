@@ -438,6 +438,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
 
   const cur = MARKETS[market][locale === 'ar' ? 'cur_ar' : 'cur_en'];
   const fmt = (n: number) => n.toLocaleString('en-US');
+  const jump = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   /* ---------- form ---------- */
   if (!res)
@@ -506,6 +507,10 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
           </svg>
           <div className="font-bold" style={{ color: col }}>{verdict}</div>
           <div className="mt-1 text-xs text-ink-mute">{fmt(res.words)} {t.words}</div>
+          <div className="mt-4 grid w-full grid-cols-2 gap-2">
+            <button type="button" onClick={() => jump('cv-rewrite')} className="btn-red btn-sm">{locale === 'ar' ? 'ارفع درجتك' : 'Raise your score'}</button>
+            <button type="button" onClick={() => jump('cv-share')} className="btn-ghost btn-sm">{locale === 'ar' ? 'شارك نتيجتك' : 'Share your score'}</button>
+          </div>
           <div className="mt-3 rounded-sheet bg-paper px-3 py-1.5 text-[11px] text-ink-mute">
             {t.engine} <span dir="ltr">v{res.model.version}</span> · {res.model.jobs_used ? t.model_trained.replace('{n}', fmt(res.model.jobs_used)) : t.model_prior}
           </div>
@@ -620,16 +625,20 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
                 })}
               </ol>
             ) : <p className="mt-2 text-ink-soft">{t.fixes_none}</p>}
+            <button type="button" onClick={() => jump('cv-rewrite')} className="btn-ghost btn-sm mt-4">{locale === 'ar' ? 'خلّينا نعدّله لك وشوف الدرجة قبل وبعد' : 'Let us rewrite it and see the score before and after'}</button>
           </div>
         );
       })()}
+
+      <div id="cv-share" className="scroll-mt-24">
+        <ShareCard locale={locale} score={res.score} role={G ? '' : locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
+          better={pr ? { pct: pr.pct, scopeLabel: prScope } : null} siteUrl={process.env.NEXT_PUBLIC_SITE_URL} />
+      </div>
 
       {!user && (
         <StayInTouch locale={locale} roleId={top.role.id} discipline={res.discipline?.id ?? null} market={market} score={res.score} years={res.years} level={res.level} />
       )}
 
-      <ShareCard locale={locale} score={res.score} role={G ? '' : locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
-        better={pr ? { pct: pr.pct, scopeLabel: prScope } : null} siteUrl={process.env.NEXT_PUBLIC_SITE_URL} />
 
       <div className="grid gap-6 lg:grid-cols-5">
         {/* checks */}
@@ -690,7 +699,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       )}
 
       {SUPABASE_READY && <CvSave file={file} locale={locale} profileHref={`${hrefBase}/profile`} signedIn={!!user} signupHref={`${hrefBase}/signup?next=/cv-check`} />}
-      <CvRewrite locale={locale} text={cvText} res={res} market={market} model={model} whatsapp={whatsapp} />
+      <div id="cv-rewrite" className="scroll-mt-24"><CvRewrite locale={locale} text={cvText} res={res} market={market} model={model} whatsapp={whatsapp} /></div>
 
       <JdMatch locale={locale} cvText={cvText} years={res.years} jd={jd} setJd={setJd} />
 
