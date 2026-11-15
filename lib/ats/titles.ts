@@ -43,7 +43,7 @@ export const TITLE_PATTERNS: Record<string, RegExp> = {
 
 const LEAD_WORDS = /\b(manage[ds]?|managing|lead|led|leading|head|director|chair(?:ed|ing)?|budget|cash\s*flow|team\s*of\s*\d+|\d+\s*(?:engineers|supervisors|subcontractors)|stakeholders?|p&l)\b|وقيادة|قيادة|إدارة\s*(?:فريق|المشروع)/i;
 
-export type TitleEvidence = { headline: string; recent: string; hits: Record<string, number>; leadership: number };
+export type TitleEvidence = { headline: string; recent: string; hits: Record<string, number>; leadership: number; /** titles of the earlier jobs, newest first */ history: string[]; /** a real job title (headline, recent or any earlier job) names this role */ titled: Record<string, boolean> };
 
 /** headline = first 6 lines; recent title = the job title closest to the first work date range */
 export function titleEvidence(rawText: string, firstWorkLine?: string): TitleEvidence {
@@ -65,11 +65,22 @@ export function titleEvidence(rawText: string, firstWorkLine?: string): TitleEvi
     // title usually sits on the 1-3 lines above the date line, sometimes on the line right after
     if (i >= 0) recent = [...lines.slice(Math.max(0, i - 3), i + 1), lines[i + 1] || ''].filter((l) => !/^[•\-*▪●]/.test(l)).join(' | ');
   }
+  // the whole job history: the title sits on the 1-2 lines above each date range (or on the same line)
+  const DATE_RANGE = /((19|20)\d{2}|present|current|now|حتى\s*الآن|الآن)\s*(-|to|till|until|–|حتى)\s*((19|20)\d{2}|present|current|now|date|الآن)|((19|20)\d{2})\s*(-|to|–)/i;
+  const history: string[] = [];
+  lines.forEach((l, i) => {
+    if (!DATE_RANGE.test(l) || /^[•\-*▪●]/.test(l)) return;
+    const t = [...lines.slice(Math.max(0, i - 2), i), l].filter((x) => !/^[•\-*▪●]/.test(x) && x.length < 140).join(' | ');
+    if (t && !(recent && recent.includes(l))) history.push(t);
+  });
   const hits: Record<string, number> = {};
+  const titled: Record<string, boolean> = {};
   for (const [role, re] of Object.entries(TITLE_PATTERNS)) {
     let h = 0;
-    if (re.test(headline)) h += 2;
-    if (recent && re.test(recent)) h += 2;
+    if (re.test(headline)) { h += 2; titled[role] = true; }
+    if (recent && re.test(recent)) { h += 2; titled[role] = true; }
+    // earlier jobs: newest counts most (1, 0.75, 0.5…), so a career that was mostly design reads as design
+    history.slice(0, 4).forEach((t, k) => { if (re.test(t)) { h += [1, 0.75, 0.5, 0.5][k]; titled[role] = true; } });
     // whole-document title mentions (weak) — ignore phrases like "reported to the project manager"
     const body = text.replace(/(report(?:ed|ing|s)?\s+to|coordinat\w*\s+with|liais\w*\s+with|support(?:ed|ing)?\s+the|assist(?:ed|ing)?\s+the|under\s+the)\s+[^.\n]{0,40}/gi, '');
     const all = body.match(new RegExp(re.source, 'gi'));
@@ -77,5 +88,5 @@ export function titleEvidence(rawText: string, firstWorkLine?: string): TitleEvi
     if (h) hits[role] = h;
   }
   const leadership = Math.min(6, (text.match(new RegExp(LEAD_WORDS.source, 'gi')) || []).length);
-  return { headline, recent, hits, leadership };
+  return { headline, recent, hits, leadership, history, titled };
 }

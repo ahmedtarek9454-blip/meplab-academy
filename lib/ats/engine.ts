@@ -16,6 +16,7 @@ import { parseJd, type ParsedJd } from './jd';
 import { weightsFor, type AtsModel } from './model';
 import { titleEvidence, type TitleEvidence } from './titles';
 import { detectDisciplines, disciplinePenalty, type DisciplineScores } from './discipline';
+import { TITLE_PATTERNS } from './titles';
 
 /** country-specific codes are only suggested for their own market */
 const OTHER_MARKET: Record<Market, string[]> = { sa: ['uae_code', 'eg_code'], ae: ['sbc', 'eg_code'], eg: ['sbc', 'uae_code'] };
@@ -26,12 +27,19 @@ export type RoleScore = { role: Role; pct: number; skillPct: number; titleBoost:
 export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Market, text = '', firstWorkLine?: string, ds?: DisciplineScores): RoleScore[] {
   const ev: TitleEvidence | null = text ? titleEvidence(text, firstWorkLine) : null;
   const disc = ds || detectDisciplines(text, found);
-  // a generic title ("Site Engineer", "MEP Engineer", "Execution Engineer") means site work in the engineer's own department
+  // a generic title ("Site Engineer", "MEP Engineer", "Engineer") says nothing by itself: read the whole job history first.
+  // Only when no job in the history names a role of the graduate's department (or an any-department role) do we fall back to
+  // site work in that department.
   const SITE_OF: Record<string, string> = { elec: 'elec_site', telecom: 'elv', civil: 'civil_site', survey: 'civil_site', arch: 'architect' };
   const degSite = disc.degree?.map((d) => SITE_OF[d]).find(Boolean);
   if (ev && degSite) {
-    const generic = /(^|[\s|,–-])(site\s*engineer|mep\s*engineer|execution\s*engineer|construction\s*engineer|project\s*engineer|engineer)\b/i;
-    if (generic.test(ev.headline + ' | ' + ev.recent)) ev.hits[degSite] = Math.max(ev.hits[degSite] || 0, ev.hits.site || 0, 3);
+    const ownOrAny = ROLES.filter((r) => r.disc === 'any' || disciplinePenalty(r.disc, disc) === 0).map((r) => r.id);
+    const named = ownOrAny.some((id) => ev.titled[id]);
+    const cur = ev.headline + ' | ' + ev.recent;
+    // "Site / Execution / Construction Engineer" is a real job (site work) that just doesn't say the department: it is the department's site role
+    if (/(site|execution|construction|field)\s*engineer/i.test(cur)) ev.hits[degSite] = Math.max(ev.hits[degSite] || 0, 2), ev.titled[degSite] = true;
+    // a bare "Engineer" / "MEP Engineer" / "Project Engineer": the earlier jobs decide; site work is only the last resort
+    else if (!named && /(^|[\s|,–-])(mep\s*engineer|project\s*engineer|engineer)\b/i.test(cur)) ev.hits[degSite] = Math.max(ev.hits[degSite] || 0, 1.5);
   }
   // non-mechanical graduates: a small lift for their own department's roles (MEP roles here are the mechanical ones)
   const ownBoost = (d: string) => (disc.degree?.length && !disc.degree.some((x) => x === 'mep' || x === 'mech') && disciplinePenalty(d, disc) === 0 && d !== 'any' ? 8 : 0);
@@ -59,9 +67,9 @@ export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Ma
     }
     // what they call themselves can override the degree (an electrical graduate who works as "HVAC Design Engineer")
     let pen = disciplinePenalty(role.disc, disc);
-    if (pen && ev && (ev.hits[role.id] || 0) >= 2 && role.id !== 'site') pen = Math.round(pen / 3);
+    if (pen && ev && ev.titled[role.id] && role.id !== 'site') pen = Math.round(pen / 3);
     // technical office is a job title, not a skill set: shop drawings and submittals are everyone's daily work
-    if (role.id === 'tech_office' && !(ev && (ev.hits.tech_office || 0) > 0)) pen += 22;
+    if (role.id === 'tech_office') pen += !ev || !ev.titled.tech_office ? 22 : TITLE_PATTERNS.tech_office.test(ev.headline + ' | ' + ev.recent) ? 0 : 11; // an earlier job only: half
     const pct = Math.max(0, Math.min(98, Math.round(skillPct * 0.75 + titleBoost - pen + ownBoost(role.disc))));
     return { role, pct, skillPct, titleBoost, matched, missing: missing.slice(0, 8), missingIds: missingIds.slice(0, 8) };
   });

@@ -187,5 +187,60 @@
   ],
   "notech": false,
   "text": "Mahmoud Ali\nMechanical Engineer\nCairo | 01000001111 | mahmoud@email.com\nEXPERIENCE\nMechanical Engineer - Petrojet\n2021 - Present\n- Followed up installation of chillers and pumps\n- Prepared reports\nEDUCATION\nMechanical Engineering - Helwan University - 2020\nSKILLS\nAutoCAD, Excel"
+ },
+ {
+  "id": "hist_elec_design",
+  "disc": "elec",
+  "roles": [
+   "elec_design"
+  ],
+  "notech": true,
+  "text": "Sherif Kamal\nEngineer\nCairo | 01001231234 | sherif@email.com\nEXPERIENCE\nEngineer - Elsewedy Electric\n2024 - Present\n- Prepared lighting and power layouts and load schedules for residential towers\n- Sized cables and prepared single line diagrams\nElectrical Design Engineer - Dar Al-Handasah\n2018 - 2023\n- Designed power, lighting and earthing systems for hospitals using DIALux and ETAP\n- Prepared electrical design reports and coordinated with HVAC and plumbing\nEDUCATION\nElectrical Engineering, Ain Shams University, 2018\nSKILLS\nDIALux, ETAP, AutoCAD, Revit"
+ },
+ {
+  "id": "hist_mech_design",
+  "disc": "mep",
+  "roles": [
+   "hvac_design"
+  ],
+  "notech": true,
+  "text": "Ali Mostafa\nMEP Engineer\nCairo | 01112345678 | ali@email.com\nEXPERIENCE\nMEP Engineer - Ramy Ghaly Consultants\n2023 - Present\n- Calculated cooling loads with HAP for office buildings\n- Sized ducts and selected AHUs and FCUs\nHVAC Design Engineer - Hill International\n2018 - 2023\n- Designed chilled water and VRF systems for hotels and malls\n- Prepared HVAC design reports per ASHRAE\nEDUCATION\nB.Sc. Mechanical Power Engineering - Cairo University - 2018\nSKILLS\nHAP, Revit MEP, AutoCAD, Duct design"
+ },
+ {
+  "id": "hist_mech_est",
+  "disc": "mep",
+  "roles": [
+   "estimation"
+  ],
+  "notech": true,
+  "text": "Hossam Adel\nEngineer\nGiza | 01009876543 | hossam@email.com\nEXPERIENCE\nEngineer - Hassan Allam Holding\n2022 - Present\n- Priced HVAC and fire fighting tenders and prepared BOQs\n- Requested supplier quotations and prepared cost comparisons\nEstimation Engineer - Petrojet\n2019 - 2022\n- Prepared quantity take-off and tender pricing for MEP packages\nEDUCATION\nB.Sc. Mechanical Engineering - Helwan University - 2019\nSKILLS\nExcel, AutoCAD, CostX"
+ },
+ {
+  "id": "hist_civil_plan",
+  "disc": "civil",
+  "roles": [
+   "planning"
+  ],
+  "notech": true,
+  "text": "Rana Fawzy\nEngineer\nCairo | 01223456789 | rana@email.com\nEXPERIENCE\nEngineer - Talaat Moustafa Group\n2023 - Present\n- Updated project schedules and prepared monthly progress reports\n- Tracked earned value and delay analysis\nPlanning Engineer - Redcon Construction\n2019 - 2023\n- Prepared baseline schedules in Primavera P6 for 3 residential projects\nEDUCATION\nB.Sc. Civil Engineering - Cairo University - 2019\nSKILLS\nPrimavera P6, MS Project, Excel"
+ },
+ {
+  "id": "hist_elec_site_to",
+  "disc": "elec",
+  "roles": [
+   "elec_site",
+   "elec_design"
+  ],
+  "notech": false,
+  "text": "Tarek Nabil\nSite Engineer\nCairo | 01010101010 | tarek@email.com\nEXPERIENCE\nSite Engineer - Arab Contractors\n2022 - Present\n- Supervised installation of LV panels, busbars and cable trays\n- Tested and handed over electrical systems\nTechnical Office Engineer - Concord\n2019 - 2022\n- Prepared electrical shop drawings and as-built drawings\nEDUCATION\nB.Sc. Electrical Engineering - Helwan University - 2019\nSKILLS\nAutoCAD, Revit, ETAP"
+ },
+ {
+  "id": "hist_mech_site",
+  "disc": "mep",
+  "roles": [
+   "site"
+  ],
+  "notech": true,
+  "text": "Amr Saeed\nProject Engineer\nAlexandria | 01155555555 | amr@email.com\nEXPERIENCE\nProject Engineer - Orascom Construction\n2020 - Present\n- Supervised installation of chillers, ducts and fire fighting pipes on site\n- Followed up subcontractors and inspected works with the consultant\nEDUCATION\nB.Sc. Mechanical Engineering - Alexandria University - 2020\nSKILLS\nAutoCAD, MS Project"
  }
 ]
