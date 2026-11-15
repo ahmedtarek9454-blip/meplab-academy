@@ -1,5 +1,6 @@
 import { SECTIONS, BANDS, LEVELS, MARKETS, type Market, type Level, type Role } from './data';
 import { findSkills, rankRoles, detectDisciplines } from '@/lib/ats/engine';
+import { disciplinePenalty } from '@/lib/ats/discipline';
 import { DISCIPLINES } from './roles-extra';
 import { defaultModel, learnedSkills, type AtsModel } from '@/lib/ats/model';
 import { SKILL_BY_ID } from '@/lib/ats/taxonomy';
@@ -116,7 +117,9 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   const exp0 = extractExperience(text);
   const firstWork = exp0.ranges.filter((r) => r.kind === 'work').sort((a, b) => b.end - a.end || b.start - a.start)[0]?.line;
   const ds = detectDisciplines(text, found);
-  const roles = rankRoles(found, model, market, text, firstWork, ds);
+  const ranked = rankRoles(found, model, market, text, firstWork, ds);
+  // "closest jobs" never suggests another department's jobs to a graduate whose degree we know (an electrical engineer is not shown "MEP mechanical site engineer")
+  const roles = ds.degree.length ? [ranked[0], ...ranked.slice(1).filter((r) => r.role.disc === 'any' || disciplinePenalty(r.role.disc, ds) === 0)] : ranked;
   const top = roles[0];
   // shown discipline: the department in the degree first (mechanical / electrical / civil…), then the best role's, then the CV's skills
   const degDisc = ds.degree.length ? (ds.degree.includes(top.role.disc) ? top.role.disc : ds.degree.find((d) => d !== 'mech') || ds.degree[0]) : null;
