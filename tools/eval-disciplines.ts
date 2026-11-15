@@ -1,5 +1,5 @@
 /* Discipline check: the department in the degree decides the discipline; technical office only when the title says so. Run: npx tsx tools/eval-disciplines.ts */
-import fs from 'fs'; import { analyzeCv } from './lib/cv/analyze';
+import fs from 'fs'; import { analyzeCv } from '../lib/cv/analyze';
 const C = JSON.parse(fs.readFileSync('./evalset/disciplines.json','utf8')); let bad=0;
 for (const c of C) { const a:any = analyzeCv(c.text, 'eg'); const top = a.roles.slice(0,4).map((r:any)=>r.role.id+':'+r.pct);
   const issues:string[]=[]; if (a.discipline?.id !== c.disc && !(c.disc==='mep' && a.discipline?.id==='mech')) issues.push(`disc ${a.discipline?.id}≠${c.disc}`);
