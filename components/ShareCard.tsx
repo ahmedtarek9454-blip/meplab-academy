@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { track } from '@/lib/stats/track';
 
 type Props = {
   locale: 'ar' | 'en';
@@ -104,6 +105,7 @@ export default function ShareCard(p: Props) {
   }, [p.score, p.role, p.better?.pct, p.locale]);
 
   async function share() {
+    track('share_native');
     try {
       const blob: Blob = await new Promise((res) => ref.current!.toBlob((b) => res(b!), 'image/png'));
       const file = new File([blob], 'meplab-cv-score.png', { type: 'image/png' });
@@ -119,10 +121,10 @@ export default function ShareCard(p: Props) {
         <h3 className="text-lg font-bold text-ink">{t.title}</h3>
         <p className="mt-1 text-sm leading-6 text-ink-soft">{t.desc}</p>
         <div className="mt-4 flex flex-wrap gap-2">
-          {url && <a href={url} download="meplab-cv-score.png" className="btn-red btn-sm">{t.dl}</a>}
+          {url && <a href={url} download="meplab-cv-score.png" onClick={() => track('share_dl')} className="btn-red btn-sm">{t.dl}</a>}
           {canShareFile && <button onClick={share} className="btn-ghost btn-sm">{t.share}</button>}
-          <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}`} target="_blank" rel="noopener" onClick={copyLink} className="btn-ghost btn-sm">{t.li}</a>
-          <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`} target="_blank" rel="noopener" className="btn-ghost btn-sm">{t.fb}</a>
+          <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}`} target="_blank" rel="noopener" onClick={() => { track('share_li'); copyLink(); }} className="btn-ghost btn-sm">{t.li}</a>
+          <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`} target="_blank" rel="noopener" onClick={() => track('share_fb')} className="btn-ghost btn-sm">{t.fb}</a>
         </div>
         {msg && <p className="mt-2 text-xs text-ink-soft">{msg}</p>}
       </div>

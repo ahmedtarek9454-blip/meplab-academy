@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { track } from '@/lib/stats/track';
 import { findSkills, matchJd, type JdMatch as Result } from '@/lib/ats/engine';
 
 type Loc = 'ar' | 'en';
@@ -48,6 +49,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
   const [err, setErr] = useState('');
 
   function run() {
+    track('jd');
     setErr('');
     if (jd.trim().split(/\n/).filter((l) => l.trim()).length < 2 && jd.trim().length < 120) return setErr(t.empty);
     setR(matchJd(cvText, findSkills(cvText), years, jd));

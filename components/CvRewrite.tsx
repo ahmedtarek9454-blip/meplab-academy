@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
+import { track } from '@/lib/stats/track';
 import type { CvResult } from '@/lib/cv/analyze';
 import { analyzeCv } from '@/lib/cv/analyze';
 import { rebuildCv, toText, polishBullet, type CvModel, type RebuildReport } from '@/lib/cv/rebuild';
@@ -110,18 +111,20 @@ export default function CvRewrite({ locale, text, res, market, model, whatsapp }
     if (after < res.score) { setNoGain(true); setOut(null); setBusy(false); return; }
     setNoGain(false);
     markRewrite(); setUsed(rewritesUsed());
-    setOut({ ...r, after });
+    setOut({ ...r, after }); track('rewrite');
     setBusy(false);
     setTimeout(() => document.getElementById('cv-rewrite-result')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
   async function downloadDocx() {
     if (!out) return;
+    track('word');
     const blob = await buildDocx(out.model, out.summary);
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${(out.model.name || 'CV').replace(/[^\w؀-ۿ ]+/g, '').trim() || 'CV'} - CV (MEP LAB).docx`; a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   }
   function printPdf() {
     if (!out) return;
+    track('pdf');
     const w = window.open('', '_blank'); if (!w) return;
     w.document.write(buildPrintHtml(out.model, out.summary)); w.document.close();
   }

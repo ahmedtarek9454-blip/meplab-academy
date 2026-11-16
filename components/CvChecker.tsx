@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { track } from '@/lib/stats/track';
 import JobCard, { ago } from './JobCard';
 import AiReview, { PENDING_KEY } from './AiReview';
 import JdMatch from './JdMatch';
@@ -310,6 +311,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
 
   // load the latest trained MEP LAB ATS model (falls back to the built-in one)
   useEffect(() => {
+    track('visit');
     const m = (window as any).__ATS_MODEL__;
     if (m) { setModel(m); return; }
     fetch('/api/ats/model').then((r) => r.json()).then((d) => { if (d?.weights) setModel(d); }).catch(() => {});
