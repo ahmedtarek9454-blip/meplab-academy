@@ -1,5 +1,7 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import CvHistory from './CvHistory';
+import { buildProfile, SYS_LABEL } from '@/lib/cv/profile';
 import { track } from '@/lib/stats/track';
 import JobCard, { ago } from './JobCard';
 import AiReview, { PENDING_KEY } from './AiReview';
@@ -306,6 +308,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
   useEffect(() => { currentUser().then(setUser).catch(() => setUser(null)); }, []);
   const [jobs, setJobs] = useState<any[]>([]);
   const [cvText, setCvText] = useState('');
+  const prof = useMemo(() => { try { return res && cvText && !res.general ? buildProfile(cvText, res) : null; } catch { return null; } }, [res, cvText]);
   const [jd, setJd] = useState('');
   const [model, setModel] = useState<AtsModel>(defaultModel);
 
@@ -533,6 +536,12 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
             <div className="text-sm font-bold text-ink-mute">{t.best_role}</div>
             {res.discipline && <span className="badge bg-paper text-ink-soft ring-1 ring-line">{t.discipline}: {locale === 'ar' ? res.discipline.ar : res.discipline.en}</span>}
           </div>
+          {prof?.multi && (
+            <div className="mt-2 rounded-sheet bg-paper px-3 py-2 text-sm text-ink">
+              {locale === 'ar' ? 'شغلك بيغطي ' : 'Your work covers '}<b>{prof.systems.filter((x) => x.id !== 'elec').map((x) => SYS_LABEL[x.id][locale]).join(locale === 'ar' ? ' + ' : ' + ')}</b>
+              {locale === 'ar' ? '. دي أقرب وظيفة، والوظايف التانية تحتها بتغطي باقي السيستمات.' : '. This is the closest single role; the others below cover your other systems.'}
+            </div>
+          )}
           <div className="mt-2 text-xl font-bold leading-snug text-ink">{locale === 'ar' ? top.role.ar : top.role.en}</div>
           <div className="mt-3 flex items-center gap-3">
             <div className="h-1.5 flex-1 overflow-hidden bg-line"><div className="h-full bg-brand-blue" style={{ width: `${top.pct}%` }} /></div>
@@ -632,8 +641,10 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         );
       })()}
 
+      {prof && prof.jobs.length > 0 && <CvHistory locale={locale} p={prof} />}
+
       <div id="cv-share" className="scroll-mt-24">
-        <ShareCard locale={locale} score={res.score} role={G ? '' : locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
+        <ShareCard locale={locale} score={res.score} role={G ? '' : prof?.multi ? (locale === 'ar' ? 'مهندس ميكانيكا: ' : 'Mechanical: ') + prof.systems.filter((x) => x.id !== 'elec').map((x) => (locale === 'ar' ? SYS_LABEL[x.id].ar.replace(/ \(.*\)/, '') : SYS_LABEL[x.id].en.replace(/ \(.*\)/, ''))).join(' + ') : locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
           better={pr ? { pct: pr.pct, scopeLabel: prScope } : null} siteUrl={process.env.NEXT_PUBLIC_SITE_URL} />
       </div>
 
@@ -666,9 +677,22 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         {!G && <div className="space-y-6 lg:col-span-2">
           {!G && <div className="card p-6">
             <h3 className="mb-3 font-bold text-ink">{t.missing_kw}</h3>
+            {prof?.multi && prof.missingBySys.length > 1 ? (
+              <div className="space-y-3">
+                {prof.missingBySys.map((g) => (
+                  <div key={g.sys}>
+                    <div className="mb-1 text-xs font-bold text-ink-mute">{SYS_LABEL[g.sys][locale]}</div>
+                    <div className="flex flex-wrap gap-2" dir="ltr">
+                      {g.role.missing.map((k) => <span key={k} className="rounded-sheet border border-dashed border-brand-red/60 px-2.5 py-1 text-sm text-ink">+ {k}</span>)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
             <div className="flex flex-wrap gap-2" dir="ltr">
               {top.missing.map((k) => <span key={k} className="rounded-sheet border border-dashed border-brand-red/60 px-2.5 py-1 text-sm text-ink">+ {k}</span>)}
             </div>
+            )}
           </div>}
           {!G && <div className="card p-6">
             <h3 className="mb-3 font-bold text-ink">{t.found_kw} ({res.skills.length})</h3>

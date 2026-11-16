@@ -37,9 +37,10 @@ const HEAD: Record<string, RegExp> = {
   experience: /^(work\s+|professional\s+|employment\s+)?(experience|history|career history|employment)\b|^(الخبرات|الخبرة|الوظائف السابقة|سجل العمل)/i,
   education: /^(education|academic|qualifications?|التعليم|المؤهل|الدراسة)/i,
   skills: /^(technical\s+|core\s+|key\s+)?(skills|competencies|software|tools|expertise)\b|^(المهارات|البرامج)/i,
-  certifications: /^(certifications?|certificates?|courses?|training|licen[cs]es?|professional development)\b|^(الشهادات|الدورات|التدريب)/i,
+  certifications: /^(certifications?|certificates?|courses?|training|licen[cs]es?|professional development)\b(?!\s+(?:engineer|manager|coordinator|specialist|officer|supervisor))|^(الشهادات|الدورات|التدريب)/i,
   languages: /^(languages?)\b|^اللغات/i,
-  projects: /^(key\s+|selected\s+|major\s+)?projects?\b|المشاريع/i,
+  // "Projects" the heading, not "Project Engineer - Orascom" or "Project Manager"
+  projects: /^(key\s+|selected\s+|major\s+|main\s+)?projects?(?!\s+(?:engineer|manager|coordinator|director|control|planner|lead|architect|specialist|executive|management))\b|المشاريع/i,
   personal: /^(personal\s+(details|information|data)|البيانات الشخصية)/i,
   references: /^(references?|المراجع)/i,
   contact: /^(contact|البيانات|الاسم|الهاتف|الموبايل|البريد|العنوان|الجنسية|تاريخ الميلاد|الحالة الاجتماعية|الديانة)/i,
@@ -244,7 +245,8 @@ export function parseCv(text: string): CvModel {
       const x = clean(lines[k]);
       if (!x) { if (got) break; continue; }
       if (headingLine(k) || /^[•\-–*▪●]/.test(lines[k].trim()) || used.has(k) || /(19|20)\d{2}/.test(x)) break;
-      if (/@|\+?\d{7,}|linkedin|^(arabic|english|french)\b/i.test(x)) continue;
+      // contact lines and language lines ("English: fluent") are not job headers; "English Teacher - X School" is
+      if (/@|\+?\d{7,}|linkedin|^(arabic|english|french|german)\s*(?:[:(\-–|,]|$|\s+(?:native|fluent|good|very|excellent|basic|intermediate|mother|advanced))/i.test(x)) continue;
       headerLines.unshift(x); used.add(k); got++;
     }
     used.add(li);
@@ -376,16 +378,26 @@ export function buildSummary(m: CvModel, years: number, roleId: string, level: L
   const genericHead = /^(?:(?:site|mep|project|execution|construction|field)\s+)?engineer$/i.test((m.headline || '').trim());
   const title = (genericHead && role ? role.en : m.headline) || role?.en || (general ? 'Professional' : 'Engineer');
   const yrs = years >= 1 ? `${Math.floor(years)}+ years` : 'early-career';
-  const topSkills = Object.entries(m.skills).filter(([c]) => (general || c !== 'other') && c !== 'software').flatMap(([, v]) => v).slice(0, 4);
+  // someone who does HVAC + fire + plumbing gets all of them named, not just the first category
+  const SYS: [string, string[]][] = [['HVAC', ['design', 'design_g', 'systems']], ['fire-fighting', ['fire']], ['plumbing', ['plumbing']]];
+  const sysOn = general ? [] : SYS.filter(([, cs]) => cs.some((c) => (m.skills[c] || []).length));
+  const norm = (x: string) => x.toLowerCase().replace(/\s*\(general\)|\s+systems?$|[^a-z0-9]+/g, '');
+  const pick = (arr: string[], n: number) => { const seen = new Set<string>(); return arr.filter((x) => { const k = norm(x); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, n); };
+  const topSkills = sysOn.length >= 2
+    ? pick(sysOn.flatMap(([, cs]) => pick(cs.flatMap((c) => m.skills[c] || []), 2)), 6)
+    : pick(Object.entries(m.skills).filter(([c]) => (general || c !== 'other') && c !== 'software').flatMap(([, v]) => v), 4);
   const tools = (m.skills.software || []).slice(0, 4);
   const sectors = general ? [] : [...new Set((m.experience.flatMap((e) => e.bullets).join(' ').match(/\b(hospitals?|healthcare|airports?|hotels?|residential|commercial|towers?|malls?|data cent(?:er|re)s?|industrial|infrastructure|universit(?:y|ies)|schools?|villas?|mixed-use)\b/gi) || []).map((x) => x.toLowerCase()))].slice(0, 3);
   const countries = [...new Set((m.experience.map((e) => e.location).join(' ') + ' ' + m.location).match(/\b(Egypt|KSA|Saudi Arabia|UAE|Qatar|Oman|Kuwait|Bahrain)\b/gi) || [])].slice(0, 3);
   const sing = (w: string) => w.replace(/^hospitals$/, 'hospital').replace(/^airports$/, 'airport').replace(/^hotels$/, 'hotel').replace(/^towers$/, 'tower').replace(/^malls$/, 'mall').replace(/^schools$/, 'school').replace(/^villas$/, 'villa').replace(/^universities$/, 'university').replace(/^data centres$|^data centers$/, 'data centre');
   const sec = [...new Set(sectors.map(sing))];
   const list = (a: string[]) => (a.length <= 1 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
-  const lc = (x: string) => x.replace(/^Cooling\/heating load calculation$/, 'cooling and heating load calculations').replace(/^Duct design & sizing$/, 'duct design and sizing').replace(/^Equipment selection$/, 'equipment selection').replace(/^Static pressure \/ fan calculations$/, 'static pressure and fan calculations').replace(/^Chilled-water systems$/, 'chilled-water systems').replace(/^Clash detection & coordination$/, 'clash detection and coordination').replace(/^Revit \/ Revit MEP$/, 'Revit MEP').replace(/^Carrier HAP \/ TRACE$/, 'Carrier HAP').replace(/^([A-Z][a-z])/, (m) => m.toLowerCase()).replace(/^(hvac|mep|bim|ahu|fcu|vrf|boq|nfpa|ashrae|smacna|ipc|upc|cmms|bms|cfd|iso|sbc|leed|pmp)/i, (m) => m.toUpperCase());
+  const lc = (x: string) => x.replace(/\s*\(general\)$/i, '').replace(/^Cooling\/heating load calculation$/, 'cooling and heating load calculations').replace(/^Duct design & sizing$/, 'duct design and sizing').replace(/^Equipment selection$/, 'equipment selection').replace(/^Static pressure \/ fan calculations$/, 'static pressure and fan calculations').replace(/^Chilled-water systems$/, 'chilled-water systems').replace(/^Clash detection & coordination$/, 'clash detection and coordination').replace(/^Revit \/ Revit MEP$/, 'Revit MEP').replace(/^Carrier HAP \/ TRACE$/, 'Carrier HAP').replace(/^([A-Z][a-z])/, (m) => m.toLowerCase()).replace(/^(hvac|mep|bim|ahu|fcu|vrf|boq|nfpa|ashrae|smacna|ipc|upc|cmms|bms|cfd|iso|sbc|leed|pmp)/i, (m) => m.toUpperCase());
   const where = `${sec.length ? ` on ${list(sec)} projects` : ''}${countries.length ? ` in ${list(countries)}` : ''}`;
   const s1 = years >= 1 ? `${title} with ${yrs} of experience${where}.` : `Early-career ${title}${where ? ` with experience${where}` : ''}.`;
+  const body = m.experience.map((e) => `${e.title} ${(e.orig || e.bullets).join(' ')}`).join(' ');
+  const both = m.experience.length >= 1 && /\bdesign(?:ed|ing)?\b|تصميم/i.test(body) && /\b(site|installation|supervis\w*|execution|commissioning)\b|تنفيذ|تركيب/i.test(body);
+  const sysLine = sysOn.length >= 2 ? `Covers ${list(sysOn.map(([k]) => k))} systems${both ? ', from design to site execution' : ''}. ` : both && !general ? 'Combines design and site execution experience. ' : '';
   const s2 = general ? (Object.values(m.skills).flat().length ? `Skilled in ${list(Object.values(m.skills).flat().slice(0, 5))}.` : '') : topSkills.length ? `Hands-on experience in ${list(topSkills.map(lc))}${tools.length ? `, working with ${list(tools.map(lc).map((x) => x.replace(/^([a-z])/, (c) => c.toUpperCase())))}` : ''}.` : tools.length ? `Proficient in ${list(tools)}.` : '';
   // Never claim what the CV doesn't say: leadership only when the bullets show it, otherwise a neutral focus line.
   const bulletsText = m.experience.flatMap((e) => e.bullets).join(' ');
@@ -401,7 +413,7 @@ export function buildSummary(m: CvModel, years: number, roleId: string, level: L
   // keep the candidate's own quantified achievement from the old summary (numbers are what recruiters scan for)
   const own = m.summary.join(' ').split(/(?<=[.!])\s+/).find((x) => /\d[\d,.]*\s*(?:%|million|billion|bn|mn|engineers|projects?|buildings?|towers|users|sites|wells|km|mw|kv|tr\b|sar|egp|aed|usd)|(?:sar|egp|aed|usd|\$)\s*\d/i.test(x) && x.length < 220);
   const s4 = own ? own.trim().replace(/([^.!])$/, '$1.') : '';
-  return [s1, s2, s4, s3].filter(Boolean).join(' ');
+  return [s1, (sysLine + s2).trim(), s4, s3].filter(Boolean).join(' ');
 }
 
 /** plain-text version (what an ATS will parse) */
@@ -519,12 +531,20 @@ export function rebuildCv(text: string, market: Market, roleId: string, years: n
       else if (keep.length) m.skills[c] = keep; else delete m.skills[c];
     }
   }
+  let headSys = false;
+  // a plain "Mechanical Engineer" headline for someone doing HVAC + fire + plumbing names the systems they actually did
+  if (!general && /^(?:senior\s+|junior\s+)?(?:mechanical|mep)(?:\s+(?:design|site))?\s+engineer$/i.test(m.headline.trim())) {
+    const has = (cs: string[]) => cs.some((c) => (m.skills[c] || []).length);
+    const sys = [has(['design', 'design_g', 'systems']) && 'HVAC', has(['fire']) && 'Fire Fighting', has(['plumbing']) && 'Plumbing'].filter(Boolean) as string[];
+    if (sys.length >= 2) { m.headline = `${m.headline.trim()} (${sys.slice(0, -1).join(', ')} & ${sys[sys.length - 1]})`; headSys = true; }
+  }
   let summary = buildSummary(m, years, roleId, level, market, general);
   // the person's own summary often holds a hard fact ("managing MEP works for a 45-building community"): keep it
   const own = m.summary.join(' ').split(/(?<=[.!])\s+/).find((x) => /\d/.test(x) && !/[\u0600-\u06FF]/.test(x) && !/\b\d+\+?\s*years?\b/i.test(x) && x.length < 220);
   if (own && !summary.includes(own)) summary = `${summary} ${own.replace(/^(currently|now)\s+/i, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase())}`.replace(/\s+/g, ' ').trim();
   const changes: string[] = [];
   changes.push('headings');
+  if (headSys) changes.push('headline_systems');
   if (m.summary.length === 0) changes.push('summary_added'); else changes.push('summary_rewritten');
   const weak = m.experience.reduce((n, e) => n + e.bullets.filter((b) => /^(Managed|Led|Delivered|Served as|Supported|Contributed to|Performed|Prepared|Coordinated with|Tracked)\b/.test(b)).length, 0);
   if (weak) changes.push('bullets');
