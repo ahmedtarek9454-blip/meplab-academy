@@ -43,6 +43,20 @@ export default async function Stats() {
     mk.set(MARKET[s.market] || s.market, (mk.get(MARKET[s.market] || s.market) || 0) + 1);
     buckets[s.score >= 75 ? 3 : s.score >= 50 ? 2 : s.score >= 25 ? 1 : 0]++;
   }
+  const fails = new Map<string, number>();
+  const hist5 = Array(21).fill(0);
+  for (const s of all) { for (const f of (s as any).failing || []) fails.set(f, (fails.get(f) || 0) + 1); hist5[Math.min(20, Math.floor(s.score / 5))]++; }
+  const cnt = (xs: (string | null | undefined)[]) => { const m = new Map<string, number>(); for (const x of xs) m.set(x || '-', (m.get(x || '-') || 0) + 1); return [...m].sort((a, b) => b[1] - a[1]); };
+  const roleDiag = [...roles.keys()].sort((a, b) => roles.get(b)! - roles.get(a)!).slice(0, 14).map((id) => {
+    const rs = all.filter((s) => s.role_id === id);
+    const avg = (f: (s: StoredSignal) => number) => Math.round(rs.reduce((x, s) => x + f(s), 0) / rs.length);
+    return {
+      id, n: rs.length, pct: avg((s) => s.pct), score: avg((s) => s.score), years: avg((s) => s.years || 0),
+      disc: cnt(rs.map((s) => s.discipline)).map(([k, v]) => `${k} ${v}`).join(', '),
+      conf: cnt(rs.filter((s) => s.confirmed_role).map((s) => (s.confirmed_role === s.role_id ? 'ok' : '→' + s.confirmed_role))).map(([k, v]) => `${k} ${v}`).join(', ') || '-',
+      skills: cnt(rs.flatMap((s) => s.skills || [])).slice(0, 8).map(([k, v]) => `${k} ${v}`).join(', ')
+    };
+  });
   const confirmed = all.filter((s) => s.confirmed_role).length;
   const corrected = all.filter((s) => s.confirmed_role && s.confirmed_role !== s.role_id).length;
 
@@ -106,6 +120,30 @@ export default async function Stats() {
           <List title="الدرجات" items={([['75 وأكتر', buckets[3]], ['50 لـ 74', buckets[2]], ['25 لـ 49', buckets[1]], ['أقل من 25', buckets[0]]] as [string, number][]).filter(([, v]) => v)} total={all.length} />
         </div>
       </div>
+
+      <details className="card mt-6 p-5 text-sm">
+        <summary className="cursor-pointer font-bold text-ink">تفاصيل للمراجعة</summary>
+        <h4 className="mt-4 font-bold text-ink">البنود اللي بتقع أكتر (من {all.length} فحص)</h4>
+        <ul className="mt-2 grid gap-1 sm:grid-cols-2" dir="ltr">
+          {top(fails, 20).map(([k, v]) => <li key={k} className="flex justify-between gap-3 border-b border-line py-1"><span>{k}</span><span className="tabular-nums">{v} ({Math.round((100 * v) / Math.max(1, all.length))}%)</span></li>)}
+        </ul>
+        <h4 className="mt-5 font-bold text-ink">الدرجات كل 5</h4>
+        <p className="mt-1 tabular-nums" dir="ltr">{hist5.map((v, i) => `${i * 5}-${i * 5 + 4}: ${v}`).filter((x) => !/: 0$/.test(x)).join(' | ')}</p>
+        <h4 className="mt-5 font-bold text-ink">كل وظيفة طلعت لمين</h4>
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-[720px] text-xs" dir="ltr">
+            <thead><tr className="border-b border-line text-left text-ink-mute">{['role', 'n', 'avg pct', 'avg score', 'avg yrs', 'disciplines', 'confirmed / corrected to', 'top skills'].map((h) => <th key={h} className="px-2 py-1">{h}</th>)}</tr></thead>
+            <tbody>
+              {roleDiag.map((r) => (
+                <tr key={r.id} className="border-b border-line align-top">
+                  <td className="px-2 py-1 font-semibold">{r.id}</td><td className="px-2 py-1">{r.n}</td><td className="px-2 py-1">{r.pct}</td><td className="px-2 py-1">{r.score}</td><td className="px-2 py-1">{r.years}</td>
+                  <td className="px-2 py-1">{r.disc}</td><td className="px-2 py-1">{r.conf}</td><td className="px-2 py-1">{r.skills}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
 
       <div className="card mt-6 p-5 text-sm leading-7 text-ink-soft">
         <h3 className="font-bold text-ink">المحرك بيتعلم إزاي</h3>
