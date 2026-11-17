@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { aiEnabled, interpretWithAi, addsNumbers } from '@/lib/ai/speechLines';
 import { ROLES } from '@/lib/cv/data';
+import { ipHash, fromOurSite, tooBig } from '@/lib/stats/ip';
+import { overLimit } from '@/lib/stats/store';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,8 +22,10 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   if (!aiEnabled()) return NextResponse.json({ error: 'not_configured' }, { status: 503 });
-  const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'na';
-  if (limited(ip)) return NextResponse.json({ error: 'rate' }, { status: 429 });
+  if (!fromOurSite(req) || tooBig(req)) return NextResponse.json({ error: 'bad' }, { status: 400 });
+  const ip = ipHash(req);
+  // per instance (burst) and across all instances (100 a day): protects the AI quota from scripts
+  if (limited(ip) || (await overLimit('ai', ip, 100))) return NextResponse.json({ error: 'rate' }, { status: 429 });
   const b: any = await req.json().catch(() => null);
   const lines: string[] = Array.isArray(b?.lines) ? b.lines.map((x: any) => String(x || '')).filter(Boolean).slice(0, 20) : [];
   if (!lines.length) return NextResponse.json({ error: 'bad' }, { status: 400 });

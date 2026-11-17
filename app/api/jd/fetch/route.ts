@@ -1,4 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { ipHash, fromOurSite, tooBig } from '@/lib/stats/ip';
+import { overLimit } from '@/lib/stats/store';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 20;
@@ -29,13 +31,29 @@ async function get(url: string, tries = 3): Promise<string> {
     try { return await get1(url); } catch (e) { if (i >= tries - 1) throw e; await new Promise((res) => setTimeout(res, 700 * (i + 1))); } // LinkedIn answers 429 now and then
   }
 }
+// redirects are followed by hand so a job board can never bounce us to a host outside the list (no SSRF)
 async function get1(url: string) {
-  const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36', 'Accept-Language': 'en-US,en;q=0.9,ar;q=0.8', Accept: 'text/html' }, redirect: 'follow', signal: AbortSignal.timeout(12000) });
-  if (!r.ok) throw new Error(String(r.status));
-  return (await r.text()).slice(0, 2_000_000);
+  let next = url;
+  for (let hop = 0; hop < 4; hop++) {
+    const u = new URL(next);
+    if (u.protocol !== 'https:' || !HOSTS.test(u.hostname)) throw new Error('redirect');
+    const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36', 'Accept-Language': 'en-US,en;q=0.9,ar;q=0.8', Accept: 'text/html' }, redirect: 'manual', signal: AbortSignal.timeout(12000) });
+    if (r.status >= 300 && r.status < 400 && r.headers.get('location')) { next = new URL(r.headers.get('location')!, u).toString(); continue; }
+    if (!r.ok) throw new Error(String(r.status));
+    if (!/text\/html|application\/xhtml/i.test(r.headers.get('content-type') || 'text/html')) throw new Error('type');
+    // read at most 2 MB, whatever the page claims
+    const reader = r.body?.getReader(); if (!reader) return '';
+    let size = 0; const parts: Uint8Array[] = [];
+    while (true) { const { done, value } = await reader.read(); if (done) break; size += value.length; parts.push(value); if (size > 2_000_000) { reader.cancel(); break; } }
+    return new TextDecoder().decode(Buffer.concat(parts));
+  }
+  throw new Error('redirect');
 }
 
 export async function POST(req: NextRequest) {
+  // only our own pages may call this, and 40 links a day per visitor is plenty for job hunting
+  if (!fromOurSite(req) || tooBig(req, 4000)) return NextResponse.json({ error: 'origin' }, { status: 403 });
+  if (await overLimit('jdfetch', ipHash(req), 40)) return NextResponse.json({ error: 'rate' }, { status: 429 });
   const b = await req.json().catch(() => null);
   let u: URL;
   try { u = new URL(String(b?.url || '').trim()); } catch { return NextResponse.json({ error: 'bad_url' }, { status: 400 }); }

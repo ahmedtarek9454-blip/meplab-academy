@@ -114,3 +114,18 @@ export async function getModel<T = any>(): Promise<T | null> {
   return (await store('ats-model').get('latest', { type: 'json' }).catch(() => null)) as T | null;
 }
 export async function setModel(model: any) { await store('ats-model').setJSON('latest', model); }
+
+/* ---------------- rate limits (shared across all server instances) ---------------- */
+/** true when this visitor already used `max` of `bucket` today */
+export async function overLimit(bucket: string, ip: string, max: number): Promise<boolean> {
+  try {
+    const s = store('rate');
+    const day = cairoDay();
+    const used = await s.list({ prefix: `${day}/${bucket}/${ip}/` });
+    if (used.blobs.length >= max) return true;
+    await s.set(`${day}/${bucket}/${ip}/${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`, '1');
+    return false;
+  } catch {
+    return false; // never lock real users out because the counter is down
+  }
+}

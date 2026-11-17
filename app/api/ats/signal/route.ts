@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { sanitizeSignal, isRole } from '@/lib/ats/learn';
-import { ipHash } from '@/lib/stats/ip';
+import { ipHash, fromOurSite, tooBig } from '@/lib/stats/ip';
 import { saveSignal, confirmSignal, BLOB_ID } from '@/lib/stats/store';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +10,7 @@ const admin = async () => (await import('@/lib/supabase/admin')).createAdminClie
 
 /** anonymous learning signal after a CV check (no CV text, no personal data) */
 export async function POST(req: NextRequest) {
+  if (!fromOurSite(req) || tooBig(req)) return NextResponse.json({ error: 'bad' }, { status: 400 });
   const sig = sanitizeSignal(await req.json().catch(() => null));
   if (!sig) return NextResponse.json({ error: 'bad' }, { status: 400 });
   const h = ipHash(req);
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
 
 /** the person confirms or corrects the detected role (once per signal) */
 export async function PATCH(req: NextRequest) {
+  if (!fromOurSite(req) || tooBig(req, 2000)) return NextResponse.json({ error: 'bad' }, { status: 400 });
   const b = await req.json().catch(() => null);
   if (!b || typeof b.id !== 'string' || !isRole(b.confirmed_role)) return NextResponse.json({ error: 'bad' }, { status: 400 });
   let sbId: string | null | undefined = /^[0-9a-f-]{36}$/.test(b.id) ? b.id : null;

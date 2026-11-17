@@ -98,6 +98,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
             ? (ar ? 'الموقع ده مش من مواقع الوظايف اللي بنقراها. انسخ نص الإعلان والصقه هنا، أو ارفع صورته.' : 'We can\'t read this site. Paste the job text here, or upload a screenshot.')
             : d.error === 'not_job' ? (ar ? 'اللينك ده مش لينك وظيفة. افتح الوظيفة نفسها وانسخ اللينك بتاعها.' : 'This link is not a job post. Open the job itself and copy its link.')
             : d.error === 'blocked' ? (ar ? 'الموقع ده بيمنع إن حد يقرا إعلاناته أوتوماتيك (Wuzzuf وBayt كده). لينكات LinkedIn بتشتغل. هنا انسخ نص الإعلان والصقه، أو صوّره وارفع الصورة.' : 'This site blocks automatic reading (Wuzzuf and Bayt do). LinkedIn links work. Paste the text or upload a screenshot.')
+            : d.error === 'rate' ? (ar ? 'فتحت لينكات كتير النهارده. الصق نص الإعلان أو ارفع صورته.' : 'Too many links today. Paste the text or upload a screenshot.')
             : d.error === 'gone' ? (ar ? 'الإعلان ده اتقفل أو اتشال من الموقع.' : 'This job post was closed or removed.')
             : (ar ? 'مقدرناش نفتح الإعلان ده، ممكن يكون محتاج تسجيل دخول أو اتقفل. انسخ نص الإعلان والصقه هنا، أو ارفع صورته.' : 'We couldn\'t open this post (it may need a login or be closed). Paste the text or upload a screenshot.'));
         }
