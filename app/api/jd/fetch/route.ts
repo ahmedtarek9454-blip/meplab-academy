@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     if (text.length < 120) return NextResponse.json({ error: 'empty' }, { status: 422 });
     const head = [title, company && `Company: ${company}`].filter(Boolean).join('\n');
     return NextResponse.json({ title, company, text: `${head}\n\n${text}`.trim() });
-  } catch {
-    return NextResponse.json({ error: 'fetch' }, { status: 502 });
+  } catch (e: any) {
+    return NextResponse.json({ error: 'fetch', detail: String(e?.message || e).slice(0, 60) }, { status: 502 });
   }
 }
