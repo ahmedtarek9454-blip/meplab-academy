@@ -8,6 +8,13 @@ export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup';
   const next = sp.next || '/dashboard';
   const isLogin = mode === 'login';
   const q = `?next=${encodeURIComponent(next)}`;
+  const ERR: Record<string, string> = {
+    phone: 'اكتب رقم واتساب صحيح بكود الدولة، زي +20 100 123 4567.',
+    name: 'اكتب اسمك بالكامل.',
+    exists: 'الإيميل ده عامل حساب قبل كده. ادخل بيه من "عندك حساب؟".',
+    weak: 'الباسورد لازم 8 حروف أو أرقام على الأقل.'
+  };
+  const google = process.env.NEXT_PUBLIC_GOOGLE_AUTH === '1';
 
   return (
     <section className="container-x flex justify-center py-14">
@@ -16,21 +23,25 @@ export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup';
         <h1 className="mb-6 text-center text-2xl font-extrabold text-ink">{isLogin ? t.login_title : t.signup_title}</h1>
 
         {sp.check && <p className="mb-4 rounded-sheet bg-green-50 p-3 text-sm text-green-800">{t.check_email}</p>}
-        {sp.error && <p className="mb-4 rounded-sheet bg-red-50 p-3 text-sm text-red-700">{t.auth_error}</p>}
+        {sp.notice && <p className="mb-4 rounded-sheet border border-ink p-3 text-sm font-semibold text-ink">{sp.notice}</p>}
+        {sp.error && <p className="mb-4 rounded-sheet bg-red-50 p-3 text-sm text-red-700">{ERR[sp.error] || (isLogin ? 'الإيميل أو الباسورد غلط.' : t.auth_error)}</p>}
+        {sp.reset && <p className="mb-4 rounded-sheet bg-green-50 p-3 text-sm text-green-800">الباسورد اتغيّر. ادخل بالباسورد الجديد.</p>}
 
         <form action={isLogin ? signIn : signUp} className="space-y-4">
           <input type="hidden" name="next" value={next} />
           {!isLogin && (
             <>
-              <div><label className="label">{t.full_name}</label><input name="full_name" required className="input" /></div>
-              <div><label className="label">{t.phone}</label><input name="phone" required className="input" dir="ltr" inputMode="tel" /></div>
+              <div><label className="label">{t.full_name}</label><input name="full_name" required minLength={3} autoComplete="name" className="input" /></div>
+              <div><label className="label">رقم الواتساب</label><input name="phone" required className="input" dir="ltr" inputMode="tel" autoComplete="tel" placeholder="+20 1xx xxx xxxx" /></div>
             </>
           )}
           <div><label className="label">{t.email}</label><input name="email" type="email" required className="input" dir="ltr" /></div>
-          <div><label className="label">{t.password}</label><input name="password" type="password" required minLength={6} className="input" dir="ltr" /></div>
+          <div><label className="label">{t.password}</label><input name="password" type="password" required minLength={isLogin ? 6 : 8} autoComplete={isLogin ? 'current-password' : 'new-password'} className="input" dir="ltr" /></div>
+          {isLogin && <div className="-mt-2 text-left text-xs"><Link href="/reset" className="text-brand-blue">نسيت الباسورد؟</Link></div>}
           <button className="btn-red w-full">{isLogin ? t.login_btn : t.signup_btn}</button>
         </form>
 
+        {google && <>
         <div className="my-5 flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200" />{t.or}<span className="h-px flex-1 bg-slate-200" /></div>
         <form action={signInWithGoogle}>
           <input type="hidden" name="next" value={next} />
@@ -39,6 +50,7 @@ export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup';
             {t.google_btn}
           </button>
         </form>
+        </>}
 
         <p className="mt-6 text-center text-sm text-ink-soft">
           {isLogin ? t.no_account : t.have_account}{' '}

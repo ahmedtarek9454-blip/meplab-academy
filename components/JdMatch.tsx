@@ -46,7 +46,13 @@ const T = {
 
 const VC: Record<string, string> = { strong: 'bg-green-600', possible: 'bg-amber-500', weak: 'bg-orange-600', rejected: 'bg-red-600' };
 
-export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: Loc; cvText: string; years: number; jd: string; setJd: (v: string) => void }) {
+const hashOf = (t: string) => { let h1 = 0x811c9dc5, h2 = 0x01000193; const n = t.toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 3000); for (let i = 0; i < n.length; i++) { const c = n.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822519) >>> 0; } return h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0'); };
+
+export default function JdMatch({ locale, cvText, years, jd, setJd, gate }: {
+  locale: Loc; cvText: string; years: number; jd: string; setJd: (v: string) => void;
+  /** accounts are open and this visitor has none: one free match, then sign up (null = no limit) */
+  gate?: { signupHref: string; loginHref: string; onLeave: () => void } | null;
+}) {
   const t = T[locale];
   const [r, setR] = useState<Result | null>(null);
   const [err, setErr] = useState('');
@@ -80,6 +86,23 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
   }
 
   const [busy, setBusy] = useState('');
+  const [locked, setLocked] = useState(false);
+
+  /** visitors without an account: the first post is free; the same post again is fine */
+  async function allowed(text: string) {
+    if (!gate) return true;
+    const h = hashOf(text);
+    let used: string | null = null;
+    try { used = localStorage.getItem('ml_jd_free'); } catch {}
+    if (used && used !== h) return false;
+    try {
+      const r = await fetch('/api/jd/quota', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ h }) });
+      const d = await r.json();
+      if (d && d.ok === false) return false;
+    } catch {}
+    try { localStorage.setItem('ml_jd_free', h); } catch {}
+    return true;
+  }
   const URL_ONLY = /^\s*(https?:\/\/\S+)\s*$/i;
 
   async function run() {
@@ -108,6 +131,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
       setBusy('');
     }
     if (text.trim().split(/\n/).filter((l) => l.trim()).length < 2 && text.trim().length < 120) return setErr(t.empty);
+    if (!(await allowed(text))) { setLocked(true); track('jd_gate'); return; }
     const m = matchJd(cvText, findSkills(cvText), years, text);
     setR(m); setApp(null);
     learnFrom(text, m.title);
@@ -134,6 +158,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
       setBusy('');
       if (text.trim().length < 60) return setErr(ar ? 'مقدرناش نقرا كلام كفاية من الصورة. صوّر الإعلان أوضح، أو الصق النص.' : 'Not enough text could be read. Try a sharper screenshot or paste the text.');
       setJd(text); track('jd_image');
+      if (!(await allowed(text))) { setLocked(true); track('jd_gate'); return; }
       const m = matchJd(cvText, findSkills(cvText), years, text);
       setR(m); learnFrom(text, m.title);
     } catch { setBusy(''); setErr(ar ? 'حصلت مشكلة في قراءة الصورة. الصق نص الإعلان بدلها.' : 'Could not read the image. Paste the text instead.'); }
@@ -146,9 +171,19 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
       <div className="border-b border-line p-6 md:p-8">
         <h3 className="text-xl font-bold text-ink">{t.title}</h3>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-ink-soft">{t.desc}</p>
-        <textarea value={jd} onChange={(e) => { setJd(e.target.value); setR(null); setApp(null); }} rows={5} placeholder={t.ph} className="input mt-4 text-sm" dir="auto"
+        <textarea value={jd} onChange={(e) => { setJd(e.target.value); setR(null); setApp(null); setLocked(false); }} rows={5} placeholder={t.ph} className="input mt-4 text-sm" dir="auto"
           onPaste={(e) => { const f = [...e.clipboardData.files].find((x) => /^image\//.test(x.type)); if (f) { e.preventDefault(); readImage(f); } }} />
         {busy && <p className="mt-3 text-sm font-semibold text-ink">{busy}</p>}
+        {locked && gate && (
+          <div className="mt-4 rounded-sheet border border-ink p-5">
+            <h4 className="font-bold text-ink">{ar ? 'المطابقة المجانية خلصت' : 'Your free match is used'}</h4>
+            <p className="mt-1 text-sm leading-7 text-ink-soft">{ar ? 'المطابقة على أول إعلان مجانية من غير حساب. عشان تطابق على وظايف أكتر وتجهّز إيميل لكل واحدة، اعمل حساب مجاني في دقيقة: اسمك وإيميلك ورقم الواتساب. الـ CV والإعلان هيفضلوا زي ما هم بعد التسجيل.' : 'Your first job-post match is free. Create a free account (name, email, WhatsApp) to match more jobs. Your CV and this post stay here after you sign up.'}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a href={gate.signupHref} onClick={() => { gate.onLeave(); track('jd_gate_signup'); }} className="btn-red btn-sm">{ar ? 'اعمل حساب مجاني' : 'Create a free account'}</a>
+              <a href={gate.loginHref} onClick={() => gate.onLeave()} className="btn-ghost btn-sm">{ar ? 'عندي حساب' : 'I have an account'}</a>
+            </div>
+          </div>
+        )}
         {err && <p role="alert" className="mt-3 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{err}</p>}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap gap-2">

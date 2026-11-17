@@ -307,6 +307,20 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
   const [user, setUser] = useState<GateUser | null | undefined>(undefined);
   const [pending, setPending] = useState<{ text: string; pages: number; market: Market } | null>(null);
   useEffect(() => { currentUser().then(setUser).catch(() => setUser(null)); }, []);
+  // back from signing up: bring the CV and the job post back
+  useEffect(() => {
+    if (!user) return;
+    try {
+      const raw = sessionStorage.getItem('ml_cv_resume'); if (!raw) return;
+      sessionStorage.removeItem('ml_cv_resume');
+      const d = JSON.parse(raw);
+      if (typeof d?.text === 'string' && d.text.length > 50) {
+        if (typeof d.jd === 'string') setJd(d.jd);
+        finish(d.text, d.pages || 0, d.market || market, user).then(() => setTimeout(() => document.getElementById('cv-jd')?.scrollIntoView({ behavior: 'smooth' }), 400));
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
   const [jobs, setJobs] = useState<any[]>([]);
   const [cvText, setCvText] = useState('');
   const prof = useMemo(() => { try { return res && cvText && !res.general ? buildProfile(cvText, res) : null; } catch { return null; } }, [res, cvText]);
@@ -732,7 +746,13 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       {SUPABASE_READY && <CvSave file={file} locale={locale} profileHref={`${hrefBase}/profile`} signedIn={!!user} signupHref={`${hrefBase}/signup?next=/cv-check`} />}
       <div id="cv-rewrite" className="scroll-mt-24"><CvRewrite locale={locale} text={cvText} res={res} market={market} model={model} whatsapp={whatsapp} /></div>
 
-      <div id="cv-jd" className="scroll-mt-24"><JdMatch locale={locale} cvText={cvText} years={res.years} jd={jd} setJd={setJd} /></div>
+      <div id="cv-jd" className="scroll-mt-24"><JdMatch locale={locale} cvText={cvText} years={res.years} jd={jd} setJd={setJd}
+        gate={SUPABASE_READY && user === null ? {
+          signupHref: `${hrefBase}/signup?next=${encodeURIComponent('/cv-check?resume=1')}`,
+          loginHref: `${loginHref}?next=${encodeURIComponent('/cv-check?resume=1')}`,
+          // keep the CV and the post on this device so they are back after signing up (never sent anywhere)
+          onLeave: () => { try { sessionStorage.setItem('ml_cv_resume', JSON.stringify({ text: cvText, market, jd, pages: 0 })); } catch {} }
+        } : null} /></div>
 
       {SUPABASE_READY && <AiReview locale={locale} text={cvText} res={res} market={market} jd={jd} loginHref={loginHref} />}
 

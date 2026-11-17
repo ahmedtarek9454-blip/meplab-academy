@@ -2,6 +2,7 @@
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import { toSheet, normWhatsapp } from '@/lib/sheet';
 
 function safeNext(v: FormDataEntryValue | null) {
   const s = String(v || '/dashboard');
@@ -27,19 +28,23 @@ export async function signIn(formData: FormData) {
 
 export async function signUp(formData: FormData) {
   const next = safeNext(formData.get('next'));
+  const full_name = String(formData.get('full_name') || '').trim().slice(0, 80);
+  const phone = normWhatsapp(String(formData.get('phone') || ''));
+  const email = String(formData.get('email') || '').trim().toLowerCase();
+  if (full_name.length < 3) redirect(`/signup?error=name&next=${encodeURIComponent(next)}`);
+  if (!phone) redirect(`/signup?error=phone&next=${encodeURIComponent(next)}`);
+  if (String(formData.get('password') || '').length < 8) redirect(`/signup?error=weak&next=${encodeURIComponent(next)}`);
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
-    email: String(formData.get('email') || '').trim(),
+    email,
     password: String(formData.get('password') || ''),
     options: {
-      data: {
-        full_name: String(formData.get('full_name') || '').trim(),
-        phone: String(formData.get('phone') || '').trim()
-      },
+      data: { full_name, phone },
       emailRedirectTo: `${await siteUrl()}/auth/callback?next=${encodeURIComponent(next)}`
     }
   });
-  if (error) redirect(`/signup?error=1&next=${encodeURIComponent(next)}`);
+  if (error) redirect(`/signup?error=${/already|registered|exists/i.test(error.message) ? 'exists' : '1'}&next=${encodeURIComponent(next)}`);
+  await toSheet({ event: 'signup', name: full_name, email, whatsapp: phone, source: next.startsWith('/cv-check') ? 'فحص الـ CV' : next.startsWith('/courses') ? 'الكورسات' : 'الموقع' });
   // If email confirmation is disabled, a session exists already
   if (data.session) redirect(next);
   redirect(`/login?check=1&next=${encodeURIComponent(next)}`);
@@ -60,4 +65,22 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect('/');
+}
+
+/** "forgot password": e-mail a reset link that lands on /reset/new */
+export async function sendReset(formData: FormData) {
+  const email = String(formData.get('email') || '').trim().toLowerCase();
+  const supabase = await createClient();
+  await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${await siteUrl()}/auth/callback?next=/reset/new` }).catch(() => {});
+  redirect('/reset?sent=1'); // same answer whether the e-mail exists or not
+}
+
+export async function setNewPassword(formData: FormData) {
+  const pw = String(formData.get('password') || '');
+  if (pw.length < 8) redirect('/reset/new?error=weak');
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password: pw });
+  if (error) redirect('/reset/new?error=1');
+  await supabase.auth.signOut();
+  redirect('/login?reset=1');
 }

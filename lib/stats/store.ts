@@ -7,7 +7,7 @@
 import { getStore } from '@netlify/blobs';
 import type { CvSignal, SignalRow } from '@/lib/ats/learn';
 
-export const EVENTS = ['visit', 'rewrite', 'word', 'pdf', 'share_dl', 'share_li', 'share_fb', 'share_native', 'jd', 'jd_link', 'jd_image', 'apply', 'apply_word', 'apply_mail'] as const;
+export const EVENTS = ['visit', 'rewrite', 'word', 'pdf', 'share_dl', 'share_li', 'share_fb', 'share_native', 'jd', 'jd_link', 'jd_image', 'jd_gate', 'jd_gate_signup', 'apply', 'apply_word', 'apply_mail'] as const;
 export type EventType = (typeof EVENTS)[number];
 
 const store = (name: string) => getStore({ name, consistency: 'strong' });
@@ -152,4 +152,14 @@ function createHashKey(t: string) {
 export async function jdPosts(): Promise<JdPost[]> {
   const ks = await keys('jd-posts', '');
   return readMany<JdPost>('jd-posts', ks.slice(0, 3000));
+}
+
+/** one free job-post match per visitor (no account): returns true when this post may be matched */
+export async function freeJdAllowed(ip: string, postHash: string): Promise<boolean> {
+  try {
+    const s = store('jd-free');
+    const first = await s.get(ip).catch(() => null);
+    if (!first) { await s.set(ip, postHash); return true; }
+    return first === postHash; // the same post again is fine
+  } catch { return true; }
 }

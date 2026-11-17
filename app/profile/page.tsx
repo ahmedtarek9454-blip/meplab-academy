@@ -3,7 +3,7 @@ import { getT, L } from '@/lib/i18n';
 import { requireUser } from '@/lib/auth';
 import { ROLES, MARKETS, roleGroups, type Market } from '@/lib/cv/data';
 import SubmitButton from '@/components/SubmitButton';
-import { saveProfile, uploadCv, deleteCv } from './actions';
+import { saveProfile, uploadCv, deleteCv, joinCourse } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,14 +32,20 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
   const doneBy: Record<string, number> = {};
   subList.forEach((s: any) => { const cid = s.course_tasks?.course_id; if (cid) doneBy[cid] = (doneBy[cid] || 0) + 1; });
 
-  const errMsg: Record<string, string> = { no_file: ar ? 'اختار ملف.' : 'Choose a file.', too_big: ar ? 'الملف أكبر من 10 ميجا.' : 'File is larger than 10 MB.', bad_type: ar ? 'PDF أو Word أو صورة بس.' : 'PDF, Word or image only.' };
-  const F = ({ name, label, type = 'text', ltr = false, ph = '' }: any) => (
-    <div><label className="label">{label}</label><input name={name} type={type} defaultValue={p?.[name] ?? ''} className="input" dir={ltr ? 'ltr' : 'auto'} placeholder={ph} /></div>
+  const errMsg: Record<string, string> = {
+    phone: ar ? 'اكتب رقم واتساب صحيح بكود الدولة، زي +20 100 123 4567.' : 'Enter a valid WhatsApp number with country code.',
+    name: ar ? 'اكتب اسمك بالكامل.' : 'Enter your full name.',
+    code: ar ? 'الكود ده مش صحيح أو اتقفل. اتأكد منه من جروب الكورس.' : 'This code is wrong or closed. Check it in your course group.',
+    join: ar ? 'حصلت مشكلة وإحنا بنضيفك للكورس. جرّب تاني أو كلّمنا.' : 'Could not add you to the course. Try again or contact us.',
+    no_file: ar ? 'اختار ملف.' : 'Choose a file.', too_big: ar ? 'الملف أكبر من 10 ميجا.' : 'File is larger than 10 MB.', bad_type: ar ? 'PDF أو Word أو صورة بس.' : 'PDF, Word or image only.' };
+  const F = ({ name, label, type = 'text', ltr = false, ph = '', req = false }: any) => (
+    <div><label className="label">{label}{req ? ' *' : ''}</label><input name={name} type={type} required={req} defaultValue={p?.[name] ?? ''} className="input" dir={ltr ? 'ltr' : 'auto'} placeholder={ph} /></div>
   );
   const fmtD = (d: string) => new Date(d).toLocaleDateString(ar ? 'ar-EG' : 'en-GB', { dateStyle: 'medium' });
 
   return (
     <section className="container-x max-w-5xl py-10">
+      {sp.complete && <p className="mb-4 rounded-sheet border border-ink p-4 text-sm font-semibold text-ink">{ar ? 'خطوة أخيرة: اكتب اسمك ورقم الواتساب واحفظ، عشان نقدر نتواصل معاك.' : 'One last step: add your name and WhatsApp number, then save.'}</p>}
       {sp.saved && <p className="mb-4 rounded-sheet bg-green-50 p-3 text-sm font-semibold text-green-800">✓ {ar ? 'اتحفظ' : 'Saved'}</p>}
       {sp.error && <p className="mb-4 rounded-sheet bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {errMsg[sp.error] || sp.error}</p>}
 
@@ -116,8 +122,9 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
           {/* data form */}
           <form action={saveProfile} className="card grid gap-4 p-6 md:grid-cols-2">
             <h2 className="text-lg font-bold text-ink md:col-span-2"> {ar ? 'بياناتي' : 'My details'}</h2>
-            <F name="full_name" label={ar ? 'الاسم بالكامل' : 'Full name'} />
-            <F name="phone" label={ar ? 'رقم الموبايل (واتساب)' : 'Mobile (WhatsApp)'} ltr ph="+20 1xx xxx xxxx" />
+            <input type="hidden" name="next" value={sp.complete && sp.next ? sp.next : ''} />
+            <F name="full_name" label={ar ? 'الاسم بالكامل' : 'Full name'} req />
+            <F name="phone" label={ar ? 'رقم الواتساب' : 'WhatsApp number'} ltr ph="+20 1xx xxx xxxx" req />
             <div><label className="label">{ar ? 'التخصص' : 'Specialty'}</label>
               <select name="role_id" defaultValue={p?.role_id ?? ''} className="input"><option value="">—</option>{roleGroups(locale as 'ar' | 'en').map((g) => <optgroup key={g.id} label={g.label}>{g.roles.map((r) => <option key={r.id} value={r.id}>{r[locale as 'ar' | 'en']}</option>)}</optgroup>)}</select></div>
             <F name="years" label={ar ? 'سنين الخبرة' : 'Years of experience'} type="number" ltr />
@@ -135,6 +142,12 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
 
         {/* CV side */}
         <aside className="space-y-6">
+          <form id="join" action={joinCourse} className="card scroll-mt-24 p-6">
+            <h2 className="text-lg font-bold text-ink">{ar ? 'انضم لكورس بالكود' : 'Join a course with a code'}</h2>
+            <p className="mt-1 text-sm leading-6 text-ink-soft">{ar ? 'لو بتحضر معانا، اكتب الكود اللي في جروب الكورس، والتاسكات هتفتحلك على طول.' : 'Attending with us? Enter the code from your course group to open the tasks.'}</p>
+            <input name="code" required className="input mt-3 uppercase tracking-wider" dir="ltr" placeholder="REVIT-MECH-01" autoComplete="off" />
+            <SubmitButton className="btn-red btn-sm mt-3 w-full">{ar ? 'انضم' : 'Join'}</SubmitButton>
+          </form>
           <div id="cv" className="card scroll-mt-24 p-6">
             <h2 className="text-lg font-bold text-ink"> {t.my_cv}</h2>
             {p?.cv_path ? (

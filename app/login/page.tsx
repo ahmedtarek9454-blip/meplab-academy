@@ -1,7 +1,9 @@
-import AuthGate from '@/components/AuthGate';
-import { getT } from '@/lib/i18n';
+import AuthForm from '@/components/AuthForm';
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
-  const sp = await searchParams; const { t, locale } = await getT();
-  return <AuthGate mode="login" next={sp.next || '/dashboard'} locale={locale} notice={sp.next && sp.next !== '/dashboard' ? t.members_only : undefined} />;
+export const dynamic = 'force-dynamic';
+
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
+  const sp = await searchParams;
+  const notice = sp.next?.startsWith('/cv-check') ? 'اعمل حساب مجاني عشان تطابق الـ CV على وظايف أكتر. الـ CV والإعلان هيرجعوا زي ما هم بعد ما تخلّص.' : undefined;
+  return <AuthForm mode="login" sp={{ ...sp, notice }} />;
 }

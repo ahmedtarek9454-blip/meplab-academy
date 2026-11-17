@@ -42,6 +42,7 @@ export default async function Admin() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="h-section">{t.admin_title}</h1>
         <div className="flex gap-2">
+          <Link href="/admin/students" className="btn-blue">طلاب الكورسات والأعضاء</Link>
           <Link href="/admin/tasks" className="btn-ghost">📝 {t.adm_tasks}</Link>
           <Link href="/admin/leads" className="btn-ghost">📧 Leads</Link>
           <Link href="/admin/model" className="btn-ghost">🧠 ATS Model</Link>
