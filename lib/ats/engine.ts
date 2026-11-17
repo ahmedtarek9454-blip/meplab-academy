@@ -76,7 +76,7 @@ export function rankRoles(found: Map<string, Found>, model: AtsModel, market: Ma
   return scored.sort((a, b) => b.pct - a.pct);
 }
 
-export type Knockout = { id: 'years' | 'degree' | 'cert'; ok: boolean; need: string; have: string };
+export type Knockout = { id: 'years' | 'degree' | 'cert'; ok: boolean; need: string; have: string; near?: boolean };
 
 export type JdMatch = {
   score: number; // final ATS ranking score 0-100
@@ -119,7 +119,11 @@ export function matchJd(cvText: string, found: Map<string, Found>, years: number
 
   // 1) knock-out filters (what auto-rejects candidates in real ATS)
   const knockouts: Knockout[] = [];
-  if (jd.yearsMin !== null) knockouts.push({ id: 'years', ok: years + 0.5 >= jd.yearsMin, need: `${jd.yearsMin}+`, have: `${years}` });
+  // 5 asked, 4.5 in the CV: not met. Within a year it is "close" (many recruiters still read it); more than a year short fails the filter
+  if (jd.yearsMin !== null) {
+    const ok = years >= jd.yearsMin - 0.05;
+    knockouts.push({ id: 'years', ok, near: !ok && jd.yearsMin - years <= 1, need: `${jd.yearsMin}+`, have: `${Math.round(years * 10) / 10}` });
+  }
   if (jd.degree) {
     const degLines = cvText.split('\n').filter((l) => /(bachelor|b\.?\s?sc\b|b\.?\s?eng\b|\bbsc\b|\bbeng\b|\bmaster(?:'?s)?\b(?!\s*plan)|m\.?\s?sc\b|\bmsc\b|بكالوريوس|ماجستير)/i.test(l) && !/\bmastered\b/i.test(l));
     const anyDeg = degLines.length > 0;
@@ -151,9 +155,10 @@ export function matchJd(cvText: string, found: Map<string, Found>, years: number
     rawScore = Math.round(100 * (0.4 * niceC + 0.35 * litC + 0.25 * titleC));
   }
   let score = rawScore;
-  const failed = knockouts.filter((k) => !k.ok);
+  const failed = knockouts.filter((k) => !k.ok && !k.near);
+  if (knockouts.some((k) => k.near)) score = Math.min(score, 60); // close but short: a human may still read it, an ATS ranks it lower
   if (failed.length) score = Math.min(score, 35); // real ATS hides knocked-out candidates
-  const verdict = failed.length ? 'rejected' : score >= 75 ? 'strong' : score >= 55 ? 'possible' : 'weak';
+  const verdict = failed.length ? 'rejected' : score >= 75 && !knockouts.some((k) => k.near) ? 'strong' : score >= 55 ? 'possible' : 'weak';
   return { score, rawScore, verdict, title: jd.title, knockouts, must, nice, literal, parts: { must: mustC, nice: niceC, literal: litC, title: titleC } };
 }
 

@@ -164,7 +164,7 @@ function splitHeader(lines: string[]): { title: string; company: string; locatio
 }
 
 /** "ETAP / Ecodial / Amtech" → only the names this CV actually mentions ("ETAP"); never claim a tool the person didn't write */
-function honestLabel(label: string, text: string) {
+export function honestLabel(label: string, text: string) {
   const t = text.toLowerCase();
   const has = (p: string) => t.includes(p.toLowerCase().trim());
   // "Lighting design (DIALux / Relux)" → keep only the named tools inside the brackets

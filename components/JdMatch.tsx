@@ -3,15 +3,16 @@ import { useState } from 'react';
 import { track } from '@/lib/stats/track';
 import { findSkills, matchJd, type JdMatch as Result } from '@/lib/ats/engine';
 import { buildApplication, type Application } from '@/lib/cv/apply';
+import { ocrImageFile } from '@/lib/cv/ocr';
 
 type Loc = 'ar' | 'en';
 const T = {
   ar: {
     title: 'جرّب الـ CV على إعلان وظيفة، زي الـ ATS بالظبط',
     desc: 'الصق إعلان الوظيفة اللي هتقدّم عليها، والمحرك هيعمل اللي أنظمة الـ ATS بتعمله: فلاتر الاستبعاد الأول، وبعدين المتطلبات الأساسية والإضافية، والكلمات المفتاحية الحرفية، والمسمى الوظيفي.',
-    ph: 'الصق إعلان الوظيفة هنا (من LinkedIn أو Bayt أو أي مكان)...',
+    ph: 'الصق نص الإعلان أو لينكه (LinkedIn أو Bayt أو Wuzzuf...)، أو ارفع صورة الإعلان...',
     btn: 'طابق الـ CV مع الإعلان',
-    empty: 'الصق نص الإعلان الأول (على الأقل سطرين).',
+    empty: 'الصق نص الإعلان أو لينكه أو ارفع صورته الأول.',
     score: 'درجة الترتيب في الـ ATS',
     v: { strong: 'فرصتك قوية، غالبًا هتعدّي للمراجعة البشرية', possible: 'فرصة متوسطة، عدّل الـ CV على الإعلان قبل ما تقدّم', weak: 'فرصة ضعيفة، الـ CV بعيد عن المطلوب', rejected: 'غالبًا هيترفض أوتوماتيك بسبب فلتر استبعاد' } as Record<string, string>,
     ko: 'فلاتر الاستبعاد (Knock-out)',
@@ -26,9 +27,9 @@ const T = {
   en: {
     title: 'Test your CV against a job post, the way an ATS does',
     desc: 'Paste the job you are applying for. The engine does what ATS software does: knock-out filters first, then must-have and nice-to-have requirements, literal keywords and job title.',
-    ph: 'Paste the job description here (LinkedIn, Bayt, anywhere)...',
+    ph: 'Paste the job post text or its link (LinkedIn, Bayt, Wuzzuf...), or upload a screenshot...',
     btn: 'Match my CV to this job',
-    empty: 'Paste the job post first (at least two lines).',
+    empty: 'Paste the job post text or link, or upload a screenshot first.',
     score: 'ATS ranking score',
     v: { strong: 'Strong — likely to reach a human reviewer', possible: 'Possible — tailor your CV to this post before applying', weak: 'Weak — your CV is far from the requirements', rejected: 'Likely auto-rejected by a knock-out filter' } as Record<string, string>,
     ko: 'Knock-out filters',
@@ -77,11 +78,46 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
     a.download = `Cover Letter - ${app.title}`.replace(/[\\/:*?"<>|]+/g, '').slice(0, 80) + '.docx'; a.click();
   }
 
-  function run() {
+  const [busy, setBusy] = useState('');
+  const URL_ONLY = /^\s*(https?:\/\/\S+)\s*$/i;
+
+  async function run() {
     track('jd');
     setErr('');
-    if (jd.trim().split(/\n/).filter((l) => l.trim()).length < 2 && jd.trim().length < 120) return setErr(t.empty);
-    setR(matchJd(cvText, findSkills(cvText), years, jd)); setApp(null);
+    let text = jd;
+    const link = jd.match(URL_ONLY)?.[1];
+    if (link) {
+      // a link to the post: read it on our server (the browser can't open LinkedIn or Bayt pages directly)
+      setBusy(ar ? 'بنفتح الإعلان من اللينك...' : 'Opening the job post...');
+      try {
+        const res = await fetch('/api/jd/fetch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: link }) });
+        const d = await res.json().catch(() => ({}));
+        if (!res.ok || !d.text) {
+          setBusy('');
+          return setErr(d.error === 'site' || d.error === 'bad_url'
+            ? (ar ? 'الموقع ده مش من مواقع الوظايف اللي بنقراها. انسخ نص الإعلان والصقه هنا، أو ارفع صورته.' : 'We can\'t read this site. Paste the job text here, or upload a screenshot.')
+            : d.error === 'not_job' ? (ar ? 'اللينك ده مش لينك وظيفة. افتح الوظيفة نفسها وانسخ اللينك بتاعها.' : 'This link is not a job post. Open the job itself and copy its link.')
+            : (ar ? 'مقدرناش نفتح الإعلان ده، ممكن يكون محتاج تسجيل دخول أو اتقفل. انسخ نص الإعلان والصقه هنا، أو ارفع صورته.' : 'We couldn\'t open this post (it may need a login or be closed). Paste the text or upload a screenshot.'));
+        }
+        text = d.text; setJd(text); track('jd_link');
+      } catch { setBusy(''); return setErr(ar ? 'النت فصل وإحنا بنفتح اللينك. جرّب تاني أو الصق النص.' : 'Connection dropped. Try again or paste the text.'); }
+      setBusy('');
+    }
+    if (text.trim().split(/\n/).filter((l) => l.trim()).length < 2 && text.trim().length < 120) return setErr(t.empty);
+    setR(matchJd(cvText, findSkills(cvText), years, text)); setApp(null);
+  }
+
+  async function readImage(file: File) {
+    if (!file || !/^image\//.test(file.type)) return;
+    setErr(''); setR(null); setApp(null);
+    setBusy(ar ? 'بنقرا الإعلان من الصورة (أول مرة بتاخد حوالي 10 ثواني)...' : 'Reading the post from the image (first time ~10 s)...');
+    try {
+      const text = await ocrImageFile(file);
+      setBusy('');
+      if (text.trim().length < 60) return setErr(ar ? 'مقدرناش نقرا كلام كفاية من الصورة. صوّر الإعلان أوضح، أو الصق النص.' : 'Not enough text could be read. Try a sharper screenshot or paste the text.');
+      setJd(text); track('jd_image');
+      setR(matchJd(cvText, findSkills(cvText), years, text));
+    } catch { setBusy(''); setErr(ar ? 'حصلت مشكلة في قراءة الصورة. الصق نص الإعلان بدلها.' : 'Could not read the image. Paste the text instead.'); }
   }
 
   const koName = (id: string) => (id === 'years' ? t.ko_years : id === 'degree' ? t.ko_degree : t.ko_cert);
@@ -91,10 +127,18 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
       <div className="border-b border-line p-6 md:p-8">
         <h3 className="text-xl font-bold text-ink">{t.title}</h3>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-ink-soft">{t.desc}</p>
-        <textarea value={jd} onChange={(e) => { setJd(e.target.value); setR(null); setApp(null); }} rows={5} placeholder={t.ph} className="input mt-4 text-sm" dir="auto" />
+        <textarea value={jd} onChange={(e) => { setJd(e.target.value); setR(null); setApp(null); }} rows={5} placeholder={t.ph} className="input mt-4 text-sm" dir="auto"
+          onPaste={(e) => { const f = [...e.clipboardData.files].find((x) => /^image\//.test(x.type)); if (f) { e.preventDefault(); readImage(f); } }} />
+        {busy && <p className="mt-3 text-sm font-semibold text-ink">{busy}</p>}
         {err && <p role="alert" className="mt-3 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{err}</p>}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <button onClick={run} className="btn-blue px-6">{t.btn}</button>
+          <div className="flex flex-wrap gap-2">
+            <button onClick={run} disabled={!!busy} className="btn-blue px-6 disabled:opacity-60">{t.btn}</button>
+            <label className={`btn-ghost cursor-pointer px-4 ${busy ? 'pointer-events-none opacity-60' : ''}`}>
+              {ar ? 'ارفع صورة الإعلان' : 'Upload a screenshot'}
+              <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) readImage(f); }} />
+            </label>
+          </div>
           <span className="text-xs text-ink-mute">{t.engine}</span>
         </div>
       </div>
@@ -123,8 +167,8 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
                 <h4 className="mb-2 font-bold text-ink">{t.ko}</h4>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {r.knockouts.map((k, i) => (
-                    <div key={i} className={`flex items-center justify-between gap-3 rounded-sheet p-3 text-sm ${k.ok ? 'bg-green-50' : 'bg-red-50 ring-1 ring-red-200'}`}>
-                      <span className="font-semibold">{k.ok ? '✓' : '✕'} {koName(k.id)}</span>
+                    <div key={i} className={`flex items-center justify-between gap-3 rounded-sheet p-3 text-sm ${k.ok ? 'bg-green-50' : k.near ? 'bg-amber-50 ring-1 ring-amber-200' : 'bg-red-50 ring-1 ring-red-200'}`}>
+                      <span className="font-semibold">{k.ok ? '✓' : k.near ? '!' : '✕'} {koName(k.id)}{k.near ? (ar ? ' (ناقص أقل من سنة)' : ' (under a year short)') : ''}</span>
                       <span className="text-xs text-ink-soft">{t.need}: <b dir="ltr" style={{ unicodeBidi: 'isolate' }}>{k.need}</b> · {t.have}: <b dir="ltr" style={{ unicodeBidi: 'isolate' }}>{k.have}</b></span>
                     </div>
                   ))}
@@ -208,7 +252,8 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
               <ul className="mt-5 space-y-1.5 border-t border-line pt-4 text-sm leading-7 text-ink-soft">
                 {!app.company && <li>{ar ? '• اسم الشركة مش واضح في الإعلان، فكتبنا "Hiring Manager". لو تعرف اسم الشركة أو اسم الـ HR غيّره.' : '• The company name was not clear in the post, so it says "Hiring Manager". Replace it if you know the company or recruiter.'}</li>}
                 {app.left.length > 0 && <li>{ar ? `• الإعلان طالب ${app.left.join('، ')} والـ CV مش بيقول إن عندك ده، فمكتبناهوش. لو عندك الخبرة دي، ضيفها للـ CV الأول وبعدين للإيميل.` : `• The post asks for ${app.left.join(', ')} and your CV doesn't show it, so we left it out. If you have it, add it to your CV first.`}</li>}
-                {r.knockouts.some((k) => !k.ok) && <li className="text-brand-red">{ar ? '• فيه شرط أساسي في الإعلان مش متحقق في الـ CV (شوف فلاتر الاستبعاد فوق). قدّم بس خلي توقعاتك على قدها.' : '• A knock-out requirement is not met (see above). You can still apply, but expect a filter.'}</li>}
+                {r.knockouts.some((k) => k.near) && <li>{ar ? '• سنين خبرتك أقل من المطلوب بشوية. لو بتقدّم، اكتب الخبرة بالشهور في الـ CV (زي Jan 2021 – Present) عشان الحساب يبان صح، ومتكتبش رقم أكبر من الحقيقي.' : '• You are a little short on years. Show exact months in your CV dates; never round up.'}</li>}
+                {r.knockouts.some((k) => !k.ok && !k.near) && <li className="text-brand-red">{ar ? '• فيه شرط أساسي في الإعلان مش متحقق في الـ CV (شوف فلاتر الاستبعاد فوق). قدّم بس خلي توقعاتك على قدها.' : '• A knock-out requirement is not met (see above). You can still apply, but expect a filter.'}</li>}
                 <li>{ar ? '• ابعت الـ CV المعدّل معاه، وسمّي الملف باسمك والوظيفة.' : '• Attach your updated CV, named with your name and the job title.'}</li>
               </ul>
             </div>

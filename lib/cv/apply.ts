@@ -2,7 +2,7 @@
  * Application email + cover letter for one job post, written only from what the CV says.
  * Never claims a requirement the CV doesn't show; missing must-haves are left out, not invented.
  */
-import { englishize, parseCv, polishBullet, enLine, type CvModel } from '@/lib/cv/rebuild';
+import { englishize, parseCv, polishBullet, enLine, honestLabel, type CvModel } from '@/lib/cv/rebuild';
 import { findSkills } from '@/lib/ats/match';
 import { SKILL_BY_ID } from '@/lib/ats/taxonomy';
 import type { JdMatch } from '@/lib/ats/engine';
@@ -46,7 +46,8 @@ export function buildApplication(cvText: string, jd: string, r: JdMatch, years: 
 
   // requirements the CV actually shows, and the ones it doesn't (left out of the letter on purpose)
   const lab = (x: string) => {
-    const parts = x.replace(/\s*\(general\)/i, '').split(/\s+\/\s+/);
+    // only the part the CV actually says: "Carrier HAP / TRACE" → "Carrier HAP" when TRACE isn't in the CV
+    const parts = honestLabel(x, cvText).replace(/\s*\(general\)/i, '').split(/\s+\/\s+/);
     return parts.filter((p) => !parts.some((q) => q !== p && q.toLowerCase().includes(p.toLowerCase()))).join(' / ');
   };
   const okMust = r.must.filter((x) => x.ok).map((x) => lab(x.label));
@@ -79,7 +80,7 @@ export function buildApplication(cvText: string, jd: string, r: JdMatch, years: 
   const degree = m.education.map((l) => l.replace(/\s*[|,]\s*(?:grade|gpa|(?:19|20)\d{2}).*$/i, '')).find((l) => /(bachelor|b\.?\s?sc|b\.?\s?eng|master|m\.?\s?sc)/i.test(l) && !AR.test(l));
   const fresh = !yrs && !curRole && degree ? ` I recently graduated with a ${degree.replace(/^bachelor of/i, "Bachelor's degree in").replace(/\s+[–-]\s+/, ' from ')}.` : '';
   const opening = yrs
-    ? `I am applying for the ${title} position${at}. I bring ${yrs} of experience${curRole ? `, currently as ${curRole}` : ''}.`
+    ? `I am applying for the ${title} position${at}. I bring ${yrs} of experience${curRole ? `, currently working as ${curRole}` : ''}.`
     : `I am applying for the ${title} position${at}.${curRole ? ` I am currently working as ${curRole}.` : fresh}`;
 
   const proof = best.length
@@ -118,7 +119,7 @@ export function buildApplication(cvText: string, jd: string, r: JdMatch, years: 
     `Dear ${to},`, '',
     tidy(`I would like to apply for the ${title} position${at}. ` + (() => {
       const skills = okMust.length ? `, with hands-on work in ${list(okMust.slice(0, 4))}` : '';
-      if (yrs) return `I have ${yrs} of experience${curRole ? `, currently as ${curRole}` : ''}${skills}.`;
+      if (yrs) return `I have ${yrs} of experience${curRole ? `, currently working as ${curRole}` : ''}${skills}.`;
       if (curRole) return `I am currently working as ${curRole}${skills}.`;
       return okMust.length ? `My experience covers ${list(okMust.slice(0, 4))}.` : '';
     })()),
