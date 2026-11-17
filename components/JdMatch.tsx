@@ -10,7 +10,7 @@ const T = {
   ar: {
     title: 'جرّب الـ CV على إعلان وظيفة، زي الـ ATS بالظبط',
     desc: 'الصق إعلان الوظيفة اللي هتقدّم عليها، والمحرك هيعمل اللي أنظمة الـ ATS بتعمله: فلاتر الاستبعاد الأول، وبعدين المتطلبات الأساسية والإضافية، والكلمات المفتاحية الحرفية، والمسمى الوظيفي.',
-    ph: 'الصق نص الإعلان أو لينكه (LinkedIn أو Bayt أو Wuzzuf...)، أو ارفع صورة الإعلان...',
+    ph: 'الصق نص الإعلان، أو لينك الوظيفة من LinkedIn، أو ارفع صورة الإعلان...',
     btn: 'طابق الـ CV مع الإعلان',
     empty: 'الصق نص الإعلان أو لينكه أو ارفع صورته الأول.',
     score: 'درجة الترتيب في الـ ATS',
@@ -27,7 +27,7 @@ const T = {
   en: {
     title: 'Test your CV against a job post, the way an ATS does',
     desc: 'Paste the job you are applying for. The engine does what ATS software does: knock-out filters first, then must-have and nice-to-have requirements, literal keywords and job title.',
-    ph: 'Paste the job post text or its link (LinkedIn, Bayt, Wuzzuf...), or upload a screenshot...',
+    ph: 'Paste the job text, a LinkedIn job link, or upload a screenshot...',
     btn: 'Match my CV to this job',
     empty: 'Paste the job post text or link, or upload a screenshot first.',
     score: 'ATS ranking score',
@@ -97,6 +97,8 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
           return setErr(d.error === 'site' || d.error === 'bad_url'
             ? (ar ? 'الموقع ده مش من مواقع الوظايف اللي بنقراها. انسخ نص الإعلان والصقه هنا، أو ارفع صورته.' : 'We can\'t read this site. Paste the job text here, or upload a screenshot.')
             : d.error === 'not_job' ? (ar ? 'اللينك ده مش لينك وظيفة. افتح الوظيفة نفسها وانسخ اللينك بتاعها.' : 'This link is not a job post. Open the job itself and copy its link.')
+            : d.error === 'blocked' ? (ar ? 'الموقع ده بيمنع إن حد يقرا إعلاناته أوتوماتيك (Wuzzuf وBayt كده). لينكات LinkedIn بتشتغل. هنا انسخ نص الإعلان والصقه، أو صوّره وارفع الصورة.' : 'This site blocks automatic reading (Wuzzuf and Bayt do). LinkedIn links work. Paste the text or upload a screenshot.')
+            : d.error === 'gone' ? (ar ? 'الإعلان ده اتقفل أو اتشال من الموقع.' : 'This job post was closed or removed.')
             : (ar ? 'مقدرناش نفتح الإعلان ده، ممكن يكون محتاج تسجيل دخول أو اتقفل. انسخ نص الإعلان والصقه هنا، أو ارفع صورته.' : 'We couldn\'t open this post (it may need a login or be closed). Paste the text or upload a screenshot.'));
         }
         text = d.text; setJd(text); track('jd_link');

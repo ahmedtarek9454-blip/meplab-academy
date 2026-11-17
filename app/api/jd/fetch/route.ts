@@ -67,6 +67,8 @@ export async function POST(req: NextRequest) {
     const head = [title, company && `Company: ${company}`].filter(Boolean).join('\n');
     return NextResponse.json({ title, company, text: `${head}\n\n${text}`.trim() });
   } catch (e: any) {
-    return NextResponse.json({ error: 'fetch', detail: String(e?.message || e).slice(0, 60) }, { status: 502 });
+    const st = String(e?.message || e).slice(0, 60);
+    // Bayt, Wuzzuf and others put bot protection in front of job pages (403); an expired post answers 404/410
+    return NextResponse.json({ error: /^(401|403|429)$/.test(st) ? 'blocked' : /^(404|410)$/.test(st) ? 'gone' : 'fetch', detail: st }, { status: 502 });
   }
 }
