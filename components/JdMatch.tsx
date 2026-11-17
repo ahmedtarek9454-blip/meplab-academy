@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { track } from '@/lib/stats/track';
-import { findSkills, matchJd, type JdMatch as Result } from '@/lib/ats/engine';
+import { findSkills, matchJd, rankRoles, type JdMatch as Result } from '@/lib/ats/engine';
+import { defaultModel } from '@/lib/ats/model';
 import { buildApplication, type Application } from '@/lib/cv/apply';
 import { ocrImageFile } from '@/lib/cv/ocr';
 
@@ -107,7 +108,21 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
       setBusy('');
     }
     if (text.trim().split(/\n/).filter((l) => l.trim()).length < 2 && text.trim().length < 120) return setErr(t.empty);
-    setR(matchJd(cvText, findSkills(cvText), years, text)); setApp(null);
+    const m = matchJd(cvText, findSkills(cvText), years, text);
+    setR(m); setApp(null);
+    learnFrom(text, m.title);
+  }
+
+  // the post itself (employer text, contacts stripped on the server) teaches the engine what this kind of job asks for
+  function learnFrom(text: string, title: string) {
+    try {
+      if ((window as any).__AUTH_MOCK__) return;
+      const mk = (['eg', 'sa', 'ae'] as const).find((x) => (x === 'sa' ? /saudi|ksa|riyadh|jeddah|dammam|السعودية|الرياض|جدة/i : x === 'ae' ? /uae|dubai|abu dhabi|sharjah|الإمارات|دبي/i : /egypt|cairo|giza|alexandria|مصر|القاهرة/i).test(text)) || 'eg';
+      const [role, second] = rankRoles(findSkills(text), (window as any).__ATS_MODEL__ || defaultModel(), mk, text);
+      // a post reads lower than a CV; learn from it only when one role clearly leads
+      if (!role || role.pct < 25 || (second && role.pct - second.pct < 8)) return;
+      fetch('/api/ats/jd-post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, text: text.slice(0, 6000), role_id: role.role.id, market: mk }), keepalive: true }).catch(() => {});
+    } catch {}
   }
 
   async function readImage(file: File) {
@@ -119,7 +134,8 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
       setBusy('');
       if (text.trim().length < 60) return setErr(ar ? 'مقدرناش نقرا كلام كفاية من الصورة. صوّر الإعلان أوضح، أو الصق النص.' : 'Not enough text could be read. Try a sharper screenshot or paste the text.');
       setJd(text); track('jd_image');
-      setR(matchJd(cvText, findSkills(cvText), years, text));
+      const m = matchJd(cvText, findSkills(cvText), years, text);
+      setR(m); learnFrom(text, m.title);
     } catch { setBusy(''); setErr(ar ? 'حصلت مشكلة في قراءة الصورة. الصق نص الإعلان بدلها.' : 'Could not read the image. Paste the text instead.'); }
   }
 

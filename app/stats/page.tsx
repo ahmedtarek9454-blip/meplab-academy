@@ -1,7 +1,7 @@
 import { ROLES } from '@/lib/cv/data';
 import { DISCIPLINES } from '@/lib/cv/roles-extra';
 import { LAUNCH_DAY, daysSince, eventCounts, signalsOfDay, type StoredSignal } from '@/lib/stats/store';
-import { getModel } from '@/lib/stats/store';
+import { getModel, jdPosts } from '@/lib/stats/store';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إحصائيات فحص الـ CV', robots: { index: false, follow: false } };
@@ -19,6 +19,7 @@ export default async function Stats() {
   const all: StoredSignal[] = [];
   const people = new Set<string>(); const visitors = new Set<string>();
   let model: any = null;
+  let posts = 0;
   try {
     for (const day of days) {
       const [sigs, ev] = await Promise.all([signalsOfDay(day), eventCounts(day)]);
@@ -32,6 +33,7 @@ export default async function Stats() {
       });
     }
     model = await getModel();
+    posts = (await jdPosts().catch(() => [])).length;
   } catch (e: any) { error = e?.message || 'stats unavailable'; }
 
   const sum = (k: keyof (typeof rows)[number]) => rows.reduce((x, r) => x + ((r[k] as number) || 0), 0);
@@ -147,7 +149,8 @@ export default async function Stats() {
 
       <div className="card mt-6 p-5 text-sm leading-7 text-ink-soft">
         <h3 className="font-bold text-ink">المحرك بيتعلم إزاي</h3>
-        <p className="mt-1">كل فحص بيبعت ملخص من غير الـ CV نفسه: الوظيفة، والتخصص، والدرجة، والمهارات اللي اتعرفت. مرة كل يوم المحرك بيتدرّب من جديد على الملخصات دي لما يكون عنده {20} فحص على الأقل.</p>
+        <p className="mt-1">كل فحص بيبعت ملخص من غير الـ CV نفسه: الوظيفة، والتخصص، والدرجة، والمهارات اللي اتعرفت. مرة كل يوم المحرك بيتدرّب من جديد على الملخصات دي لما يكون عنده {20} فحص على الأقل، وعلى إعلانات الوظايف اللي الناس طابقت عليها.</p>
+        <p className="mt-1">بيعرف الوظيفة الصح من غير ما حد يختار: الأول من تأكيد الشخص لو أكّد ({all.filter((s) => s.confirmed_role).length})، وبعدين من المسمى المكتوب في الـ CV نفسه ({all.filter((s) => !s.confirmed_role && (s as any).title_role).length})، وآخر حاجة من تخمين المحرك لما يكون متأكد (بوزن صغير عشان ميقلّدش نفسه). إعلانات وظايف اتعلّم منها: {posts}.</p>
         <p className="mt-1">النسخة الحالية: <span dir="ltr">{model?.version || '0.1-prior (لسه متدرّبش)'}</span>{model?.cvs_used ? ` · اتعلّم من ${model.cvs_used} CV` : ''}. {confirmed} شخص أكّد الوظيفة، و{corrected} منهم صحّحها.</p>
       </div>
     </main>

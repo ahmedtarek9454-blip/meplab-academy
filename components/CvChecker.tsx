@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import CvHistory from './CvHistory';
 import { buildProfile, SYS_LABEL } from '@/lib/cv/profile';
 import { track } from '@/lib/stats/track';
+import { titleEvidence } from '@/lib/ats/titles';
 import JobCard, { ago } from './JobCard';
 import AiReview, { PENDING_KEY } from './AiReview';
 import JdMatch from './JdMatch';
@@ -417,7 +418,10 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       const sk = secs.find((x) => x.key === 'skills');
       const next = sk ? secs.filter((x) => x.pos > sk.pos).sort((a, b) => a.pos - b.pos)[0]?.pos ?? text.length : 0;
       const terms = sk ? unknownSkillTerms(text.slice(sk.pos, Math.min(next, sk.pos + 2500)).split('\n').slice(1).join('\n')) : [];
-      const payload = { role_id: r.roles[0].role.id, pct: r.roles[0].pct, discipline: r.discipline?.id ?? null, market: mkt, years: r.years, score: r.score,
+      // the role the CV's own titles name (headline / latest job), when it is explicit enough
+      const ev = titleEvidence(text);
+      const title_role = Object.entries(ev.hits).filter(([id, h]) => ev.titled[id] && h >= 1.5).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+      const payload = { title_role, role_id: r.roles[0].role.id, pct: r.roles[0].pct, discipline: r.discipline?.id ?? null, market: mkt, years: r.years, score: r.score,
         skills: r.skills.map((x) => x.id).filter((id) => !id.startsWith('l:')), terms, failing: r.checks.filter((c) => c.status !== 'pass').map((c) => c.id), model_version: r.model.version };
       if ((window as any).__AUTH_MOCK__) { (window as any).__LAST_SIGNAL__ = payload; setSigId('demo'); }
       else fetch('/api/ats/signal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })

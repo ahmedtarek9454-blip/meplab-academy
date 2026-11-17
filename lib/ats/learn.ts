@@ -16,6 +16,8 @@ import { ROLES } from '@/lib/cv/data';
 export type CvSignal = {
   role_id: string; pct: number; discipline: string | null; market: string; years: number; score: number;
   skills: string[]; terms: string[]; failing: string[]; model_version: string;
+  /** the role the CV's own job titles name (not the engine's guess): a label that needs nobody to click anything */
+  title_role?: string | null;
 };
 
 const ROLE_IDS = new Set(ROLES.map((r) => r.id));
@@ -67,12 +69,13 @@ export function sanitizeSignal(b: any): CvSignal | null {
     years: Math.round(num(b.years, 0, 50)), // whole years only
     score: Math.round(num(b.score, 0, 100)),
     skills, terms, failing,
-    model_version: typeof b.model_version === 'string' ? b.model_version.slice(0, 30) : ''
+    model_version: typeof b.model_version === 'string' ? b.model_version.slice(0, 30) : '',
+    title_role: isRole(b.title_role) ? b.title_role : null
   };
 }
 
 /* ---------------- training side ---------------- */
-export type SignalRow = { role_id: string; confirmed_role: string | null; pct: number; market?: string; score?: number | null; discipline?: string | null; skills: string[] | null; terms: string[] | null };
+export type SignalRow = { role_id: string; confirmed_role: string | null; title_role?: string | null; pct: number; market?: string; score?: number | null; discipline?: string | null; skills: string[] | null; terms: string[] | null };
 
 /** learned vocabulary becomes skills the engine matches, scoped to the roles that use it */
 export function learnedSkill(term: string): Skill {
@@ -80,16 +83,22 @@ export function learnedSkill(term: string): Skill {
 }
 
 export const LEARN = {
-  minCvs: 8,        // a term must appear in at least this many CVs of a role
+  minCvs: 5,        // a term must appear in at least this many (weighted) CVs of a role
   minShare: 0.12,   // ... and in at least 12% of that role's CVs
   lift: 2.5,        // ... and be 2.5× more common there than in other roles
-  confidentPct: 75  // unconfirmed checks count (at half weight) only when the engine was this sure
+  confidentPct: 65  // an unlabelled check counts only when the engine was this sure
 };
 
-/** label of a signal: the person's confirmation wins; confident unconfirmed checks count at half weight */
+/**
+ * Label of a check, strongest first, so the engine learns even when nobody answers "is this your job?":
+ *  1. the person confirmed or corrected the role                     → full weight
+ *  2. the CV's own job title names a role (independent of the engine) → 0.75
+ *  3. the engine was confident                                        → 0.4 (kept low so it can't just echo itself)
+ */
 export function labelOf(s: SignalRow): { role: string; w: number } | null {
   if (s.confirmed_role && isRole(s.confirmed_role)) return { role: s.confirmed_role, w: 1 };
-  if (s.pct >= LEARN.confidentPct && isRole(s.role_id)) return { role: s.role_id, w: 0.5 };
+  if (s.title_role && isRole(s.title_role)) return { role: s.title_role, w: s.title_role === s.role_id ? 0.75 : 0.6 };
+  if (s.pct >= LEARN.confidentPct && isRole(s.role_id)) return { role: s.role_id, w: 0.4 };
   return null;
 }
 

@@ -129,3 +129,27 @@ export async function overLimit(bucket: string, ip: string, max: number): Promis
     return false; // never lock real users out because the counter is down
   }
 }
+
+/* ---------------- job posts people match their CV against (public employer text, no personal data) ---------------- */
+export type JdPost = { title: string; text: string; role_id: string; market: 'eg' | 'sa' | 'ae'; created_at: string };
+
+/** one entry per distinct post (same post pasted twice counts once) */
+export async function saveJdPost(p: Omit<JdPost, 'created_at'>, ip: string): Promise<'ok' | 'dup' | 'rate'> {
+  const s = store('jd-posts');
+  const norm = p.text.toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 3000);
+  const key = createHashKey(norm);
+  if (await s.get(key).catch(() => null)) return 'dup';
+  if (await overLimit('jdpost', ip, 20)) return 'rate';
+  await s.setJSON(key, { ...p, created_at: new Date().toISOString() });
+  return 'ok';
+}
+function createHashKey(t: string) {
+  // tiny stable hash (FNV-1a, 2 rounds) is enough to dedupe posts
+  let h1 = 0x811c9dc5, h2 = 0x01000193;
+  for (let i = 0; i < t.length; i++) { const c = t.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822519) >>> 0; }
+  return h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0');
+}
+export async function jdPosts(): Promise<JdPost[]> {
+  const ks = await keys('jd-posts', '');
+  return readMany<JdPost>('jd-posts', ks.slice(0, 3000));
+}
