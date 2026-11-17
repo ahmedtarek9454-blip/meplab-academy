@@ -44,9 +44,11 @@ export async function submitTask(formData: FormData) {
     if (prev?.file_path) await supabase.storage.from('tasks').remove([prev.file_path]).catch(() => {});
   }
 
+  // a quiz is graded here on the server, so its row is written with the server key: a student can never write a score themselves (RLS blocks it)
+  const db = task.kind === 'quiz' ? (await import('@/lib/supabase/admin')).createAdminClient() : supabase;
   const { error } = prev
-    ? await supabase.from('task_submissions').update(row).eq('id', prev.id)
-    : await supabase.from('task_submissions').insert(row);
+    ? await db.from('task_submissions').update(row).eq('id', prev.id).eq('user_id', user!.id)
+    : await db.from('task_submissions').insert(row);
   if (error) return fail(error.message);
   revalidatePath(back); revalidatePath('/profile'); revalidatePath('/dashboard');
   redirect(`${back}?sent=1#task-${taskId}`);
