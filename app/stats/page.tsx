@@ -15,7 +15,7 @@ function top(map: Map<string, number>, n = 8) { return [...map.entries()].sort((
 export default async function Stats() {
   let error = '';
   const days = daysSince(LAUNCH_DAY);
-  const rows: { day: string; visitors: number; checks: number; checkers: number; rewrites: number; downloads: number; shares: number; avg: number | null }[] = [];
+  const rows: { day: string; visitors: number; checks: number; checkers: number; rewrites: number; downloads: number; shares: number; jd: number; apply: number; avg: number | null }[] = [];
   const all: StoredSignal[] = [];
   const people = new Set<string>(); const visitors = new Set<string>();
   let model: any = null;
@@ -27,7 +27,7 @@ export default async function Stats() {
       const n = (k: string) => ev[k]?.n || 0;
       rows.push({
         day, visitors: ev.visit?.people || 0, checks: sigs.length, checkers: new Set(sigs.map((s) => s.ip_hash)).size,
-        rewrites: n('rewrite'), downloads: n('word') + n('pdf'), shares: n('share_dl') + n('share_li') + n('share_fb') + n('share_native'),
+        rewrites: n('rewrite'), downloads: n('word') + n('pdf'), shares: n('share_dl') + n('share_li') + n('share_fb') + n('share_native'), jd: n('jd'), apply: n('apply'),
         avg: sigs.length ? Math.round(sigs.reduce((x, s) => x + s.score, 0) / sigs.length) : null
       });
     }
@@ -97,15 +97,15 @@ export default async function Stats() {
       </div>
 
       <div className="card mt-6 overflow-x-auto p-0">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="w-full min-w-[820px] text-sm">
           <thead className="border-b border-line text-ink-mute">
-            <tr>{['اليوم', 'زوار', 'فحوصات', 'أشخاص فحصوا', 'نسخة معدّلة', 'تحميل', 'مشاركة', 'متوسط الدرجة'].map((h) => <th key={h} className="px-4 py-3 text-right font-semibold">{h}</th>)}</tr>
+            <tr>{['اليوم', 'زوار', 'فحوصات', 'أشخاص فحصوا', 'نسخة معدّلة', 'تحميل', 'مشاركة', 'طابقوا إعلان', 'جهّزوا تقديم', 'متوسط الدرجة'].map((h) => <th key={h} className="px-4 py-3 text-right font-semibold">{h}</th>)}</tr>
           </thead>
           <tbody>
             {rows.map((r) => (
               <tr key={r.day} className="border-b border-line last:border-0">
                 <td className="px-4 py-3 tabular-nums" dir="ltr" style={{ textAlign: 'right' }}>{r.day}</td>
-                {[r.visitors, r.checks, r.checkers, r.rewrites, r.downloads, r.shares, r.avg ?? '–'].map((v, i) => <td key={i} className="px-4 py-3 tabular-nums">{v}</td>)}
+                {[r.visitors, r.checks, r.checkers, r.rewrites, r.downloads, r.shares, r.jd, r.apply, r.avg ?? '–'].map((v, i) => <td key={i} className="px-4 py-3 tabular-nums">{v}</td>)}
               </tr>
             ))}
           </tbody>

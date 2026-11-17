@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { track } from '@/lib/stats/track';
 import { findSkills, matchJd, type JdMatch as Result } from '@/lib/ats/engine';
+import { buildApplication, type Application } from '@/lib/cv/apply';
 
 type Loc = 'ar' | 'en';
 const T = {
@@ -47,12 +48,40 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
   const t = T[locale];
   const [r, setR] = useState<Result | null>(null);
   const [err, setErr] = useState('');
+  const [app, setApp] = useState<Application | null>(null);
+  const [tab, setTab] = useState<'email' | 'letter'>('email');
+  const [mail, setMail] = useState('');
+  const [letter, setLetter] = useState('');
+  const [copied, setCopied] = useState('');
+  const ar = locale === 'ar';
+  const jdEmail = (jd.match(/[\w.+-]+@[\w-]+\.[\w.]{2,}/) || [''])[0];
+
+  function prepare() {
+    if (!r) return;
+    track('apply');
+    const a = buildApplication(cvText, jd, r, years);
+    setApp(a); setMail(a.email); setLetter(a.letter); setTab('email');
+    setTimeout(() => document.getElementById('cv-apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+  async function copy(what: string, text: string) {
+    try { await navigator.clipboard.writeText(text); setCopied(what); setTimeout(() => setCopied(''), 1800); } catch {}
+  }
+  async function letterDocx() {
+    if (!app) return;
+    track('apply_word');
+    const D: any = await import('docx');
+    const { Document, Packer, Paragraph, TextRun } = D;
+    const doc = new Document({ sections: [{ properties: { page: { margin: { top: 1134, bottom: 1134, left: 1134, right: 1134 } } }, children: letter.split('\n').map((l: string, i: number) => new Paragraph({ children: [new TextRun({ text: l, font: 'Calibri', size: i === 0 ? 28 : 22, bold: i === 0 })], spacing: { after: l ? 80 : 40 } })) }] });
+    const blob = await Packer.toBlob(doc);
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `Cover Letter - ${app.title}`.replace(/[\\/:*?"<>|]+/g, '').slice(0, 80) + '.docx'; a.click();
+  }
 
   function run() {
     track('jd');
     setErr('');
     if (jd.trim().split(/\n/).filter((l) => l.trim()).length < 2 && jd.trim().length < 120) return setErr(t.empty);
-    setR(matchJd(cvText, findSkills(cvText), years, jd));
+    setR(matchJd(cvText, findSkills(cvText), years, jd)); setApp(null);
   }
 
   const koName = (id: string) => (id === 'years' ? t.ko_years : id === 'degree' ? t.ko_degree : t.ko_cert);
@@ -62,7 +91,7 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
       <div className="border-b border-line p-6 md:p-8">
         <h3 className="text-xl font-bold text-ink">{t.title}</h3>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-ink-soft">{t.desc}</p>
-        <textarea value={jd} onChange={(e) => { setJd(e.target.value); setR(null); }} rows={5} placeholder={t.ph} className="input mt-4 text-sm" dir="auto" />
+        <textarea value={jd} onChange={(e) => { setJd(e.target.value); setR(null); setApp(null); }} rows={5} placeholder={t.ph} className="input mt-4 text-sm" dir="auto" />
         {err && <p role="alert" className="mt-3 rounded-sheet border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{err}</p>}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <button onClick={run} className="btn-blue px-6">{t.btn}</button>
@@ -131,6 +160,59 @@ export default function JdMatch({ locale, cvText, years, jd, setJd }: { locale: 
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {r && (
+        <div className="border-t border-line p-6 md:p-8">
+          {!app ? (
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h4 className="text-lg font-bold text-ink">{ar ? 'هتقدّم على الوظيفة دي؟' : 'Applying for this job?'}</h4>
+                <p className="mt-1 max-w-2xl text-sm leading-7 text-ink-soft">{ar ? 'نجهّزلك إيميل التقديم والـ Cover Letter بالإنجليزي من الـ CV بتاعك وعلى مقاس الإعلان. بنكتب بس اللي الـ CV بيقوله، ومش بنضيف حاجة إنت ما عملتهاش.' : 'We draft your application email and cover letter from your CV, tailored to this post. Only what your CV says, nothing invented.'}</p>
+              </div>
+              <button onClick={prepare} className="btn-red px-6">{ar ? 'جهّز الإيميل والـ Cover Letter' : 'Draft my email and cover letter'}</button>
+            </div>
+          ) : (
+            <div id="cv-apply" className="scroll-mt-24">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h4 className="text-lg font-bold text-ink">{ar ? 'التقديم جاهز، راجعه وعدّل اللي محتاج' : 'Your application, ready to review'}</h4>
+                <div className="flex rounded-sheet border border-line p-0.5 text-sm">
+                  {(['email', 'letter'] as const).map((k) => (
+                    <button key={k} onClick={() => setTab(k)} className={`rounded-sheet px-3 py-1.5 font-semibold ${tab === k ? 'bg-ink text-white' : 'text-ink-soft'}`}>{k === 'email' ? (ar ? 'إيميل التقديم' : 'Email') : 'Cover Letter'}</button>
+                  ))}
+                </div>
+              </div>
+
+              {tab === 'email' ? (
+                <div className="mt-4 space-y-3">
+                  <label className="block text-xs font-bold text-ink-mute">{ar ? 'العنوان (Subject)' : 'Subject'}
+                    <input readOnly value={app.subject} dir="ltr" className="input mt-1 text-sm" onFocus={(e) => e.target.select()} />
+                  </label>
+                  <textarea value={mail} onChange={(e) => setMail(e.target.value)} rows={13} dir="ltr" className="input font-[inherit] text-sm leading-7" />
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={() => copy('email', `${app.subject}\n\n${mail}`)} className="btn-ghost btn-sm">{copied === 'email' ? (ar ? 'اتنسخ' : 'Copied') : ar ? 'انسخ الإيميل' : 'Copy email'}</button>
+                    <a href={`mailto:${jdEmail}?subject=${encodeURIComponent(app.subject)}&body=${encodeURIComponent(mail)}`} onClick={() => track('apply_mail')} className="btn-ghost btn-sm">{jdEmail ? (ar ? `افتحه في الإيميل لـ ${jdEmail}` : `Open in mail to ${jdEmail}`) : ar ? 'افتحه في برنامج الإيميل' : 'Open in your mail app'}</a>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-4 space-y-3">
+                  <textarea value={letter} onChange={(e) => setLetter(e.target.value)} rows={22} dir="ltr" className="input font-[inherit] text-sm leading-7" />
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={letterDocx} className="btn-red btn-sm">{ar ? 'حمّل Word' : 'Download Word'}</button>
+                    <button onClick={() => copy('letter', letter)} className="btn-ghost btn-sm">{copied === 'letter' ? (ar ? 'اتنسخ' : 'Copied') : ar ? 'انسخ النص' : 'Copy text'}</button>
+                  </div>
+                </div>
+              )}
+
+              <ul className="mt-5 space-y-1.5 border-t border-line pt-4 text-sm leading-7 text-ink-soft">
+                {!app.company && <li>{ar ? '• اسم الشركة مش واضح في الإعلان، فكتبنا "Hiring Manager". لو تعرف اسم الشركة أو اسم الـ HR غيّره.' : '• The company name was not clear in the post, so it says "Hiring Manager". Replace it if you know the company or recruiter.'}</li>}
+                {app.left.length > 0 && <li>{ar ? `• الإعلان طالب ${app.left.join('، ')} والـ CV مش بيقول إن عندك ده، فمكتبناهوش. لو عندك الخبرة دي، ضيفها للـ CV الأول وبعدين للإيميل.` : `• The post asks for ${app.left.join(', ')} and your CV doesn't show it, so we left it out. If you have it, add it to your CV first.`}</li>}
+                {r.knockouts.some((k) => !k.ok) && <li className="text-brand-red">{ar ? '• فيه شرط أساسي في الإعلان مش متحقق في الـ CV (شوف فلاتر الاستبعاد فوق). قدّم بس خلي توقعاتك على قدها.' : '• A knock-out requirement is not met (see above). You can still apply, but expect a filter.'}</li>}
+                <li>{ar ? '• ابعت الـ CV المعدّل معاه، وسمّي الملف باسمك والوظيفة.' : '• Attach your updated CV, named with your name and the job title.'}</li>
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>

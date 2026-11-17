@@ -516,6 +516,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
             <button type="button" onClick={() => jump('cv-rewrite')} className="btn-red btn-sm">{locale === 'ar' ? 'ارفع درجتك' : 'Raise your score'}</button>
             <button type="button" onClick={() => jump('cv-share')} className="btn-ghost btn-sm">{locale === 'ar' ? 'شارك نتيجتك' : 'Share your score'}</button>
           </div>
+          <button type="button" onClick={() => jump('cv-jd')} className="mt-2 text-sm font-semibold text-brand-blue underline-offset-4 hover:underline">{locale === 'ar' ? 'عندك إعلان وظيفة؟ طابقه وجهّز إيميل التقديم' : 'Have a job post? Match it and draft your application'}</button>
           <div className="mt-3 rounded-sheet bg-paper px-3 py-1.5 text-[11px] text-ink-mute">
             {t.engine} <span dir="ltr">v{res.model.version}</span> · {res.model.jobs_used ? t.model_trained.replace('{n}', fmt(res.model.jobs_used)) : t.model_prior}
           </div>
@@ -727,7 +728,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       {SUPABASE_READY && <CvSave file={file} locale={locale} profileHref={`${hrefBase}/profile`} signedIn={!!user} signupHref={`${hrefBase}/signup?next=/cv-check`} />}
       <div id="cv-rewrite" className="scroll-mt-24"><CvRewrite locale={locale} text={cvText} res={res} market={market} model={model} whatsapp={whatsapp} /></div>
 
-      <JdMatch locale={locale} cvText={cvText} years={res.years} jd={jd} setJd={setJd} />
+      <div id="cv-jd" className="scroll-mt-24"><JdMatch locale={locale} cvText={cvText} years={res.years} jd={jd} setJd={setJd} /></div>
 
       {SUPABASE_READY && <AiReview locale={locale} text={cvText} res={res} market={market} jd={jd} loginHref={loginHref} />}
 
