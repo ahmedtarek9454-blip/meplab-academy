@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { requireUser } from '@/lib/auth';
 import { toSheet, normWhatsapp } from '@/lib/sheet';
+import { DEPARTMENTS, cleanYear } from '@/lib/education';
 
 export async function saveProfile(formData: FormData) {
   const { supabase, user } = await requireUser('/profile');
@@ -13,14 +14,18 @@ export async function saveProfile(formData: FormData) {
   const full_name = g('full_name', 80);
   if (!phone) redirect('/profile?error=phone');
   if (!full_name || full_name.length < 3) redirect('/profile?error=name');
+  const department = g('department', 60);
+  const university = g('university', 80);
+  const grad_year = cleanYear(formData.get('grad_year'));
+  if (!department || !DEPARTMENTS.includes(department) || !university || !grad_year) redirect('/profile?error=edu');
   await supabase.from('profiles').update({
-    full_name, phone, role_id: g('role_id', 40),
+    full_name, phone, department, university, grad_year, role_id: g('role_id', 40),
     market: market && ['eg', 'sa', 'ae'].includes(market) ? market : null,
     years: years ? Math.max(0, Math.min(50, parseFloat(years) || 0)) : null,
     job_title: g('job_title', 80), company: g('company', 80), linkedin: g('linkedin', 120),
     updated_at: new Date().toISOString()
   }).eq('id', user!.id);
-  await toSheet({ event: 'profile', name: full_name, email: user!.email || '', whatsapp: phone, job_title: g('job_title', 80) });
+  await toSheet({ event: 'profile', name: full_name, email: user!.email || '', whatsapp: phone, department, university, grad_year, job_title: g('job_title', 80) });
   revalidatePath('/profile'); revalidatePath('/dashboard');
   const next = String(formData.get('next') || '');
   redirect(next.startsWith('/') && !next.startsWith('//') ? next : '/profile?saved=1');

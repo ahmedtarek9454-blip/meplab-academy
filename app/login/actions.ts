@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { toSheet, normWhatsapp } from '@/lib/sheet';
+import { DEPARTMENTS, cleanYear } from '@/lib/education';
 
 function safeNext(v: FormDataEntryValue | null) {
   const s = String(v || '/dashboard');
@@ -34,17 +35,21 @@ export async function signUp(formData: FormData) {
   if (full_name.length < 3) redirect(`/signup?error=name&next=${encodeURIComponent(next)}`);
   if (!phone) redirect(`/signup?error=phone&next=${encodeURIComponent(next)}`);
   if (String(formData.get('password') || '').length < 8) redirect(`/signup?error=weak&next=${encodeURIComponent(next)}`);
+  const department = String(formData.get('department') || '').trim();
+  const university = String(formData.get('university') || '').trim().slice(0, 80);
+  const grad_year = cleanYear(formData.get('grad_year'));
+  if (!DEPARTMENTS.includes(department) || university.length < 3 || !grad_year) redirect(`/signup?error=edu&next=${encodeURIComponent(next)}`);
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password: String(formData.get('password') || ''),
     options: {
-      data: { full_name, phone },
+      data: { full_name, phone, department, university, grad_year },
       emailRedirectTo: `${await siteUrl()}/auth/callback?next=${encodeURIComponent(next)}`
     }
   });
   if (error) redirect(`/signup?error=${/already|registered|exists/i.test(error.message) ? 'exists' : '1'}&next=${encodeURIComponent(next)}`);
-  await toSheet({ event: 'signup', name: full_name, email, whatsapp: phone, source: next.startsWith('/cv-check') ? 'فحص الـ CV' : next.startsWith('/courses') ? 'الكورسات' : 'الموقع' });
+  await toSheet({ event: 'signup', name: full_name, email, whatsapp: phone, department, university, grad_year, source: next.startsWith('/cv-check') ? 'فحص الـ CV' : next.startsWith('/courses') ? 'الكورسات' : 'الموقع' });
   // If email confirmation is disabled, a session exists already
   if (data.session) redirect(next);
   redirect(`/login?check=1&next=${encodeURIComponent(next)}`);

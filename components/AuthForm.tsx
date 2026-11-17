@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getT } from '@/lib/i18n';
 import { signIn, signUp, signInWithGoogle } from '@/app/login/actions';
 import Logo from './Logo';
+import { DEPARTMENTS, UNIVERSITIES, GRAD_YEARS } from '@/lib/education';
 
 export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup'; sp: Record<string, string | undefined> }) {
   const { t } = await getT();
@@ -12,7 +13,8 @@ export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup';
     phone: 'اكتب رقم واتساب صحيح بكود الدولة، زي +20 100 123 4567.',
     name: 'اكتب اسمك بالكامل.',
     exists: 'الإيميل ده عامل حساب قبل كده. ادخل بيه من "عندك حساب؟".',
-    weak: 'الباسورد لازم 8 حروف أو أرقام على الأقل.'
+    weak: 'الباسورد لازم 8 حروف أو أرقام على الأقل.',
+    edu: 'اختار القسم واكتب الجامعة وسنة التخرج.'
   };
   const google = process.env.NEXT_PUBLIC_GOOGLE_AUTH === '1';
 
@@ -33,6 +35,12 @@ export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup';
             <>
               <div><label className="label">{t.full_name}</label><input name="full_name" required minLength={3} autoComplete="name" className="input" /></div>
               <div><label className="label">رقم الواتساب</label><input name="phone" required className="input" dir="ltr" inputMode="tel" autoComplete="tel" placeholder="+20 1xx xxx xxxx" /></div>
+              <div><label className="label">القسم</label>
+                <select name="department" required defaultValue="" className="input"><option value="" disabled>اختار قسمك</option>{DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}</select></div>
+              <div className="grid grid-cols-[1fr,8rem] gap-3">
+                <div><label className="label">الجامعة</label><input name="university" required list="unis" minLength={3} className="input" placeholder="اكتب أو اختار" /><datalist id="unis">{UNIVERSITIES.map((u) => <option key={u} value={u} />)}</datalist></div>
+                <div><label className="label">سنة التخرج</label><select name="grad_year" required defaultValue="" className="input" dir="ltr"><option value="" disabled>—</option>{GRAD_YEARS.map((y) => <option key={y}>{y}</option>)}</select></div>
+              </div>
             </>
           )}
           <div><label className="label">{t.email}</label><input name="email" type="email" required className="input" dir="ltr" /></div>
