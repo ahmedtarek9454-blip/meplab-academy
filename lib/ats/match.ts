@@ -1,4 +1,5 @@
 import { SKILLS, type Skill } from './taxonomy';
+import { NEAR, EXTRA_SYN, nearRegex } from './phrasing';
 
 /** compile every synonym once: word-boundary match, tolerant to plurals and -, /, spaces */
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -6,12 +7,12 @@ type Compiled = { skill: Skill; res: RegExp[] };
 let compiled: Compiled[] | null = null;
 const compileOne = (skill: Skill): Compiled => ({
     skill,
-    res: skill.syn.map((syn) => {
+    res: [...skill.syn, ...(EXTRA_SYN[skill.id] || [])].map((syn) => {
       const body = esc(syn.toLowerCase()).replace(/\\-|\s+/g, '[\\s\\-_/]*');
       return /[a-z]/.test(syn)
         ? new RegExp(`(?:^|[^a-z0-9])(${body}(?:s|es)?)(?=[^a-z0-9]|$)`, 'gi')
         : new RegExp(`(${body})`, 'g');
-    })
+    }).concat((NEAR[skill.id] || []).map(nearRegex))
   });
 function compile() {
   if (compiled) return compiled;

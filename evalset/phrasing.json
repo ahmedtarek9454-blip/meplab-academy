@@ -1,0 +1,749 @@
+[
+ [
+  "Selected booster pumps and water heaters for residential towers",
+  [
+   "equip_sel"
+  ]
+ ],
+ [
+  "Selection of chillers, AHUs and FCUs",
+  [
+   "equip_sel"
+  ]
+ ],
+ [
+  "Sizing and selection of pumps, tanks and water heaters",
+  [
+   "equip_sel"
+  ]
+ ],
+ [
+  "Chillers and cooling towers selection for a 40,000 m2 mall",
+  [
+   "equip_sel"
+  ]
+ ],
+ [
+  "Selecting fans and AHUs based on ESP",
+  [
+   "equip_sel"
+  ]
+ ],
+ [
+  "Hydraulic calcs for sprinkler systems using Elite Fire",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Performed hydraulic calculations for fire fighting network",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Fire fighting hydraulic design using PIPENET",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Pressure loss calculations for sprinkler pipes",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Friction loss and pump head calculation for fire pumps",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Sizing of pipes, pumps and tanks for water supply networks",
+  [
+   "pipe_design",
+   "water_supply"
+  ]
+ ],
+ [
+  "Calculated pipe sizes using fixture units",
+  [
+   "pipe_design",
+   "fixture_units"
+  ]
+ ],
+ [
+  "Designed chilled water pipes network",
+  [
+   "pipe_design",
+   "chw"
+  ]
+ ],
+ [
+  "Calculated cooling loads for 25 buildings using HAP",
+  [
+   "load_calc",
+   "hap"
+  ]
+ ],
+ [
+  "Heat load calculations using Carrier HAP 5.2",
+  [
+   "load_calc",
+   "hap"
+  ]
+ ],
+ [
+  "Cooling and heating loads estimation",
+  [
+   "load_calc"
+  ]
+ ],
+ [
+  "Calculating the cooling load of villas",
+  [
+   "load_calc"
+  ]
+ ],
+ [
+  "Designed ducts and selected diffusers",
+  [
+   "duct_design"
+  ]
+ ],
+ [
+  "Duct sizing and routing for offices",
+  [
+   "duct_design"
+  ]
+ ],
+ [
+  "Sizing ductwork using ductulator",
+  [
+   "duct_design"
+  ]
+ ],
+ [
+  "Ducts design and layouts for a hospital",
+  [
+   "duct_design",
+   "healthcare"
+  ]
+ ],
+ [
+  "Design of fire pump room and jockey pump",
+  [
+   "fire_pump"
+  ]
+ ],
+ [
+  "Fire pumps selection according to NFPA 20",
+  [
+   "fire_pump",
+   "equip_sel",
+   "nfpa"
+  ]
+ ],
+ [
+  "Prepared shop dwgs for HVAC and fire fighting",
+  [
+   "shop_dwg",
+   "ff_systems"
+  ]
+ ],
+ [
+  "Preparing MEP shop drawings and coordination drawings",
+  [
+   "shop_dwg"
+  ]
+ ],
+ [
+  "Prepared material submittals and got consultant approval",
+  [
+   "submittals"
+  ]
+ ],
+ [
+  "Quantities calculation and BOQ preparation",
+  [
+   "qto",
+   "boq"
+  ]
+ ],
+ [
+  "Calculating quantities of HVAC works",
+  [
+   "qto"
+  ]
+ ],
+ [
+  "Quantity surveying for MEP packages",
+  [
+   "qto"
+  ]
+ ],
+ [
+  "Led a team of 6 engineers and 20 technicians",
+  [
+   "team_lead"
+  ]
+ ],
+ [
+  "Managed a team of site engineers",
+  [
+   "team_lead"
+  ]
+ ],
+ [
+  "Supervising a team of 15 technicians",
+  [
+   "team_lead"
+  ]
+ ],
+ [
+  "Lighting calculations using Dialux",
+  [
+   "lighting"
+  ]
+ ],
+ [
+  "Lighting design for villas and offices",
+  [
+   "lighting"
+  ]
+ ],
+ [
+  "Cable sizing and voltage drop calculations",
+  [
+   "cable_sizing"
+  ]
+ ],
+ [
+  "Calculated cable sizes and selected breakers",
+  [
+   "cable_sizing"
+  ]
+ ],
+ [
+  "Prepared load schedules and SLD",
+  [
+   "power_dist",
+   "sld"
+  ]
+ ],
+ [
+  "Design of distribution boards and panel schedules",
+  [
+   "power_dist"
+  ]
+ ],
+ [
+  "Clash detection using Navisworks",
+  [
+   "clash",
+   "navis"
+  ]
+ ],
+ [
+  "Resolved clashes between MEP services",
+  [
+   "clash"
+  ]
+ ],
+ [
+  "Clash checking and coordination between disciplines",
+  [
+   "clash"
+  ]
+ ],
+ [
+  "Testing and commissioning of chillers",
+  [
+   "tnc",
+   "chw"
+  ]
+ ],
+ [
+  "Pressure testing of water supply lines",
+  [
+   "tnc",
+   "water_supply"
+  ]
+ ],
+ [
+  "Supervised installation of AHUs and ductwork",
+  [
+   "installation",
+   "ahu_fcu"
+  ]
+ ],
+ [
+  "Follow up the installation works at site",
+  [
+   "installation"
+  ]
+ ],
+ [
+  "Planned preventive maintenance for HVAC equipment",
+  [
+   "ppm"
+  ]
+ ],
+ [
+  "Preventive maintenance schedules for chillers",
+  [
+   "ppm",
+   "chw"
+  ]
+ ],
+ [
+  "Concrete pouring and casting of slabs",
+  [
+   "concrete"
+  ]
+ ],
+ [
+  "Supervised casting of concrete columns",
+  [
+   "concrete"
+  ]
+ ],
+ [
+  "Structural design of residential buildings",
+  [
+   "struct_design"
+  ]
+ ],
+ [
+  "Designing RC slabs, beams and columns",
+  [
+   "struct_design"
+  ]
+ ],
+ [
+  "Static pressure calculations for fans",
+  [
+   "esp"
+  ]
+ ],
+ [
+  "Smoke extraction and staircase pressurization design",
+  [
+   "smoke"
+  ]
+ ],
+ [
+  "Obtained Civil Defense approval",
+  [
+   "civil_defense"
+  ]
+ ],
+ [
+  "Prepared as-built drawings",
+  [
+   "asbuilt"
+  ]
+ ],
+ [
+  "Prepared method statements and inspection requests",
+  [
+   "ms_ir"
+  ]
+ ],
+ [
+  "Fire alarm system design",
+  [
+   "fire_alarm"
+  ]
+ ],
+ [
+  "Domestic water and drainage design",
+  [
+   "water_supply",
+   "drainage"
+  ]
+ ],
+ [
+  "Rain water drainage design",
+  [
+   "storm",
+   "drainage"
+  ]
+ ],
+ [
+  "Earthing and lightning protection systems design",
+  [
+   "earthing"
+  ]
+ ],
+ [
+  "Generator and UPS sizing",
+  [
+   "genset_ups"
+  ]
+ ],
+ [
+  "Short circuit and voltage drop studies using ETAP",
+  [
+   "cable_sizing",
+   "elec_sw"
+  ]
+ ],
+ [
+  "Revit modeling of MEP services",
+  [
+   "revit"
+  ]
+ ],
+ [
+  "Excavation and backfilling works",
+  [
+   "earthworks"
+  ]
+ ],
+ [
+  "Setting out using total station",
+  [
+   "total_station"
+  ]
+ ],
+ [
+  "Time schedule preparation using Primavera P6",
+  [
+   "planning",
+   "primavera"
+  ]
+ ],
+ [
+  "Preparing monthly progress reports and updating the schedule",
+  [
+   "planning"
+  ]
+ ],
+ [
+  "Responsible for selecting chilled water pumps and expansion tanks",
+  [
+   "equip_sel"
+  ]
+ ],
+ [
+  "Did the hydraulic calculation of the sprinkler network in Elite Fire",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Hydraulically most remote area calculations",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Pipe sizing for domestic cold and hot water",
+  [
+   "pipe_design",
+   "water_supply",
+   "hot_water"
+  ]
+ ],
+ [
+  "Sized the refrigerant pipes for VRF systems",
+  [
+   "pipe_design",
+   "vrf"
+  ]
+ ],
+ [
+  "Heat gain calculations for commercial buildings",
+  [
+   "load_calc"
+  ]
+ ],
+ [
+  "Prepared the HVAC load calculation report",
+  [
+   "load_calc"
+  ]
+ ],
+ [
+  "Duct layout and sizing for a shopping mall",
+  [
+   "duct_design"
+  ]
+ ],
+ [
+  "Preparing shop-drawings for plumbing works",
+  [
+   "shop_dwg"
+  ]
+ ],
+ [
+  "Quantity take off for electrical works",
+  [
+   "qto"
+  ]
+ ],
+ [
+  "Estimating quantities and preparing BOQs",
+  [
+   "qto",
+   "boq"
+  ]
+ ],
+ [
+  "Leading a team of 4 BIM modelers",
+  [
+   "team_lead"
+  ]
+ ],
+ [
+  "Supervision of 30 workers and 3 foremen",
+  [
+   "team_lead"
+  ]
+ ],
+ [
+  "Lux calculations for roads and parking",
+  [
+   "lighting"
+  ]
+ ],
+ [
+  "Cables and breakers sizing",
+  [
+   "cable_sizing"
+  ]
+ ],
+ [
+  "Clash free model delivered for the hospital",
+  [
+   "clash"
+  ]
+ ],
+ [
+  "Hydrostatic testing of fire fighting lines",
+  [
+   "tnc"
+  ]
+ ],
+ [
+  "Supervised concrete casting for raft foundation",
+  [
+   "concrete"
+  ]
+ ],
+ [
+  "Analysis and design of steel structures",
+  [
+   "struct_design"
+  ]
+ ],
+ [
+  "Updating the time schedule weekly",
+  [
+   "planning"
+  ]
+ ],
+ [
+  "Fire pumps installation and testing",
+  [
+   "fire_pump",
+   "installation"
+  ]
+ ],
+ [
+  "Selection of the fire pump set (electric, diesel and jockey)",
+  [
+   "fire_pump",
+   "equip_sel"
+  ]
+ ],
+ [
+  "Sizing of booster pump sets and water tanks",
+  [
+   "water_supply",
+   "equip_sel"
+  ]
+ ],
+ [
+  "Planned maintenance of chillers and AHUs",
+  [
+   "ppm"
+  ]
+ ],
+ [
+  "Getting the material approvals from the consultant",
+  [
+   "submittals"
+  ]
+ ],
+ [
+  "Chiller and pump selections using manufacturer software",
+  [
+   "equip_sel"
+  ]
+ ],
+ [
+  "Hydraulic design of fire hydrant network",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Calculating the pressure drop in sprinkler branch lines",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "Designing the drainage piping and vent stacks",
+  [
+   "pipe_design",
+   "drainage"
+  ]
+ ],
+ [
+  "Cooling load estimation for a data center",
+  [
+   "load_calc"
+  ]
+ ],
+ [
+  "Designing supply and return ducts",
+  [
+   "duct_design"
+  ]
+ ],
+ [
+  "Managing 3 site engineers and 12 technicians",
+  [
+   "team_lead"
+  ]
+ ],
+ [
+  "Calculated BOQ quantities for tender",
+  [
+   "qto",
+   "boq",
+   "pricing"
+  ]
+ ],
+ [
+  "Lighting layouts and lux level calculations in Dialux Evo",
+  [
+   "lighting"
+  ]
+ ],
+ [
+  "Voltage drop and cable selection calculations",
+  [
+   "cable_sizing"
+  ]
+ ],
+ [
+  "Clash detection meetings with the main contractor",
+  [
+   "clash"
+  ]
+ ],
+ [
+  "Pressure tests and flushing for chilled water pipes",
+  [
+   "tnc",
+   "chw"
+  ]
+ ],
+ [
+  "Supervising the pouring of concrete slabs",
+  [
+   "concrete"
+  ]
+ ],
+ [
+  "Updated the project programme and prepared weekly reports",
+  [
+   "planning"
+  ]
+ ],
+ [
+  "Supervised installation of sprinkler pipes",
+  [
+   "installation",
+   "sprinkler"
+  ]
+ ],
+ [
+  "اختيار المضخات وخزانات المياه للأبراج السكنية",
+  [
+   "equip_sel"
+  ]
+ ],
+ [
+  "حساب الأحمال الحرارية باستخدام برنامج HAP",
+  [
+   "load_calc",
+   "hap"
+  ]
+ ],
+ [
+  "تصميم مجاري الهواء وتوزيع الهواء للمستشفى",
+  [
+   "duct_design"
+  ]
+ ],
+ [
+  "تحديد أقطار المواسير لشبكة التغذية",
+  [
+   "pipe_design"
+  ]
+ ],
+ [
+  "عمل الحسابات الهيدروليكية لشبكة الرشاشات",
+  [
+   "hydraulic"
+  ]
+ ],
+ [
+  "الإشراف على فريق من 10 فنيين",
+  [
+   "team_lead"
+  ]
+ ],
+ [
+  "حساب الإنارة باستخدام ديالوكس",
+  [
+   "lighting"
+  ]
+ ],
+ [
+  "متابعة صب الخرسانة للأسقف",
+  [
+   "concrete"
+  ]
+ ],
+ [
+  "اختبار ضغط المواسير قبل الاستلام",
+  [
+   "tnc"
+  ]
+ ],
+ [
+  "حصر الكميات وإعداد المقايسات",
+  [
+   "qto"
+  ]
+ ],
+ [
+  "تحديث الجدول الزمني للمشروع أسبوعيًا",
+  [
+   "planning"
+  ]
+ ],
+ [
+  "إعداد شوب دروينج للتكييف والحريق",
+  [
+   "shop_dwg"
+  ]
+ ]
+]
