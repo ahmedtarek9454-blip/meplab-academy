@@ -614,7 +614,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
       {(() => {
         const totalW = res.checks.reduce((x, c) => x + c.weight, 0);
         const fixes = res.checks.filter((c) => c.status !== 'pass' && CHECKS[c.id])
-          .map((c) => ({ c, gain: Math.max(1, Math.round((100 * c.weight * (c.status === 'fail' ? 1 : 0.5)) / totalW)) }))
+          .map((c) => ({ c, gain: c.gain ?? Math.max(1, Math.round((100 * c.weight * (c.status === 'fail' ? 1 : 0.5)) / totalW)) }))
           .sort((a, b) => b.gain - a.gain).slice(0, 3);
         return (
           <div className="card p-6">

@@ -187,7 +187,10 @@ export function parseCv(text: string): CvModel {
   const t = text.replace(/\r/g, '').replace(/[–—]/g, '–').replace(/ /g, ' ');
   const lines = t.split('\n').map((l) => l.replace(/\s+$/, ''));
   const exp = extractExperience(text);
-  const work = exp.ranges.filter((r) => r.kind === 'work' && r.lineIdx !== undefined).sort((a, b) => a.lineIdx! - b.lineIdx!);
+  // internships are real entries in the CV (title, company, bullets): keep them as entries, they just don't count as years
+  const near = (i: number) => lines.slice(Math.max(0, i - 2), i + 1).join(' ');
+  let work = exp.ranges.filter((r) => r.lineIdx !== undefined && (r.kind === 'work' || (r.kind === 'training' && /\b(intern(?:ship)?|trainee|summer\s+training)\b|متدرب|تدريب\s+صيفي/i.test(near(r.lineIdx!)))))
+    .sort((a, b) => a.lineIdx! - b.lineIdx!);
 
   const email = (t.match(/[\w.+-]+@[\w-]+\.[\w.]{2,}/) || [''])[0];
   const phone = (t.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).find((x: string) => x.replace(/\D/g, '').length >= 9 && !/(19|20)\d{2}\s*[-–]\s*(19|20)\d{2}/.test(x))?.replace(/\s+/g, ' ').trim() || '';
@@ -231,6 +234,8 @@ export function parseCv(text: string): CvModel {
   });
   const headingLine = (i: number) => { if (inline[i]) return true; if (BULLET.test(lines[i])) return false; const l = clean(lines[i]).replace(/[:：\-–\s]+$/, ''); return !!l && l.length <= 45 && Object.values(HEAD).some((re) => re.test(l)); };
 
+  // an internship listed under Courses/Training stays there; only one under Experience becomes an entry
+  work = work.filter((r) => r.kind === 'work' || sec[r.lineIdx!] === 'experience');
   // experience entries anchored on work date lines
   const experience: Entry[] = [];
   const used = new Set<number>();

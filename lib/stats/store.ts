@@ -100,10 +100,13 @@ export async function eventCounts(day: string) {
 }
 
 /* ---------------- learning ---------------- */
+/** when the score became 40% format / 60% content; older scores are on a different scale and stay out of the score comparison */
+export const SCORE_V2 = '2026-11-17T06:30:00Z';
+
 export async function trainingRows(days = 365): Promise<SignalRow[]> {
   const from = dayBefore(cairoDay(), days) > LAUNCH_DAY ? dayBefore(cairoDay(), days) : LAUNCH_DAY;
   const out: SignalRow[] = [];
-  for (const d of daysSince(from)) out.push(...(await signalsOfDay(d)));
+  for (const d of daysSince(from)) out.push(...(await signalsOfDay(d)).map((r) => (r.created_at < SCORE_V2 ? { ...r, score: null } : r)));
   return out;
 }
 

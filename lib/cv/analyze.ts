@@ -8,7 +8,7 @@ import type { Found } from '@/lib/ats/match';
 import { extractExperience, type Range } from '@/lib/ats/experience';
 
 export type CheckStatus = 'pass' | 'warn' | 'fail';
-export type Check = { id: string; status: CheckStatus; weight: number; detail?: string };
+export type Check = { id: string; status: CheckStatus; weight: number; detail?: string; gain?: number };
 
 export type RoleMatch = { role: Role; pct: number; matched: string[]; missing: string[]; missingIds?: string[] };
 
@@ -159,24 +159,24 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
   // Words per page, so a short but clean PDF isn't told it is a scan.
   const perPage = pages > 0 ? words / pages : Infinity;
   add('readable', 15, pages === 0 || perPage >= 60 ? 'pass' : perPage >= 20 ? 'warn' : 'fail', `${words}`);
-  add('email', 8, /[\w.+-]+@[\w-]+\.[\w.]{2,}/.test(text) ? 'pass' : 'fail');
-  add('phone', 6, /(\+?\d[\d\s\-().]{7,}\d)/.test(text) && (text.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).some((x: string) => x.replace(/\D/g, '').length >= 9 && !/(19|20)\d{2}\s*[-–]\s*(19|20)\d{2}/.test(x)) ? 'pass' : 'fail');
-  add('linkedin', 4, /linkedin\.com\/in\//i.test(text) || /linkedin/i.test(text) ? 'pass' : 'warn');
-  add('summary', 5, has('summary') ? 'pass' : 'warn');
+  add('email', 6, /[\w.+-]+@[\w-]+\.[\w.]{2,}/.test(text) ? 'pass' : 'fail');
+  add('phone', 5, /(\+?\d[\d\s\-().]{7,}\d)/.test(text) && (text.match(/\+?\d[\d\s\-().]{7,}\d/g) || []).some((x: string) => x.replace(/\D/g, '').length >= 9 && !/(19|20)\d{2}\s*[-–]\s*(19|20)\d{2}/.test(x)) ? 'pass' : 'fail');
+  add('linkedin', 3, /linkedin\.com\/in\//i.test(text) || /linkedin/i.test(text) ? 'pass' : 'warn');
+  add('summary', 4, has('summary') ? 'pass' : 'warn');
   add('experience', 10, has('experience') ? 'pass' : 'fail');
-  add('education', 6, has('education') ? 'pass' : 'fail');
-  add('skills', 8, has('skills') ? 'pass' : 'fail');
+  add('education', 5, has('education') ? 'pass' : 'fail');
+  add('skills', 6, has('skills') ? 'pass' : 'fail');
   const dateCount = exp.ranges.filter((r) => r.kind === 'work').length;
   add('dates', 6, dateCount >= 1 ? 'pass' : 'fail', `${dateCount}`);
-  add('length', 8,
+  add('length', 6,
     words >= 350 && words <= 1100 && (!pages || pages <= 3) ? 'pass' : words >= 200 && words <= 1600 ? 'warn' : 'fail',
     `${words}${pages ? ` / ${pages}p` : ''}`);
   const metrics = (lower.match(/\d[\d,.]*\s*-?\s*(?:%|percent|projects?|buildings?|tr\b|tons?|cfm|m2|m²|m3|m³|sqm|sq\.?\s*m|million|mn|billion|bn|k\b|units|floors?|stor(?:ey|ies)|rooms?|keys|beds?|m\b|lm\b|meters?|metres?|gpm|l\/s|villas?|towers?|engineers|members|workers|operators|users|customers|clients|sites|wells|km|kv|mw|kw|bopd|mmscfd|hospitals|schools|lines|machines|stores|apps?|hours|days|weeks|months|egp|sar|aed|usd|\$)|(?:egp|sar|aed|usd|\$)\s*\d/g) || []).length;
-  add('metrics', 7, metrics >= 3 ? 'pass' : metrics >= 1 ? 'warn' : 'fail', `${metrics}`);
+  add('metrics', 12, metrics >= 3 ? 'pass' : metrics >= 1 ? 'warn' : 'fail', `${metrics}`);
   // general CVs: the skills list itself (how many concrete skills are named) instead of role keywords
   const skillItems = listedSkills(text);
-  if (general) add('keywords', 12, skillItems.length >= 8 ? 'pass' : skillItems.length >= 4 ? 'warn' : 'fail', `${skillItems.length}`);
-  else add('keywords', 12, top.pct >= 60 ? 'pass' : top.pct >= 35 ? 'warn' : 'fail', `${top.matched.length}`);
+  if (general) add('keywords', 16, skillItems.length >= 8 ? 'pass' : skillItems.length >= 4 ? 'warn' : 'fail', `${skillItems.length}`);
+  else add('keywords', 16, top.pct >= 60 ? 'pass' : top.pct >= 35 ? 'warn' : 'fail', `${top.matched.length}`);
   // skills backed by experience: an ATS/recruiter discounts a long skills list that never appears in the experience bullets
   {
     const expStart = sections.find((x) => x.key === 'experience')?.pos ?? -1;
@@ -193,24 +193,34 @@ export function analyzeCv(rawText: string, market: Market, pages = 0, model: Ats
       evidenced = items.filter((x) => el.includes(x) || x.split(/\s+/).filter((w) => w.length > 3).some((w) => el.includes(w))).length;
     }
     const ratio = total ? evidenced / total : 1;
-    add('evidence', 10, !expText ? 'warn' : ratio >= 0.5 ? 'pass' : ratio >= 0.3 ? 'warn' : 'fail', `${evidenced}/${total}`);
+    add('evidence', 12, !expText ? 'warn' : ratio >= 0.5 ? 'pass' : ratio >= 0.3 ? 'warn' : 'fail', `${evidenced}/${total}`);
     // experience depth: how many bullets with real content
     const bullets = (expText.match(/^\s*[•\-–*▪●]\s*\S.{25,}/gm) || []).length;
-    add('depth', 8, bullets >= 6 || (expText.length > 1200 && !/^\s*[•\-–*]/m.test(expText)) ? 'pass' : bullets >= 3 || expText.length > 600 ? 'warn' : 'fail', `${bullets}`);
+    add('depth', 10, bullets >= 6 || (expText.length > 1200 && !/^\s*[•\-–*]/m.test(expText)) ? 'pass' : bullets >= 3 || expText.length > 600 ? 'warn' : 'fail', `${bullets}`);
     // impact language: bullets that open with an action verb, not "responsible for / duties"
     const blts = (expText.match(/^\s*[•\-–*▪●]\s*\S.{15,}/gm) || []).map((b) => b.replace(/^\s*[•\-–*▪●]\s*/, '').toLowerCase());
     const strong = blts.filter((b) => STRONG_VERB.test(b)).length;
     const weak = blts.filter((b) => WEAK_START.test(b)).length;
     const vr = blts.length ? strong / blts.length : 0;
-    add('verbs', 5, blts.length < 3 ? 'warn' : vr >= 0.6 && weak <= 1 ? 'pass' : vr >= 0.35 ? 'warn' : 'fail', `${strong}/${blts.length}`);
+    add('verbs', 8, blts.length < 3 ? 'warn' : vr >= 0.6 && weak <= 1 ? 'pass' : vr >= 0.35 ? 'warn' : 'fail', `${strong}/${blts.length}`);
   }
   const arabic = (text.match(/[؀-ۿ]/g) || []).length / Math.max(1, text.replace(/\s/g, '').length);
   add('language', 3, arabic < 0.15 ? 'pass' : 'warn');
   add('personal', 2, /(religion|marital status|date of birth|\bdob\b|references available|الديانة|الحالة الاجتماعية)/i.test(text) ? 'warn' : 'pass');
 
-  const totalW = checks.reduce((s, c) => s + c.weight, 0);
-  const got = checks.reduce((s, c) => s + c.weight * (c.status === 'pass' ? 1 : c.status === 'warn' ? 0.5 : 0), 0);
-  const score = Math.round((100 * got) / totalW);
+  // the score is 40% format (can an ATS read it and find the basics) and 60% content (does it say what you did, with proof).
+  // Before this split, a CV with weak bullets and no numbers still scored 85+, because the format checks almost everyone passes outweighed everything else.
+  const CONTENT = new Set(['keywords', 'evidence', 'metrics', 'depth', 'verbs']);
+  const part = (inContent: boolean, warn: number) => {
+    const cs = checks.filter((c) => CONTENT.has(c.id) === inContent);
+    const w = cs.reduce((s, c) => s + c.weight, 0);
+    return w ? cs.reduce((s, c) => s + c.weight * (c.status === 'pass' ? 1 : c.status === 'warn' ? warn : 0), 0) / w : 1;
+  };
+  const score = Math.round(40 * part(false, 0.5) + 60 * part(true, 0.4));
+  for (const c of checks) {
+    c.weight = Math.round((c.weight / checks.filter((x) => CONTENT.has(x.id) === CONTENT.has(c.id)).reduce((s, x) => s + x.weight, 0)) * (CONTENT.has(c.id) ? 60 : 40) * 10) / 10;
+    c.gain = c.status === 'pass' ? 0 : Math.max(1, Math.round(c.weight * (c.status === 'fail' ? 1 : CONTENT.has(c.id) ? 0.6 : 0.5)));
+  }
 
   const alerts: string[] = [];
   const engineer = !general && engCue && textDisc !== 'it';

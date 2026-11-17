@@ -17,14 +17,15 @@ export async function GET() {
     const saved = await getModel<any>();
     if (saved?.weights) model = saved;
     const age = saved?.trained_at ? Date.now() - Date.parse(saved.trained_at) : Infinity;
-    if (age > DAY) {
+    if (age > DAY || saved?.score_v !== 2) {
       const rows = await trainingRows();
       if (rows.length >= MIN_CVS) {
         const fresh = trainModel([], rows, new Set());
         fresh.version = `cv-${new Date().toISOString().slice(0, 10)}-${rows.length}`;
+        (fresh as any).score_v = 2;
         await setModel(fresh); model = fresh;
       } else if (saved?.weights) {
-        await setModel({ ...saved, trained_at: new Date().toISOString() });
+        await setModel({ ...saved, trained_at: new Date().toISOString(), score_v: 2 });
       }
     }
   } catch {}
