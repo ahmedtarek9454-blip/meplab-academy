@@ -24,7 +24,12 @@ function fromJsonLd(html: string) {
   return null;
 }
 
-async function get(url: string) {
+async function get(url: string, tries = 3): Promise<string> {
+  for (let i = 0; ; i++) {
+    try { return await get1(url); } catch (e) { if (i >= tries - 1) throw e; await new Promise((res) => setTimeout(res, 700 * (i + 1))); } // LinkedIn answers 429 now and then
+  }
+}
+async function get1(url: string) {
   const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36', 'Accept-Language': 'en-US,en;q=0.9,ar;q=0.8', Accept: 'text/html' }, redirect: 'follow', signal: AbortSignal.timeout(12000) });
   if (!r.ok) throw new Error(String(r.status));
   return (await r.text()).slice(0, 2_000_000);
