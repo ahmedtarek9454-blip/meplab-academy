@@ -3,6 +3,7 @@ import { getT, L } from '@/lib/i18n';
 import { requireUser } from '@/lib/auth';
 import { ROLES, MARKETS, roleGroups, type Market } from '@/lib/cv/data';
 import SubmitButton from '@/components/SubmitButton';
+import CourseQuestion from '@/components/CourseQuestion';
 import { saveProfile, uploadCv, deleteCv, joinCourse } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
     supabase.from('task_submissions').select('id, task_id, status, score, submitted_at, course_tasks(title_ar, title_en, max_score, course_id)').eq('user_id', user!.id).order('submitted_at', { ascending: false }),
     p?.cv_path ? supabase.storage.from('cvs').createSignedUrl(p.cv_path, 600, { download: p.cv_name || undefined }).then((r: any) => r.data?.signedUrl as string | undefined) : Promise.resolve(undefined)
   ]);
+  const { data: courseList } = await supabase.from('courses').select('id, title_ar, title_en').eq('published', true).order('sort_order');
   const enrolled = (orders ?? []).filter((o: any) => o.courses);
   const approvedIds = enrolled.filter((o: any) => o.status === 'approved').map((o: any) => o.courses.id);
   let taskTotals: Record<string, number> = {};
@@ -36,6 +38,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
     phone: ar ? 'اكتب رقم واتساب صحيح بكود الدولة، زي +20 100 123 4567.' : 'Enter a valid WhatsApp number with country code.',
     name: ar ? 'اكتب اسمك بالكامل.' : 'Enter your full name.',
     code: ar ? 'الكود ده مش صحيح أو اتقفل. اتأكد منه من جروب الكورس.' : 'This code is wrong or closed. Check it in your course group.',
+    course: ar ? 'اختار الكورس اللي إنت مشترك فيه.' : 'Choose the course you are enrolled in.',
     join: ar ? 'حصلت مشكلة وإحنا بنضيفك للكورس. جرّب تاني أو كلّمنا.' : 'Could not add you to the course. Try again or contact us.',
     no_file: ar ? 'اختار ملف.' : 'Choose a file.', too_big: ar ? 'الملف أكبر من 10 ميجا.' : 'File is larger than 10 MB.', bad_type: ar ? 'PDF أو Word أو صورة بس.' : 'PDF, Word or image only.' };
   const F = ({ name, label, type = 'text', ltr = false, ph = '', req = false }: any) => (
@@ -46,6 +49,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
   return (
     <section className="container-x max-w-5xl py-10">
       {sp.complete && <p className="mb-4 rounded-sheet border border-ink p-4 text-sm font-semibold text-ink">{ar ? 'خطوة أخيرة: اكتب اسمك ورقم الواتساب واحفظ، عشان نقدر نتواصل معاك.' : 'One last step: add your name and WhatsApp number, then save.'}</p>}
+      {sp.need_course && <p className="mb-4 rounded-sheet border border-amber-300 bg-amber-50 p-4 text-sm font-semibold text-amber-800">{ar ? 'عشان تسلّم التاسكات لازم تكون متسجّل في الكورس: اختار «آه، مشترك» والكورس بتاعك تحت واحفظ، أو اكتب كود الكورس من الجروب.' : 'To hand in tasks you need to be in the course: answer "Yes" and pick your course below, or enter the course code from your group.'}</p>}
       {sp.saved && <p className="mb-4 rounded-sheet bg-green-50 p-3 text-sm font-semibold text-green-800">✓ {ar ? 'اتحفظ' : 'Saved'}</p>}
       {sp.error && <p className="mb-4 rounded-sheet bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {errMsg[sp.error] || sp.error}</p>}
 
@@ -73,7 +77,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr,340px]">
         <div className="space-y-6">
           {/* my courses */}
-          <div className="card p-6">
+          <div id="my-courses" className="card scroll-mt-24 p-6">
             <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-ink"> {t.my_courses}</h2><Link href="/dashboard" className="text-sm font-semibold text-brand-blue">{t.nav_dashboard} →</Link></div>
             {enrolled.length === 0 ? (
               <div className="mt-4 rounded-sheet bg-paper p-6 text-center text-ink-soft">{t.no_courses_yet} <Link href="/courses" className="font-bold text-brand-blue">{t.browse_courses}</Link></div>
@@ -120,7 +124,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
           )}
 
           {/* data form */}
-          <form action={saveProfile} className="card grid gap-4 p-6 md:grid-cols-2">
+          <form id="details" action={saveProfile} className="card scroll-mt-24 grid gap-4 p-6 md:grid-cols-2">
             <h2 className="text-lg font-bold text-ink md:col-span-2"> {ar ? 'بياناتي' : 'My details'}</h2>
             <input type="hidden" name="next" value={sp.complete && sp.next ? sp.next : ''} />
             <F name="full_name" label={ar ? 'الاسم بالكامل' : 'Full name'} req />
@@ -133,6 +137,8 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
             <F name="job_title" label={ar ? 'المسمى الوظيفي الحالي' : 'Current job title'} />
             <F name="company" label={ar ? 'الشركة الحالية' : 'Current company'} />
             <F name="linkedin" label="LinkedIn" ltr ph="linkedin.com/in/..." />
+            <CourseQuestion ar={ar} courses={(courseList ?? []).map((c: any) => ({ id: c.id, title: L(c, 'title', locale) }))}
+              answer={p?.course_answer ?? ''} courseId={p?.claimed_course_id ?? ''} status={p?.claim_status ?? ''} />
             <div className="flex flex-wrap gap-2 md:col-span-2">
               <SubmitButton className="btn-red px-6">{ar ? 'حفظ البروفايل' : 'Save profile'}</SubmitButton>
               <Link href="/cv-check" className="btn-ghost">{t.nav_cv}</Link>

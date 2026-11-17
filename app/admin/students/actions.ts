@@ -42,3 +42,24 @@ export async function addStudent(fd: FormData) {
   }
   back('?added=1');
 }
+
+/** a member said on his profile "I'm in course X": Hamada confirms (opens the course + tasks) or refuses */
+export async function decideClaim(fd: FormData) {
+  await requireAdmin();
+  const uid = String(fd.get('user_id') || '');
+  const ok = String(fd.get('decision')) === 'approve';
+  const admin = createAdminClient();
+  const { data: p } = await admin.from('profiles').select('id, full_name, email, phone, claimed_course_id, claim_status').eq('id', uid).maybeSingle();
+  if (!p || !p.claimed_course_id) back(`?error=${encodeURIComponent('الطلب ده مش موجود.')}`);
+  const { data: c } = await admin.from('courses').select('title_ar').eq('id', p!.claimed_course_id).maybeSingle();
+  if (ok) {
+    const { data: has } = await admin.from('orders').select('id').eq('user_id', uid).eq('course_id', p!.claimed_course_id).eq('status', 'approved').maybeSingle();
+    if (!has) {
+      const { error } = await admin.from('orders').insert({ user_id: uid, course_id: p!.claimed_course_id, method: 'manual', amount: 0, receipt_path: '', machine_code: '', status: 'approved', reviewed_at: new Date().toISOString(), admin_note: 'confirmed from profile answer' });
+      if (error) back(`?error=${encodeURIComponent(error.message)}`);
+    }
+  }
+  await admin.from('profiles').update({ claim_status: ok ? 'approved' : 'rejected' }).eq('id', uid);
+  await toSheet({ event: ok ? 'course' : 'profile', name: p!.full_name, email: p!.email || '', whatsapp: p!.phone, course: ok ? c?.title_ar || '' : undefined, student: `آه — ${c?.title_ar || ''} (${ok ? 'متأكد' : 'مرفوض'})` });
+  back(ok ? '?added=1' : '');
+}

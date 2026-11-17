@@ -13,6 +13,26 @@ export async function saveProfile(formData: FormData) {
   const full_name = g('full_name', 80);
   if (!phone) redirect('/profile?error=phone');
   if (!full_name || full_name.length < 3) redirect('/profile?error=name');
+  // "are you one of our course students? which course?"
+  const answer = String(formData.get('course_answer') || '');
+  const claimId = String(formData.get('claimed_course_id') || '') || null;
+  if (answer === 'yes' && !claimId) redirect('/profile?error=course#details');
+  const claim: Record<string, any> = {};
+  let claimTitle = '';
+  if (answer === 'no') Object.assign(claim, { course_answer: 'no', claimed_course_id: null, claim_status: null, claimed_at: null });
+  if (answer === 'yes' && claimId) {
+    const { data: c } = await supabase.from('courses').select('id, title_ar').eq('id', claimId).maybeSingle();
+    if (!c) redirect('/profile?error=course#details');
+    claimTitle = c!.title_ar;
+    const { data: cur } = await supabase.from('profiles').select('claimed_course_id, claim_status').eq('id', user!.id).maybeSingle();
+    const { data: has } = await supabase.from('orders').select('id').eq('user_id', user!.id).eq('course_id', claimId).eq('status', 'approved').maybeSingle();
+    const same = cur?.claimed_course_id === claimId && cur?.claim_status;
+    Object.assign(claim, {
+      course_answer: 'yes', claimed_course_id: claimId,
+      claim_status: has ? 'approved' : same ? cur!.claim_status : 'pending',
+      ...(same ? {} : { claimed_at: new Date().toISOString() })
+    });
+  }
   await supabase.from('profiles').update({
     full_name, phone, role_id: g('role_id', 40),
     market: market && ['eg', 'sa', 'ae'].includes(market) ? market : null,
@@ -20,7 +40,11 @@ export async function saveProfile(formData: FormData) {
     job_title: g('job_title', 80), company: g('company', 80), linkedin: g('linkedin', 120),
     updated_at: new Date().toISOString()
   }).eq('id', user!.id);
-  await toSheet({ event: 'profile', name: full_name, email: user!.email || '', whatsapp: phone, job_title: g('job_title', 80) });
+  // separate write: if the new columns aren't in the database yet, the rest of the profile still saves
+  if (Object.keys(claim).length) await supabase.from('profiles').update(claim).eq('id', user!.id);
+  const student = claim.course_answer === 'no' ? 'لأ' : claim.course_answer === 'yes'
+    ? `آه — ${claimTitle} (${claim.claim_status === 'approved' ? 'متأكد' : claim.claim_status === 'rejected' ? 'مرفوض' : 'مستني موافقتك'})` : undefined;
+  await toSheet({ event: 'profile', name: full_name, email: user!.email || '', whatsapp: phone, job_title: g('job_title', 80), student });
   revalidatePath('/profile'); revalidatePath('/dashboard');
   const next = String(formData.get('next') || '');
   redirect(next.startsWith('/') && !next.startsWith('//') ? next : '/profile?saved=1');
@@ -71,8 +95,9 @@ export async function joinCourse(formData: FormData) {
     const { error } = await admin.from('orders').insert({ user_id: user!.id, course_id: c!.course_id, method: 'code', amount: 0, receipt_path: '', machine_code: '', status: 'approved', reviewed_at: new Date().toISOString(), admin_note: `code ${code}` });
     if (error) redirect('/profile?error=join#join');
     await admin.from('course_codes').update({ uses: (c!.uses || 0) + 1 }).eq('code', code);
-    await toSheet({ event: 'course', name: profile?.full_name, email: user!.email || '', whatsapp: profile?.phone, course: (c as any).courses?.title_ar || '' });
+    await toSheet({ event: 'course', name: profile?.full_name, email: user!.email || '', whatsapp: profile?.phone, course: (c as any).courses?.title_ar || '', student: `آه — ${(c as any).courses?.title_ar || ''} (متأكد بالكود)` });
   }
+  await admin.from('profiles').update({ course_answer: 'yes', claimed_course_id: c!.course_id, claim_status: 'approved', claimed_at: new Date().toISOString() }).eq('id', user!.id);
   revalidatePath('/profile'); revalidatePath('/dashboard');
   redirect(`/courses/${(c as any).courses?.slug}/tasks?joined=1`);
 }

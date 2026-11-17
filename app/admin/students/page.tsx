@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { requireAdmin } from '@/lib/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import SubmitButton from '@/components/SubmitButton';
-import { newCode, closeCode, addStudent } from './actions';
+import { newCode, closeCode, addStudent, decideClaim } from './actions';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { robots: { index: false } };
@@ -19,6 +19,10 @@ export default async function Students({ searchParams }: { searchParams: Promise
     admin.from('task_submissions').select('user_id, status, course_tasks(course_id)'),
     admin.from('profiles').select('id', { count: 'exact', head: true })
   ]);
+  // members who answered "yes, I'm in course X" on their profile and wait for a confirmation
+  // (if the new columns aren't in the database yet this just comes back empty)
+  const { data: claims } = await admin.from('profiles').select('id, full_name, email, phone, claimed_course_id, claimed_at').eq('claim_status', 'pending').order('claimed_at');
+  const courseTitle = (id: string) => (courses ?? []).find((c: any) => c.id === id)?.title_ar || '—';
   const done = (uid: string, cid: string) => (subs ?? []).filter((s: any) => s.user_id === uid && s.course_tasks?.course_id === cid).length;
   const fmt = (d: string) => new Date(d).toLocaleDateString('ar-EG', { dateStyle: 'medium' });
 
@@ -35,6 +39,34 @@ export default async function Students({ searchParams }: { searchParams: Promise
       {sp.error && <p className="mt-4 rounded-sheet bg-red-50 p-3 text-sm font-semibold text-red-700">{sp.error}</p>}
       {sp.code && <p className="mt-4 rounded-sheet border border-ink p-3 text-sm font-semibold">الكود الجديد: <span dir="ltr" className="font-mono text-lg">{sp.code}</span> ابعته في جروب الكورس، والطالب يكتبه في البروفايل بتاعه.</p>}
       {sp.added && <p className="mt-4 rounded-sheet bg-green-50 p-3 text-sm font-semibold text-green-800">اتضاف للكورس.</p>}
+
+      {(claims ?? []).length > 0 && (
+        <div className="card mt-6 border-amber-300 p-6">
+          <h2 className="text-lg font-bold text-ink">قالوا إنهم مشتركين في كورس ({claims!.length}) <span className="text-sm font-normal text-ink-mute">· راجع وأكّد</span></h2>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full min-w-[720px] text-sm">
+              <thead className="border-b border-line text-ink-mute"><tr>{['الاسم', 'الإيميل', 'واتساب', 'الكورس اللي اختاره', 'من يوم', ''].map((h, i) => <th key={i} className="px-3 py-2 text-right font-semibold">{h}</th>)}</tr></thead>
+              <tbody>
+                {claims!.map((m: any) => (
+                  <tr key={m.id} className="border-b border-line last:border-0">
+                    <td className="px-3 py-2" dir="auto">{m.full_name || '—'}</td>
+                    <td className="px-3 py-2" dir="ltr">{m.email}</td>
+                    <td className="px-3 py-2" dir="ltr">{m.phone ? <a className="text-brand-blue" href={`https://wa.me/${m.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener">{m.phone}</a> : '—'}</td>
+                    <td className="px-3 py-2 font-semibold">{courseTitle(m.claimed_course_id)}</td>
+                    <td className="px-3 py-2">{m.claimed_at ? fmt(m.claimed_at) : '—'}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-2">
+                        <form action={decideClaim}><input type="hidden" name="user_id" value={m.id} /><input type="hidden" name="decision" value="approve" /><SubmitButton className="btn-red btn-sm">أكّد وافتحله الكورس</SubmitButton></form>
+                        <form action={decideClaim}><input type="hidden" name="user_id" value={m.id} /><input type="hidden" name="decision" value="reject" /><SubmitButton className="btn-ghost btn-sm">مش طالب عندنا</SubmitButton></form>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {(courses ?? []).map((c: any) => {
         const code = (codes ?? []).find((x: any) => x.course_id === c.id);

@@ -31,6 +31,23 @@ export async function submitTask(formData: FormData) {
     if (answers.some((a) => a === null)) return fail('pick_all');
     const g = gradeQuiz(quiz, answers, task.max_score || 10);
     Object.assign(row, { answers, score: g.score, status: 'graded', graded_at: new Date().toISOString() });
+  } else if (formData.get('file_path')) {
+    // the browser already put the file in Storage (see TaskFileInput): check the path is this student's,
+    // for this task, and that the object really exists and is within the limit
+    const path = String(formData.get('file_path'));
+    const name = String(formData.get('file_name') || path.split('/').pop() || '').slice(0, 120);
+    const dir = `${user!.id}/${taskId}`;
+    if (!path.startsWith(dir + '/') || path.includes('..') || !TASK_EXT.test(path)) return fail('no_file');
+    const objName = path.slice(dir.length + 1);
+    const { data: objs } = await supabase.storage.from('tasks').list(dir, { search: objName, limit: 5 });
+    const obj = (objs ?? []).find((o: any) => o.name === objName);
+    if (!obj) return fail('no_file');
+    if ((obj.metadata?.size || 0) > TASK_MAX_BYTES) {
+      await supabase.storage.from('tasks').remove([path]).catch(() => {});
+      return fail('too_big');
+    }
+    Object.assign(row, { file_path: path, file_name: name });
+    if (prev?.file_path && prev.file_path !== path) await supabase.storage.from('tasks').remove([prev.file_path]).catch(() => {});
   } else {
     const file = formData.get('file') as File | null;
     if (!file || !file.size) return fail('no_file');
