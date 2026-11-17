@@ -3,7 +3,7 @@ import { getT, L } from '@/lib/i18n';
 import { requireUser } from '@/lib/auth';
 import { ROLES, MARKETS, roleGroups, type Market } from '@/lib/cv/data';
 import SubmitButton from '@/components/SubmitButton';
-import { DEPARTMENTS, UNIVERSITIES, GRAD_YEARS } from '@/lib/education';
+import { DEPARTMENTS, UNIVERSITIES, GRAD_YEARS, COUNTRIES } from '@/lib/education';
 import { saveProfile, uploadCv, deleteCv, joinCourse } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -36,7 +36,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
   const errMsg: Record<string, string> = {
     phone: ar ? 'اكتب رقم واتساب صحيح بكود الدولة، زي +20 100 123 4567.' : 'Enter a valid WhatsApp number with country code.',
     name: ar ? 'اكتب اسمك بالكامل.' : 'Enter your full name.',
-    edu: ar ? 'اختار القسم واكتب الجامعة وسنة التخرج.' : 'Choose your department, university and graduation year.',
+    edu: ar ? 'اختار القسم والبلد، واكتب الجامعة وسنة التخرج.' : 'Choose your department, university and graduation year.',
     code: ar ? 'الكود ده مش صحيح أو اتقفل. اتأكد منه من جروب الكورس.' : 'This code is wrong or closed. Check it in your course group.',
     join: ar ? 'حصلت مشكلة وإحنا بنضيفك للكورس. جرّب تاني أو كلّمنا.' : 'Could not add you to the course. Try again or contact us.',
     no_file: ar ? 'اختار ملف.' : 'Choose a file.', too_big: ar ? 'الملف أكبر من 10 ميجا.' : 'File is larger than 10 MB.', bad_type: ar ? 'PDF أو Word أو صورة بس.' : 'PDF, Word or image only.' };
@@ -47,7 +47,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
 
   return (
     <section className="container-x max-w-5xl py-10">
-      {(sp.complete || !p?.phone || !p?.department || !p?.university || !p?.grad_year) && !sp.saved && <p className="mb-4 rounded-sheet border border-ink p-4 text-sm font-semibold text-ink">{ar ? 'كمّل بياناتك: الاسم، ورقم الواتساب، والقسم، والجامعة، وسنة التخرج، واحفظ تحت في "بياناتي".' : 'Complete your details: name, WhatsApp, department, university and graduation year, then save below.'}</p>}
+      {(sp.complete || !p?.phone || !p?.department || !p?.university || !p?.country || !p?.grad_year) && !sp.saved && <p className="mb-4 rounded-sheet border border-ink p-4 text-sm font-semibold text-ink">{ar ? 'كمّل بياناتك: الاسم، ورقم الواتساب، والقسم، والجامعة والبلد، وسنة التخرج، واحفظ تحت في "بياناتي".' : 'Complete your details: name, WhatsApp, department, university and graduation year, then save below.'}</p>}
       {sp.saved && <p className="mb-4 rounded-sheet bg-green-50 p-3 text-sm font-semibold text-green-800">✓ {ar ? 'اتحفظ' : 'Saved'}</p>}
       {sp.error && <p className="mb-4 rounded-sheet bg-red-50 p-3 text-sm font-semibold text-red-700">⚠️ {errMsg[sp.error] || sp.error}</p>}
 
@@ -60,7 +60,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
             <div className="min-w-0 flex-1">
               <h1 className="truncate text-2xl font-extrabold" dir="auto">{p?.full_name || user!.email}</h1>
               <div className="mt-1 text-sm text-slate-300" dir="auto">{[p?.job_title, p?.company].filter(Boolean).join(' · ') || (role ? role[locale] : '')}</div>
-              {(p?.department || p?.university) && <div className="mt-1 text-sm text-slate-300" dir="auto">{[p?.department, p?.university, p?.grad_year].filter(Boolean).join(' · ')}</div>}
+              {(p?.department || p?.university) && <div className="mt-1 text-sm text-slate-300" dir="auto">{[p?.department, p?.university, p?.country, p?.grad_year].filter(Boolean).join(' · ')}</div>}
               <div className="mt-1 text-xs text-slate-400" dir="ltr">{user!.email}{p?.phone ? ` · ${p.phone}` : ''}</div>
             </div>
           </div>
@@ -130,6 +130,8 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
             <F name="phone" label={ar ? 'رقم الواتساب' : 'WhatsApp number'} ltr ph="+20 1xx xxx xxxx" req />
             <div><label className="label">{ar ? 'القسم *' : 'Department *'}</label>
               <select name="department" required defaultValue={p?.department ?? ''} className="input"><option value="" disabled>{ar ? 'اختار قسمك' : 'Choose'}</option>{DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}</select></div>
+            <div><label className="label">{ar ? 'اتخرجت منين (البلد) *' : 'Country of study *'}</label>
+              <select name="country" required defaultValue={p?.country ?? 'مصر'} className="input">{COUNTRIES.map((c) => <option key={c}>{c}</option>)}</select></div>
             <div><label className="label">{ar ? 'الجامعة *' : 'University *'}</label>
               <input name="university" required list="unis" defaultValue={p?.university ?? ''} className="input" /><datalist id="unis">{UNIVERSITIES.map((u) => <option key={u} value={u} />)}</datalist></div>
             <div><label className="label">{ar ? 'سنة التخرج *' : 'Graduation year *'}</label>

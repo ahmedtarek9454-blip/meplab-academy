@@ -15,7 +15,7 @@ export default async function Students({ searchParams }: { searchParams: Promise
   const [{ data: courses }, { data: codes }, { data: orders }, { data: subs }, { count: members }] = await Promise.all([
     admin.from('courses').select('id, slug, title_ar').order('sort_order'),
     admin.from('course_codes').select('*').eq('active', true),
-    admin.from('orders').select('user_id, course_id, method, created_at, profiles(full_name, email, phone, department, university, grad_year)').eq('status', 'approved').order('created_at', { ascending: false }),
+    admin.from('orders').select('user_id, course_id, method, created_at, profiles(full_name, email, phone, department, university, country, grad_year)').eq('status', 'approved').order('created_at', { ascending: false }),
     admin.from('task_submissions').select('user_id, status, course_tasks(course_id)'),
     admin.from('profiles').select('id', { count: 'exact', head: true })
   ]);
@@ -64,7 +64,7 @@ export default async function Students({ searchParams }: { searchParams: Promise
                         <td className="px-3 py-2" dir="auto">{o.profiles?.full_name || '—'}</td>
                         <td className="px-3 py-2" dir="ltr">{o.profiles?.email}</td>
                         <td className="px-3 py-2" dir="ltr">{o.profiles?.phone ? <a className="text-brand-blue" href={`https://wa.me/${o.profiles.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener">{o.profiles.phone}</a> : '—'}</td>
-                        <td className="px-3 py-2" dir="auto">{[o.profiles?.department, o.profiles?.university, o.profiles?.grad_year].filter(Boolean).join(' · ') || '—'}</td>
+                        <td className="px-3 py-2" dir="auto">{[o.profiles?.department, o.profiles?.university, o.profiles?.country, o.profiles?.grad_year].filter(Boolean).join(' · ') || '—'}</td>
                         <td className="px-3 py-2">{o.method === 'code' ? 'الكود' : o.method === 'manual' ? 'إنت ضفته' : 'دفع'}</td>
                         <td className="px-3 py-2">{fmt(o.created_at)}</td>
                         <td className="px-3 py-2 tabular-nums">{done(o.user_id, c.id)}</td>

@@ -3,7 +3,7 @@
  * The sheet runs a tiny Apps Script web app (tools/google-sheet/members.gs); its URL and a shared secret
  * are set in Netlify as SHEET_WEBHOOK_URL / SHEET_WEBHOOK_SECRET. No URL → nothing is sent, nothing breaks.
  */
-export type SheetRow = { event: 'signup' | 'profile' | 'course'; name?: string | null; email: string; whatsapp?: string | null; source?: string; course?: string | null; job_title?: string | null; department?: string | null; university?: string | null; grad_year?: number | null };
+export type SheetRow = { event: 'signup' | 'profile' | 'course'; name?: string | null; email: string; whatsapp?: string | null; source?: string; course?: string | null; job_title?: string | null; department?: string | null; university?: string | null; grad_year?: number | null; country?: string | null };
 
 export async function toSheet(row: SheetRow) {
   const url = process.env.SHEET_WEBHOOK_URL;
