@@ -1,4 +1,4 @@
--- MEP LAB: "are you one of our course students? which course?" on the profile + task files up to 50 MB
+-- MEP LAB: "are you one of our course students? which course?" on the profile + Google Classroom link per course
 -- Run once in Supabase → SQL Editor (safe to run again).
 
 -- 1) the answer the member gives on the profile page
@@ -11,8 +11,5 @@ alter table public.profiles add column if not exists claim_status text check (cl
 alter table public.profiles add column if not exists claimed_at timestamptz;
 create index if not exists profiles_claim_pending_idx on public.profiles(claim_status) where claim_status = 'pending';
 
--- 2) task files: 50 MB per file on the bucket itself, and a student may delete his own old file when he resubmits
-update storage.buckets set file_size_limit = 52428800 where id = 'tasks';
-drop policy if exists "tasks_delete_own" on storage.objects;
-create policy "tasks_delete_own" on storage.objects
-  for delete using (bucket_id = 'tasks' and (storage.foldername(name))[1] = auth.uid()::text);
+-- 2) where tasks are handed in: the course's Google Classroom (the Player's "submit task" button lands there via /go/task)
+alter table public.courses add column if not exists classroom_url text check (classroom_url is null or classroom_url like 'https://classroom.google.com/%');

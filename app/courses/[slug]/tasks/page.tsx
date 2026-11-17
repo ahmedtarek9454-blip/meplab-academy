@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { getT, L } from '@/lib/i18n';
 import { requireUser } from '@/lib/auth';
 import SubmitButton from '@/components/SubmitButton';
-import TaskFileInput from '@/components/TaskFileInput';
 import { submitTask } from './actions';
 import type { QuizQ } from '@/lib/tasks/quiz';
 
@@ -142,7 +141,11 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
                           </ol>
                         </>
                       ) : (
-                        <TaskFileInput userId={user!.id} taskId={task.id} label={t.task_file} hint={t.task_file_hint} ar={ar} />
+                        <div>
+                          <label className="label">{t.task_file}</label>
+                          <input type="file" name="file" required className="input" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.rvt,.rfa,.dwg,.dxf,.nwc,.nwd,.ifc,.zip,.rar,.7z,.png,.jpg,.jpeg,.webp,.txt,.csv" />
+                          <p className="mt-1 text-xs text-ink-mute" dir="ltr">{t.task_file_hint}</p>
+                        </div>
                       )}
                       <div>
                         <label className="label">{t.task_note}</label>

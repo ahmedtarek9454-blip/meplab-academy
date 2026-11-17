@@ -57,6 +57,7 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
             <F name="cover_url" label={t.cover_url} ltr />
             <F name="preview_url" label={t.preview_url} ltr />
             <F name="download_url" label={t.download_url} ltr />
+            <F name="classroom_url" label="لينك Google Classroom (زرار «سلّم التاسك» في المشغل بيفتحه)" ltr />
             <F name="product_key" label={t.product_key} ltr />
             <A name="desc_ar" label={t.desc_ar} />
             <A name="desc_en" label={t.desc_en} ltr />

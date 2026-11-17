@@ -67,10 +67,16 @@ export async function saveCourse(formData: FormData) {
     audience_ar: g('audience_ar') || null,
     audience_en: g('audience_en') || null
   };
-  const { error } = id
-    ? await supabase.from('courses').update(row).eq('id', id)
-    : await supabase.from('courses').insert(row);
+  const { data: saved, error } = id
+    ? await supabase.from('courses').update(row).eq('id', id).select('id').maybeSingle()
+    : await supabase.from('courses').insert(row).select('id').maybeSingle();
   if (error) redirect(`/admin/courses?${id ? `edit=${id}&` : ''}error=${encodeURIComponent(error.message)}`);
+  // Classroom link in its own write: before the SQL file is run the column doesn't exist, and the course still saves
+  const classroom = g('classroom_url');
+  if (classroom && !/^https:\/\/classroom\.google\.com\//.test(classroom)) {
+    redirect(`/admin/courses?edit=${saved?.id || id}&error=${encodeURIComponent('لينك الكلاس روم لازم يبدأ بـ https://classroom.google.com/')}`);
+  }
+  if (saved?.id) await supabase.from('courses').update({ classroom_url: classroom || null }).eq('id', saved.id);
   revalidateTag('courses');
   revalidatePath('/', 'layout');
   redirect('/admin/courses');

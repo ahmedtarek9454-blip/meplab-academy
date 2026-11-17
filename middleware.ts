@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from 'next/server';
  * Members-only areas (كل حاجة محتاجة حساب): a visitor without a session is sent to /login?next=…
  * Public: home, course list, each course page (free intro video, contact, waitlist), /cv-check and auth pages.
  */
-const MEMBERS_ONLY = [/^\/go\//, /^\/courses\/[^/]+\/tasks/, /^\/download/, /^\/jobs/, /^\/checkout/, /^\/dashboard/, /^\/profile/, /^\/admin/];
+const MEMBERS_ONLY = [/^\/courses\/[^/]+\/tasks/, /^\/download/, /^\/jobs/, /^\/checkout/, /^\/dashboard/, /^\/profile/, /^\/admin/];
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });

@@ -98,7 +98,7 @@ export default async function Profile({ searchParams }: { searchParams: Promise<
                       {o.status === 'approved' && (
                         <div className="flex items-center gap-3">
                           {tot > 0 && <div className="text-xs font-semibold text-ink-soft" dir="ltr">{dn}/{tot} <span className="text-slate-400">{ar ? 'تاسك' : 'tasks'}</span></div>}
-                          <Link href={`/courses/${c.slug}/tasks`} className="btn-blue btn-sm"> {t.go_tasks}</Link>
+                          <a href={`/go/task?course=${c.slug}`} className="btn-blue btn-sm"> {t.go_tasks}</a>
                         </div>
                       )}
                     </div>
