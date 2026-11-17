@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
+const DEFAULT_CLASSROOM = 'https://classroom.google.com/w/ODI2MzYyNzM0MTYw/t/all';
+
 /**
  * Fixed link the MEP LAB Player opens when the student presses "submit the task":
  *   https://meplab.net/go/task?course=<course name or slug>&lesson=<video title>
@@ -34,5 +36,7 @@ export async function GET(req: NextRequest) {
   }
   if (!pick?.classroom_url && withLink.length === 1) pick = withLink[0];   // one class running → that's it
   if (pick?.classroom_url) return NextResponse.redirect(pick.classroom_url);
+  // until a link is set in /admin/courses (or before the SQL file is run): the Revit course's Classwork page
+  if (!withLink.length) return NextResponse.redirect(process.env.DEFAULT_CLASSROOM_URL || DEFAULT_CLASSROOM);
   return to(pick ? `/courses/${pick.slug}` : '/courses');
 }
