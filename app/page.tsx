@@ -1,3 +1,4 @@
+import { WHATSAPP } from '@/lib/whatsapp';
 import Link from 'next/link';
 import { getT } from '@/lib/i18n';
 import { safeCourses } from '@/lib/data/courses';
@@ -12,7 +13,7 @@ export default async function Home() {
   const courses = await safeCourses();
   const available = courses.filter((c: any) => c.status !== 'soon');
   const soon = courses.filter((c: any) => c.status === 'soon');
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP;
+  const wa = WHATSAPP;
   const ar = locale === 'ar';
 
   const steps = [t.how1, t.how2, t.how3, t.how4];

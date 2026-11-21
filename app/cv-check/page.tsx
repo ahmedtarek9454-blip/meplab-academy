@@ -1,3 +1,4 @@
+import { WHATSAPP } from '@/lib/whatsapp';
 import { getLocale } from '@/lib/i18n';
 import CvChecker from '@/components/CvChecker';
 import { safeCourses } from '@/lib/data/courses';
@@ -28,7 +29,7 @@ export default async function CvCheckPage() {
         </div>
       </section>
       <section className="container-x relative z-10 -mt-10 pb-4">
-        <CvChecker locale={locale} whatsapp={process.env.NEXT_PUBLIC_WHATSAPP} courses={(data ?? []) as any}
+        <CvChecker locale={locale} whatsapp={WHATSAPP} courses={(data ?? []) as any}
           playerUrl={process.env.NEXT_PUBLIC_PLAYER_DOWNLOAD_URL} playerVersion={process.env.NEXT_PUBLIC_PLAYER_VERSION} facebook={process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://facebook.com/MEPLAB.EGY'} />
       </section>
     </>

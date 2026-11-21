@@ -1,3 +1,4 @@
+import { WHATSAPP } from '@/lib/whatsapp';
 import Link from 'next/link';
 import Logo from './Logo';
 import { JOBS_ENABLED } from '@/lib/features';
@@ -7,7 +8,7 @@ import { getT } from '@/lib/i18n';
 
 export default async function Footer() {
   const { t } = await getT();
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP;
+  const wa = WHATSAPP;
   const fb = process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://facebook.com/MEPLAB.EGY';
   const links = [
     ['/courses', t.nav_courses], ['/cv-check', t.nav_cv], ['/cv-builder', t.nav_courses === 'Courses' ? 'Build a CV' : 'اعمل CV'], ['/at-tools', 'AT Tools'],

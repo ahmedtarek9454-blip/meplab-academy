@@ -1,3 +1,4 @@
+import { WHATSAPP } from '@/lib/whatsapp';
 import Link from 'next/link';
 import { getT, L } from '@/lib/i18n';
 import { requireUser } from '@/lib/auth';
@@ -13,7 +14,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
     .eq('user_id', user!.id)
     .order('created_at', { ascending: false });
   const orders = data ?? [];
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP;
+  const wa = WHATSAPP;
 
   const badge: Record<string, string> = {
     pending: 'bg-amber-100 text-amber-800',

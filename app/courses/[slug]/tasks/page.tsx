@@ -1,3 +1,4 @@
+import { WHATSAPP } from '@/lib/whatsapp';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getT, L } from '@/lib/i18n';
@@ -18,7 +19,7 @@ export default async function CourseTasks({ params, searchParams }: { params: Pr
   const { data: c } = await supabase.from('courses').select('id, slug, title_ar, title_en').eq('slug', slug).maybeSingle();
   if (!c) notFound();
   const { data: order } = await supabase.from('orders').select('status').eq('user_id', user!.id).eq('course_id', c.id).eq('status', 'approved').limit(1).maybeSingle();
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP;
+  const wa = WHATSAPP;
 
   if (!order) {
     return (

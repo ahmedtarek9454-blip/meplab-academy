@@ -1,3 +1,4 @@
+import { WHATSAPP } from '@/lib/whatsapp';
 /**
  * Optional email notifications via Resend (free: 3,000 emails/month).
  * Env: RESEND_API_KEY, EMAIL_FROM, ADMIN_EMAIL. If no key, emails are skipped silently.
@@ -51,7 +52,7 @@ ${btn(`${site()}/dashboard`, 'افتح حسابك')}
 }
 
 export function notifyStudentRejected(o: { to: string; name?: string; course: string; note?: string | null }) {
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP;
+  const wa = WHATSAPP;
   return sendEmail(o.to, `بخصوص طلب اشتراكك في ${o.course}`, layout(`أهلًا ${esc(o.name || '')}`, `
 <p>للأسف مقدرناش نقبل طلب اشتراكك في <b>${esc(o.course)}</b>.</p>
 ${o.note ? `<p style="background:#fef2f2;color:#b91c1c;padding:12px;border-radius:10px"><b>السبب:</b> ${esc(o.note)}</p>` : ''}

@@ -1,3 +1,4 @@
+import { WHATSAPP } from '@/lib/whatsapp';
 import { getLocale } from '@/lib/i18n';
 
 export const metadata = {
@@ -52,7 +53,7 @@ export default async function AtToolsPage() {
   const locale = await getLocale();
   const ar = locale === 'ar';
   const fb = process.env.NEXT_PUBLIC_MESSENGER_URL || 'https://m.me/MEPLAB.EGY';
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP;
+  const wa = WHATSAPP;
   const msg = ar ? 'السلام عليكم، عايز رخصة AT Tools. الـ Machine ID بتاعي: ' : 'Hello, I would like an AT Tools licence. My Machine ID: ';
   const licenceHref = wa ? `https://wa.me/${wa}?text=${encodeURIComponent(msg)}` : fb;
 
