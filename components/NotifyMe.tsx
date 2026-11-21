@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { SUPABASE_READY } from '@/lib/supabase/env';
+import { track } from '@/lib/stats/track';
 
 const MESSENGER = process.env.NEXT_PUBLIC_MESSENGER_URL || 'https://m.me/MEPLAB.EGY';
 
@@ -24,6 +25,7 @@ export default function NotifyMe({ slug, locale, email: initial = '', className 
       if ((window as any).__AUTH_MOCK__) { await new Promise((r) => setTimeout(r, 400)); setSt('ok'); return; }
       const r = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, email: email.trim() }) });
       if (!r.ok) throw new Error();
+      track('notify', { course: slug });
       setSt('ok');
     } catch { setSt('err'); setMsg(t.err); }
   }

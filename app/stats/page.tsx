@@ -15,7 +15,7 @@ function top(map: Map<string, number>, n = 8) { return [...map.entries()].sort((
 export default async function Stats() {
   let error = '';
   const days = daysSince(LAUNCH_DAY);
-  const rows: { day: string; visitors: number; checks: number; checkers: number; rewrites: number; downloads: number; shares: number; jd: number; apply: number; avg: number | null }[] = [];
+  const rows: { day: string; visitors: number; checks: number; checkers: number; rewrites: number; downloads: number; shares: number; jd: number; apply: number; rec: number; courseViews: number; contacts: number; notify: number; signups: number; avg: number | null }[] = [];
   const all: StoredSignal[] = [];
   const people = new Set<string>(); const visitors = new Set<string>();
   let model: any = null;
@@ -29,6 +29,7 @@ export default async function Stats() {
       rows.push({
         day, visitors: ev.visit?.people || 0, checks: sigs.length, checkers: new Set(sigs.map((s) => s.ip_hash)).size,
         rewrites: n('rewrite'), downloads: n('word') + n('pdf'), shares: n('share_dl') + n('share_li') + n('share_fb') + n('share_native'), jd: n('jd'), apply: n('apply'),
+        rec: n('course_rec'), courseViews: n('course_view'), contacts: n('contact_wa') + n('contact_ms'), notify: n('notify'), signups: n('signup'),
         avg: sigs.length ? Math.round(sigs.reduce((x, s) => x + s.score, 0) / sigs.length) : null
       });
     }
@@ -97,17 +98,26 @@ export default async function Stats() {
         <Card label="عملوا النسخة المعدّلة" value={sum('rewrites')} note={`${sum('downloads')} تحميل Word أو PDF`} />
         <Card label="شاركوا النتيجة" value={sum('shares')} note={all.length ? `متوسط الدرجة ${Math.round(all.reduce((x, s) => x + s.score, 0) / all.length)}` : undefined} />
       </div>
+      <h2 className="display mt-8 text-xl text-ink">من الفحص للحجز</h2>
+      <p className="mt-1 text-sm text-ink-mute">الأرقام دي بدأت تتسجل من 22 نوفمبر 2026.</p>
+      <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <Card label="شافوا اقتراح كورس" value={sum('rec')} note="بعد نتيجة الفحص" />
+        <Card label="فتحوا صفحة كورس" value={sum('courseViews')} />
+        <Card label="دوسوا واتساب / ماسنجر" value={sum('contacts')} note="من صفحة الكورس أو بعد الفحص" />
+        <Card label="طلبوا بلّغني" value={sum('notify')} note="كورسات قريبًا" />
+        <Card label="عملوا حساب" value={sum('signups')} />
+      </div>
 
       <div className="card mt-6 overflow-x-auto p-0">
         <table className="w-full min-w-[820px] text-sm">
           <thead className="border-b border-line text-ink-mute">
-            <tr>{['اليوم', 'زوار', 'فحوصات', 'أشخاص فحصوا', 'نسخة معدّلة', 'تحميل', 'مشاركة', 'طابقوا إعلان', 'جهّزوا تقديم', 'متوسط الدرجة'].map((h) => <th key={h} className="px-4 py-3 text-right font-semibold">{h}</th>)}</tr>
+            <tr>{['اليوم', 'زوار', 'فحوصات', 'أشخاص فحصوا', 'نسخة معدّلة', 'تحميل', 'مشاركة', 'طابقوا إعلان', 'جهّزوا تقديم', 'فتحوا كورس', 'واتساب/ماسنجر', 'حسابات جديدة', 'متوسط الدرجة'].map((h) => <th key={h} className="px-4 py-3 text-right font-semibold">{h}</th>)}</tr>
           </thead>
           <tbody>
             {rows.map((r) => (
               <tr key={r.day} className="border-b border-line last:border-0">
                 <td className="px-4 py-3 tabular-nums" dir="ltr" style={{ textAlign: 'right' }}>{r.day}</td>
-                {[r.visitors, r.checks, r.checkers, r.rewrites, r.downloads, r.shares, r.jd, r.apply, r.avg ?? '–'].map((v, i) => <td key={i} className="px-4 py-3 tabular-nums">{v}</td>)}
+                {[r.visitors, r.checks, r.checkers, r.rewrites, r.downloads, r.shares, r.jd, r.apply, r.courseViews, r.contacts, r.signups, r.avg ?? '–'].map((v, i) => <td key={i} className="px-4 py-3 tabular-nums">{v}</td>)}
               </tr>
             ))}
           </tbody>

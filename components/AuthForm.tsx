@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getT } from '@/lib/i18n';
 import { signIn, signUp, signInWithGoogle } from '@/app/login/actions';
+import TrackView from './TrackView';
 import Logo from './Logo';
 import { DEPARTMENTS, UNIVERSITIES, GRAD_YEARS, COUNTRIES } from '@/lib/education';
 
@@ -24,6 +25,7 @@ export default async function AuthForm({ mode, sp }: { mode: 'login' | 'signup';
         <div className="mb-6 flex justify-center"><Logo /></div>
         <h1 className="mb-6 text-center text-2xl font-extrabold text-ink">{isLogin ? t.login_title : t.signup_title}</h1>
 
+        {sp.check && <TrackView type="signup" adOnly />}
         {sp.check && <p className="mb-4 rounded-sheet bg-green-50 p-3 text-sm text-green-800">{t.check_email}</p>}
         {sp.notice && <p className="mb-4 rounded-sheet border border-ink p-3 text-sm font-semibold text-ink">{sp.notice}</p>}
         {sp.error && <p className="mb-4 rounded-sheet bg-red-50 p-3 text-sm text-red-700">{ERR[sp.error] || (isLogin ? 'الإيميل أو الباسورد غلط.' : t.auth_error)}</p>}

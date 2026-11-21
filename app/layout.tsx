@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import DraftSync from '@/components/DraftSync';
 import Footer from '@/components/Footer';
+import Analytics from '@/components/Analytics';
 import { getLocale } from '@/lib/i18n';
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
@@ -37,6 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main className="flex-1 pb-24">{children}</main>
         <Footer />
         <DraftSync />
+        <Analytics />
       </body>
     </html>
   );

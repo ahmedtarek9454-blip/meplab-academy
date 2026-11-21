@@ -7,7 +7,7 @@
 import { getStore } from '@netlify/blobs';
 import type { CvSignal, SignalRow } from '@/lib/ats/learn';
 
-export const EVENTS = ['visit', 'rewrite', 'word', 'pdf', 'share_dl', 'share_li', 'share_fb', 'share_native', 'jd', 'jd_link', 'jd_image', 'jd_gate', 'jd_gate_signup', 'apply', 'apply_word', 'apply_mail'] as const;
+export const EVENTS = ['visit', 'rewrite', 'word', 'pdf', 'share_dl', 'share_li', 'share_fb', 'share_native', 'jd', 'jd_link', 'jd_image', 'jd_gate', 'jd_gate_signup', 'apply', 'apply_word', 'apply_mail', 'signup', 'course_view', 'course_rec', 'contact_wa', 'contact_ms', 'notify'] as const;
 export type EventType = (typeof EVENTS)[number];
 
 const store = (name: string) => getStore({ name, consistency: 'strong' });

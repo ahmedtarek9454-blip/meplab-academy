@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import CvHistory from './CvHistory';
 import { buildProfile, SYS_LABEL } from '@/lib/cv/profile';
-import { track } from '@/lib/stats/track';
+import { track, adTrack } from '@/lib/stats/track';
+import CourseRec from './CourseRec';
 import { titleEvidence } from '@/lib/ats/titles';
 import JobCard, { ago } from './JobCard';
 import AiReview, { PENDING_KEY } from './AiReview';
@@ -426,6 +427,7 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
     setCvText(text);
     const r = analyzeCv(text, mkt, pages, model);
     setRes(r); setBusy(''); setPending(null); setFb('ask'); setSigId(null);
+    if (!(window as any).__AUTH_MOCK__) adTrack('cv_check', { score: r.score, role: r.roles[0]?.role.id, discipline: r.discipline?.id ?? 'none' });
     // anonymous learning signal: no CV text or personal data — only what the engine recognised
     try {
       const secs = findSections(text);
@@ -666,6 +668,8 @@ export default function CvChecker({ locale, coursesHref = '/courses', jobsHref =
         <ShareCard locale={locale} score={res.score} role={G ? '' : prof?.multi ? (locale === 'ar' ? 'مهندس ميكانيكا: ' : 'Mechanical: ') + prof.systems.filter((x) => x.id !== 'elec').map((x) => (locale === 'ar' ? SYS_LABEL[x.id].ar.replace(/ \(.*\)/, '') : SYS_LABEL[x.id].en.replace(/ \(.*\)/, ''))).join(' + ') : locale === 'ar' ? top.role.ar : top.role.en} discipline={res.discipline ? res.discipline[locale] : null}
           better={pr ? { pct: pr.pct, scopeLabel: prScope } : null} siteUrl={process.env.NEXT_PUBLIC_SITE_URL} />
       </div>
+
+      {!G && <CourseRec locale={locale} roleId={top.role.id} discipline={res.discipline?.id ?? null} missing={top.missing} score={res.score} courses={courses} whatsapp={whatsapp} hrefBase={hrefBase} />}
 
       {!user && (
         <StayInTouch locale={locale} roleId={top.role.id} discipline={res.discipline?.id ?? null} market={market} score={res.score} years={res.years} level={res.level} />

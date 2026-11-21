@@ -8,7 +8,10 @@ import CourseArt from '@/components/CourseArt';
 import { COURSE_DEEP } from '@/components/CourseCard';
 import { videoEmbed } from '@/lib/ui/video';
 import NotifyMe from '@/components/NotifyMe';
-import ContactButtons, { contactLinks } from '@/components/ContactButtons';
+import ContactButtons from '@/components/ContactButtons';
+import { contactLinks } from '@/lib/contact';
+import TrackView, { TrackLink } from '@/components/TrackView';
+import Testimonials from '@/components/Testimonials';
 import { SUPABASE_READY } from '@/lib/supabase/env';
 import { SHOW_PRICES } from '@/lib/features';
 
@@ -52,6 +55,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
   return (
     <div style={{ ['--sys' as any]: sys.color }}>
+      <TrackView type="course_view" params={{ course: c.slug }} />
       {/* header: a drawing sheet, the discipline colour as its only accent */}
       <section className="border-b-[1.5px] border-ink bg-sheet">
         <div className="container-x grid items-center gap-8 py-10 md:py-14 lg:grid-cols-[1.15fr,.85fr]">
@@ -138,6 +142,8 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               </ul>
             </>
           )}
+
+          <Testimonials slug={c.slug} locale={locale} />
         </div>
 
         <aside id="enroll" className="min-w-0 scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
@@ -163,7 +169,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               ) : existing?.status === 'pending' ? (
                 <Link href="/dashboard" className="btn-ghost mt-6 w-full">{t.already_pending}</Link>
               ) : !SUPABASE_READY ? (
-                <a href={contactLinks(L(c, 'title', locale), locale).whatsapp || contactLinks(L(c, 'title', locale), locale).messenger} target="_blank" rel="noopener" className="btn-red mt-6 w-full py-3">{ar ? 'احجز مكانك: ابعتلنا' : 'Enrol: message us'}</a>
+                <TrackLink type={contactLinks(L(c, 'title', locale), locale).whatsapp ? 'contact_wa' : 'contact_ms'} params={{ course: c.slug }} href={contactLinks(L(c, 'title', locale), locale).whatsapp || contactLinks(L(c, 'title', locale), locale).messenger} target="_blank" rel="noopener" className="btn-red mt-6 w-full py-3">{ar ? 'احجز مكانك: ابعتلنا' : 'Enrol: message us'}</TrackLink>
               ) : (
                 <Link href={user ? `/checkout/${c.slug}` : `/signup?next=/checkout/${c.slug}`} className="btn-red mt-6 w-full py-3">{t.enroll}</Link>
               )}
@@ -190,7 +196,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
             {soon ? (
               <a href="#enroll" className="btn-ghost btn-sm shrink-0">{ar ? 'بلّغني لما ينزل' : 'Notify me'}</a>
             ) : !SUPABASE_READY ? (
-              <a href={contactLinks(L(c, 'title', locale), locale).whatsapp || contactLinks(L(c, 'title', locale), locale).messenger} target="_blank" rel="noopener" className="btn-red btn-sm shrink-0">{ar ? 'احجز مكانك' : 'Book your seat'}</a>
+              <TrackLink type={contactLinks(L(c, 'title', locale), locale).whatsapp ? 'contact_wa' : 'contact_ms'} params={{ course: c.slug }} href={contactLinks(L(c, 'title', locale), locale).whatsapp || contactLinks(L(c, 'title', locale), locale).messenger} target="_blank" rel="noopener" className="btn-red btn-sm shrink-0">{ar ? 'احجز مكانك' : 'Book your seat'}</TrackLink>
             ) : (
               <a href="#enroll" className="btn-red btn-sm shrink-0">{t.enroll}</a>
             )}

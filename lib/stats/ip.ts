@@ -14,3 +14,9 @@ export const fromOurSite = (req: NextRequest) => {
 };
 /** small JSON bodies only */
 export const tooBig = (req: NextRequest, max = 32_000) => Number(req.headers.get('content-length') || 0) > max;
+
+/** same visitor id from plain request headers (server actions have no NextRequest) */
+export const ipHashFromHeaders = (h: Headers) => {
+  const ip = (h.get('x-nf-client-connection-ip') || h.get('x-forwarded-for') || '').split(',')[0].trim() || h.get('x-real-ip') || 'na';
+  return createHash('sha256').update(`${ip}|${process.env.CRON_SECRET || 'meplab-salt'}`).digest('hex').slice(0, 24);
+};

@@ -16,16 +16,17 @@ const supabaseAnon =
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.URL || '';
 
 // Security headers on every response. The CSP allows only what the site really loads:
-// our own files, Supabase (login, storage), the video players we embed, WebAssembly for the OCR reader.
+// our own files, Supabase (login, storage), the video players we embed, WebAssembly for the OCR reader,
+// and the Meta Pixel / Google Analytics tags (only loaded when their IDs are set).
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:",
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://connect.facebook.net https://www.googletagmanager.com",
   "worker-src 'self' blob:",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "media-src 'self' blob:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.facebook.com https://connect.facebook.net https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
   "frame-src https://www.youtube-nocookie.com https://player.vimeo.com https://drive.google.com",
   "frame-ancestors 'none'",
   "form-action 'self' https://*.supabase.co",

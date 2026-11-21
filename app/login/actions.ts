@@ -4,6 +4,8 @@ import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { toSheet, normWhatsapp } from '@/lib/sheet';
 import { DEPARTMENTS, COUNTRIES, cleanYear } from '@/lib/education';
+import { saveEvent } from '@/lib/stats/store';
+import { ipHashFromHeaders } from '@/lib/stats/ip';
 
 function safeNext(v: FormDataEntryValue | null) {
   const s = String(v || '/dashboard');
@@ -50,6 +52,7 @@ export async function signUp(formData: FormData) {
     }
   });
   if (error) redirect(`/signup?error=${/already|registered|exists/i.test(error.message) ? 'exists' : '1'}&next=${encodeURIComponent(next)}`);
+  try { await saveEvent('signup', ipHashFromHeaders(await headers())); } catch {}
   await toSheet({ event: 'signup', name: full_name, email, whatsapp: phone, department, university, grad_year, country, source: next.startsWith('/cv-check') ? 'فحص الـ CV' : next.startsWith('/courses') ? 'الكورسات' : 'الموقع' });
   // If email confirmation is disabled, a session exists already
   if (data.session) redirect(next);
