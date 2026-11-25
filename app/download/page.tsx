@@ -1,4 +1,5 @@
 import { getT } from '@/lib/i18n';
+import DownloadButton from '@/components/DownloadButton';
 
 export default async function Download() {
   const { t, locale } = await getT();
@@ -12,10 +13,11 @@ export default async function Download() {
       <div>
         <h1 className="display text-[2.4rem] leading-tight md:text-[3.75rem]">{t.download_title}</h1>
         <p className="mt-4 max-w-xl text-[17px] leading-8 text-ink-soft">{t.download_sub}</p>
-        <a href={url} {...(local ? { download: true } : { target: '_blank', rel: 'noopener' })} className="btn-red mt-8 px-7 py-3 text-base">
-          <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden><path d="M8 2v8m-3.5-3.5L8 10l3.5-3.5M3 13h10" fill="none" stroke="currentColor" strokeWidth="1.8" /></svg>
-          {t.download_btn}
-        </a>
+        <DownloadButton
+          url={url}
+          local={local}
+          labels={{ btn: t.download_btn, phone: t.download_phone, copy: t.download_copy, copied: t.download_copied, started: t.download_started, direct: t.download_direct }}
+        />
         <p className="mt-3 text-sm text-ink-soft" dir="ltr" style={{ textAlign: 'start' }}>MEP-LAB-Player-Setup-{ver}.msi · 47.6 MB · Windows 64-bit</p>
         <dl className="card mt-8 grid max-w-md grid-cols-2 overflow-hidden text-start">
           <div className="px-4 py-3"><dt className="tb-k">{t.version}</dt><dd className="tb-v" dir="ltr" style={{ textAlign: 'start' }}>{ver || '—'}</dd></div>
