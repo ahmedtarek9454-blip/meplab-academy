@@ -3,7 +3,7 @@ import DownloadButton from '@/components/DownloadButton';
 
 export default async function Download() {
   const { t, locale } = await getT();
-  const ver = process.env.NEXT_PUBLIC_PLAYER_VERSION || '2.1.6';
+  const ver = process.env.NEXT_PUBLIC_PLAYER_VERSION || '2.1.7';
   // the installer ships with the site (public/player); an env URL can override it later
   const url = process.env.NEXT_PUBLIC_PLAYER_DOWNLOAD_URL || `/player/MEP-LAB-Player-Setup-${ver}.msi`;
   const local = url.startsWith('/');
