@@ -36,9 +36,7 @@ export async function signIn(formData: FormData) {
 export async function signUp(formData: FormData) {
   const next = safeNext(formData.get('next'));
   const full_name = String(formData.get('full_name') || '').trim().slice(0, 80);
-  // compare the last 9 digits, so 0935…, 963935… and +963 935… are the same number whatever the country
-  const tail = (v: string) => { const d = v.replace(/\D/g, ''); return d.length >= 9 ? d.slice(-9) : ''; };
-  const phone = tail(String(formData.get('phone') || ''));
+  const phone = normWhatsapp(String(formData.get('phone') || ''));
   const email = String(formData.get('email') || '').trim().toLowerCase();
   if (full_name.length < 3) redirect(`/signup?error=name&next=${encodeURIComponent(next)}`);
   if (!phone) redirect(`/signup?error=phone&next=${encodeURIComponent(next)}`);
@@ -104,7 +102,9 @@ export async function sendReset(formData: FormData) {
     redirect('/reset?sent=1'); // same answer whether the e-mail exists or not
   }
 
-  const phone = normWhatsapp(String(formData.get('phone') || ''));
+  // compare the last 9 digits, so 0935…, 963935… and +963 935… are the same number whatever the country
+  const tail = (v: string) => { const d = v.replace(/\D/g, ''); return d.length >= 9 ? d.slice(-9) : ''; };
+  const phone = tail(String(formData.get('phone') || ''));
   const ip = ipHashFromHeaders(await headers());
   const blocked = (await overLimit('ip', ip)) || (await overLimit('email', email));
   if (blocked) redirect('/reset?error=limit');
