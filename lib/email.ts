@@ -76,6 +76,13 @@ export function notifyWaitlistLaunch(o: { to: string; course: string; url: strin
 <p style="color:#64748b;font-size:13px">وصلك الإيميل ده لأنك طلبت نبلّغك لما الكورس ينزل.</p>`));
 }
 
+/** Password reset link, sent by us instead of Supabase's own mailer */
+export function sendResetLink(o: { to: string; url: string }) {
+  return sendEmail(o.to, 'تغيير باسورد حسابك على MEP LAB', layout('تغيير الباسورد', `
+<p>طلبت تغيّر باسورد حسابك على MEP LAB. دوس الزرار واكتب الباسورد الجديد:</p>${btn(o.url, 'اكتب باسورد جديد')}
+<p style="color:#64748b;font-size:13px">اللينك بيشتغل مرة واحدة ولمدة محدودة. لو مش إنت اللي طلبت، سيب الإيميل ده ومفيش حاجة هتتغير.</p>`));
+}
+
 /** Confirms a CV-checker opt-in. Every marketing email must carry the unsubscribe link. */
 export function unsubLink(token: string) {
   return `${site()}/unsubscribe?t=${encodeURIComponent(token)}`;

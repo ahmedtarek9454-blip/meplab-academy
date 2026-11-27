@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { toSheet } from '@/lib/sheet';
+import { headers } from 'next/headers';
+import { recoveryLink } from '@/lib/authLinks';
 
 const back = (q = '') => { revalidatePath('/admin/students'); redirect(`/admin/students${q}`); };
 
@@ -41,4 +43,15 @@ export async function addStudent(fd: FormData) {
     await toSheet({ event: 'course', name: p!.full_name, email, whatsapp: p!.phone, course: c?.title_ar || '' });
   }
   back('?added=1');
+}
+
+/** a one-time "new password" link for a student, to hand over on WhatsApp when the e-mail does not arrive */
+export async function resetLinkFor(fd: FormData) {
+  await requireAdmin();
+  const email = String(fd.get('email') || '').trim().toLowerCase();
+  const h = await headers();
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || `${h.get('x-forwarded-proto') || 'https'}://${h.get('host')}`).replace(/\/$/, '');
+  const url = await recoveryLink(email, site);
+  if (!url) back(`?error=${encodeURIComponent('مفيش حساب بالإيميل ده، أو الطالب داخل بجوجل بس.')}`);
+  back(`?reset=${encodeURIComponent(url!)}&for=${encodeURIComponent(email)}`);
 }

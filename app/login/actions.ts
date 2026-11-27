@@ -6,6 +6,8 @@ import { toSheet, normWhatsapp } from '@/lib/sheet';
 import { DEPARTMENTS, COUNTRIES, cleanYear } from '@/lib/education';
 import { saveEvent } from '@/lib/stats/store';
 import { ipHashFromHeaders } from '@/lib/stats/ip';
+import { recoveryLink } from '@/lib/authLinks';
+import { sendResetLink } from '@/lib/email';
 
 function safeNext(v: FormDataEntryValue | null) {
   const s = String(v || '/dashboard');
@@ -76,12 +78,33 @@ export async function signOut() {
   redirect('/');
 }
 
-/** "forgot password": e-mail a reset link that lands on /reset/new */
+/**
+ * "forgot password": e-mail a reset link that lands on /auth/confirm, then /reset/new.
+ * With RESEND_API_KEY set we make the link ourselves and send it through Resend.
+ * Without it we fall back to Supabase's own mailer, which is rate limited and often does not deliver.
+ */
 export async function sendReset(formData: FormData) {
   const email = String(formData.get('email') || '').trim().toLowerCase();
-  const supabase = await createClient();
-  await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${await siteUrl()}/auth/callback?next=/reset/new` }).catch(() => {});
+  let sent = false;
+  if (email && process.env.RESEND_API_KEY) {
+    const url = await recoveryLink(email, await siteUrl());
+    if (url) sent = await sendResetLink({ to: email, url });
+  }
+  if (email && !sent) {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${await siteUrl()}/auth/callback?next=/reset/new` }).catch((e) => ({ error: e }));
+    if (error) console.error('reset email', (error as any)?.message || error);
+  }
   redirect('/reset?sent=1'); // same answer whether the e-mail exists or not
+}
+
+/** the button on /auth/confirm: trade the one-time token for a session, then ask for the new password */
+export async function confirmRecovery(formData: FormData) {
+  const token_hash = String(formData.get('token_hash') || '');
+  const supabase = await createClient();
+  const { error } = await supabase.auth.verifyOtp({ type: 'recovery', token_hash });
+  if (error) redirect('/auth/confirm?error=1');
+  redirect('/reset/new');
 }
 
 export async function setNewPassword(formData: FormData) {

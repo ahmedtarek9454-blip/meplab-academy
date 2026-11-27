@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { requireAdmin } from '@/lib/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import SubmitButton from '@/components/SubmitButton';
-import { newCode, closeCode, addStudent } from './actions';
+import { newCode, closeCode, addStudent, resetLinkFor } from './actions';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { robots: { index: false } };
@@ -34,7 +34,22 @@ export default async function Students({ searchParams }: { searchParams: Promise
       </div>
       {sp.error && <p className="mt-4 rounded-sheet bg-red-50 p-3 text-sm font-semibold text-red-700">{sp.error}</p>}
       {sp.code && <p className="mt-4 rounded-sheet border border-ink p-3 text-sm font-semibold">الكود الجديد: <span dir="ltr" className="font-mono text-lg">{sp.code}</span> ابعته في جروب الكورس، والطالب يكتبه في البروفايل بتاعه.</p>}
+      {sp.reset && (
+        <div className="mt-4 rounded-sheet border border-ink p-3 text-sm leading-7">
+          <p className="font-semibold">لينك تغيير الباسورد لـ <span dir="ltr">{sp.for}</span>. انسخه وابعته للطالب على واتساب. بيشتغل مرة واحدة ولمدة محدودة:</p>
+          <input readOnly value={sp.reset} dir="ltr" className="input mt-2 font-mono text-xs" />
+        </div>
+      )}
       {sp.added && <p className="mt-4 rounded-sheet bg-green-50 p-3 text-sm font-semibold text-green-800">اتضاف للكورس.</p>}
+
+      <div className="card mt-6 p-6">
+        <h2 className="text-lg font-bold text-ink">طالب نسي الباسورد</h2>
+        <p className="mt-1 text-sm text-ink-mute">اكتب إيميل الحساب وهيطلعلك لينك تبعتهوله على واتساب، من غير ما نستنى إيميل يوصله.</p>
+        <form action={resetLinkFor} className="mt-4 flex flex-wrap gap-2">
+          <input name="email" type="email" required placeholder="إيميل الطالب" className="input max-w-sm" dir="ltr" />
+          <SubmitButton className="btn-ghost btn-sm">اعمل لينك تغيير باسورد</SubmitButton>
+        </form>
+      </div>
 
       {(courses ?? []).map((c: any) => {
         const code = (codes ?? []).find((x: any) => x.course_id === c.id);
