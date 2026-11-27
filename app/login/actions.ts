@@ -8,6 +8,8 @@ import { saveEvent } from '@/lib/stats/store';
 import { ipHashFromHeaders } from '@/lib/stats/ip';
 import { recoveryLink } from '@/lib/authLinks';
 import { sendResetLink } from '@/lib/email';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { overLimit, logPhoneReset } from '@/lib/resetGate';
 
 function safeNext(v: FormDataEntryValue | null) {
   const s = String(v || '/dashboard');
@@ -78,24 +80,46 @@ export async function signOut() {
   redirect('/');
 }
 
+/** e-mail reset is on only when a mail provider is set; otherwise the student proves the account with the WhatsApp number on it */
+const MAIL_READY = () => !!process.env.RESEND_API_KEY;
+
 /**
- * "forgot password": e-mail a reset link that lands on /auth/confirm, then /reset/new.
- * With RESEND_API_KEY set we make the link ourselves and send it through Resend.
- * Without it we fall back to Supabase's own mailer, which is rate limited and often does not deliver.
+ * "forgot password".
+ * Mail provider set (RESEND_API_KEY): we make the link and e-mail it through Resend.
+ * No provider: the form also asks for the WhatsApp number saved on the account. When both match,
+ * the student goes straight to the new-password step, no e-mail needed. Admin accounts are never
+ * reset this way, and attempts are capped per visitor and per e-mail each day.
  */
 export async function sendReset(formData: FormData) {
   const email = String(formData.get('email') || '').trim().toLowerCase();
-  let sent = false;
-  if (email && process.env.RESEND_API_KEY) {
-    const url = await recoveryLink(email, await siteUrl());
-    if (url) sent = await sendResetLink({ to: email, url });
+  if (!email) redirect('/reset');
+  const site = await siteUrl();
+
+  if (MAIL_READY()) {
+    const url = await recoveryLink(email, site);
+    const sent = url ? await sendResetLink({ to: email, url }) : false;
+    if (url && !sent) console.error('reset email: Resend did not accept the message');
+    redirect('/reset?sent=1'); // same answer whether the e-mail exists or not
   }
-  if (email && !sent) {
-    const supabase = await createClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${await siteUrl()}/auth/callback?next=/reset/new` }).catch((e) => ({ error: e }));
-    if (error) console.error('reset email', (error as any)?.message || error);
+
+  const phone = normWhatsapp(String(formData.get('phone') || ''));
+  const ip = ipHashFromHeaders(await headers());
+  const blocked = (await overLimit('ip', ip)) || (await overLimit('email', email));
+  if (blocked) redirect('/reset?error=limit');
+  if (!phone) redirect('/reset?error=match');
+
+  let target: string | null = null;
+  try {
+    const admin = createAdminClient();
+    const { data: p } = await admin.from('profiles').select('phone, role').ilike('email', email).maybeSingle();
+    const saved = p?.phone ? normWhatsapp(p.phone) : null;
+    if (p && p.role !== 'admin' && saved && saved === phone) target = await recoveryLink(email, site);
+  } catch (e) {
+    console.error('reset by phone', e);
   }
-  redirect('/reset?sent=1'); // same answer whether the e-mail exists or not
+  if (!target) redirect('/reset?error=match');
+  await logPhoneReset(email);
+  redirect(target!.replace(site, '') || '/reset');
 }
 
 /** the button on /auth/confirm: trade the one-time token for a session, then ask for the new password */

@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import SubmitButton from '@/components/SubmitButton';
 import { newCode, closeCode, addStudent, resetLinkFor } from './actions';
+import { recentPhoneResets } from '@/lib/resetGate';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { robots: { index: false } };
@@ -19,6 +20,7 @@ export default async function Students({ searchParams }: { searchParams: Promise
     admin.from('task_submissions').select('user_id, status, course_tasks(course_id)'),
     admin.from('profiles').select('id', { count: 'exact', head: true })
   ]);
+  const phoneResets = await recentPhoneResets(10);
   const done = (uid: string, cid: string) => (subs ?? []).filter((s: any) => s.user_id === uid && s.course_tasks?.course_id === cid).length;
   const fmt = (d: string) => new Date(d).toLocaleDateString('ar-EG', { dateStyle: 'medium' });
 
@@ -49,6 +51,12 @@ export default async function Students({ searchParams }: { searchParams: Promise
           <input name="email" type="email" required placeholder="إيميل الطالب" className="input max-w-sm" dir="ltr" />
           <SubmitButton className="btn-ghost btn-sm">اعمل لينك تغيير باسورد</SubmitButton>
         </form>
+        {phoneResets.length > 0 && (
+          <div className="mt-4 text-sm text-ink-mute">
+            <p className="font-semibold text-ink">آخر اللي غيّروا الباسورد بالإيميل ورقم الواتساب:</p>
+            <ul className="mt-1 space-y-0.5">{phoneResets.map((r) => <li key={r.at} dir="ltr" className="text-right">{r.email} · {new Date(r.at).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Africa/Cairo' })}</li>)}</ul>
+          </div>
+        )}
       </div>
 
       {(courses ?? []).map((c: any) => {

@@ -3,10 +3,13 @@ import { sendReset } from '@/app/login/actions';
 import SubmitButton from '@/components/SubmitButton';
 import { WHATSAPP } from '@/lib/whatsapp';
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: 'نسيت الباسورد', robots: { index: false } };
 
 export default async function Reset({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
   const sp = await searchParams;
+  const byMail = !!process.env.RESEND_API_KEY;
+  const wa = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent('نسيت باسورد حسابي على MEP LAB، الإيميل بتاعي: ')}`;
   return (
     <section className="container-x flex justify-center py-14" dir="rtl">
       <div className="card w-full max-w-md p-8">
@@ -14,13 +17,25 @@ export default async function Reset({ searchParams }: { searchParams: Promise<Re
         {sp.sent ? (
           <>
             <p className="mt-4 rounded-sheet bg-green-50 p-3 text-sm leading-7 text-green-800">لو الإيميل ده عليه حساب، هيوصلك لينك تغيّر بيه الباسورد خلال دقايق. شوف الـ Spam كمان.</p>
-            <p className="mt-4 text-sm leading-7 text-ink-mute">موصلش بعد 10 دقايق؟ <a className="font-bold text-brand-blue" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('نسيت باسورد حسابي على MEP LAB، الإيميل بتاعي: ')}`} target="_blank" rel="noopener">ابعتلنا الإيميل بتاعك على واتساب</a> وهنبعتلك لينك تغيير الباسورد هناك.</p>
+            <p className="mt-4 text-sm leading-7 text-ink-mute">موصلش بعد 10 دقايق؟ <a className="font-bold text-brand-blue" href={wa} target="_blank" rel="noopener">ابعتلنا الإيميل بتاعك على واتساب</a> وهنبعتلك لينك تغيير الباسورد هناك.</p>
           </>
         ) : (
-          <form action={sendReset} className="mt-5 space-y-4">
-            <div><label className="label">الإيميل</label><input name="email" type="email" required className="input" dir="ltr" autoComplete="email" /></div>
-            <SubmitButton className="btn-red w-full">ابعتلي لينك تغيير الباسورد</SubmitButton>
-          </form>
+          <>
+            {sp.error === 'match' && <p className="mt-4 rounded-sheet bg-red-50 p-3 text-sm leading-7 text-red-700">الإيميل ورقم الواتساب مش مطابقين لحساب عندنا. اكتب الرقم اللي سجلت بيه بالظبط، أو <a className="font-bold underline" href={wa} target="_blank" rel="noopener">كلمنا واتساب</a>.</p>}
+            {sp.error === 'limit' && <p className="mt-4 rounded-sheet bg-red-50 p-3 text-sm leading-7 text-red-700">جربت كتير النهارده. <a className="font-bold underline" href={wa} target="_blank" rel="noopener">كلمنا واتساب</a> ونغيرهالك، أو جرب بكرة.</p>}
+            <form action={sendReset} className="mt-5 space-y-4">
+              <div><label className="label">الإيميل</label><input name="email" type="email" required className="input" dir="ltr" autoComplete="email" /></div>
+              {!byMail && (
+                <div>
+                  <label className="label">رقم الواتساب اللي سجلت بيه</label>
+                  <input name="phone" type="tel" required className="input" dir="ltr" autoComplete="tel" placeholder="01xxxxxxxxx" />
+                  <p className="mt-1 text-xs text-ink-mute">لو الاتنين مطابقين لحسابك هتكتب الباسورد الجديد على طول.</p>
+                </div>
+              )}
+              <SubmitButton className="btn-red w-full">{byMail ? 'ابعتلي لينك تغيير الباسورد' : 'كمّل'}</SubmitButton>
+            </form>
+            {process.env.NEXT_PUBLIC_GOOGLE_AUTH === '1' && <p className="mt-4 text-sm leading-7 text-ink-mute">سجلت بحساب جوجل؟ ارجع لصفحة الدخول وادخل بجوجل، مش محتاج باسورد.</p>}
+          </>
         )}
         <p className="mt-6 text-center text-sm"><Link href="/login" className="font-bold text-brand-blue">رجوع للدخول</Link></p>
       </div>
